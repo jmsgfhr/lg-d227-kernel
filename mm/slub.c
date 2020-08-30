@@ -4220,9 +4220,8 @@ static long validate_slab_cache(struct kmem_cache *s)
  * and freed.
  */
 
-#ifdef CONFIG_MTK_MEMCFG
+
 #define MTK_MEMCFG_SLABTRACE_CNT 4
-#endif 
 /* MTK_MEMCFG_SLABTRACE_CNT should be always <= TRACK_ADDRS_COUNT */
 #if (MTK_MEMCFG_SLABTRACE_CNT > TRACK_ADDRS_COUNT)
 #error (MTK_MEMCFG_SLABTRACE_CNT > TRACK_ADDRS_COUNT)
