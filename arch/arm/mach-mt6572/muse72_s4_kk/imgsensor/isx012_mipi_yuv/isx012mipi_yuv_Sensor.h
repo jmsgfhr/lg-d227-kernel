@@ -1,0 +1,4890 @@
+/*****************************************************************************
+ *
+ * Filename:
+ * ---------
+ *   sensor.h
+ *
+ * Project:
+ * --------
+ *   DUMA
+ *
+ * Description:
+ * ------------
+ *   Header file of Sensor driver
+ *
+ *
+ * Author:
+ * -------
+ *   PC Huang (MTK02204)
+ *
+ *============================================================================
+ *             HISTORY
+ * Below this line, this part is controlled by CC/CQ. DO NOT MODIFY!!
+ *------------------------------------------------------------------------------
+ * $Revision:$
+ * $Modtime:$
+ * $Log:$
+ *
+ * 09 10 2010 jackie.su
+ * [ALPS00002279] [Need Patch] [Volunteer Patch] ALPS.Wxx.xx Volunteer patch for
+ * .10y dual sensor
+ *
+ * 09 02 2010 jackie.su
+ * [ALPS00002279] [Need Patch] [Volunteer Patch] ALPS.Wxx.xx Volunteer patch for
+ * .roll back dual sensor
+ *
+ * Mar 4 2010 mtk70508
+ * [DUMA00154792] Sensor driver
+ *
+ *
+ * Feb 24 2010 mtk01118
+ * [DUMA00025869] [Camera][YUV I/F & Query feature] check in camera code
+ *
+ *
+ * Aug 5 2009 mtk01051
+ * [DUMA00009217] [Camera Driver] CCAP First Check In
+ *
+ *
+ * Apr 7 2009 mtk02204
+ * [DUMA00004012] [Camera] Restructure and rename camera related custom folders and folder name of came
+ *
+ *
+ * Mar 26 2009 mtk02204
+ * [DUMA00003515] [PC_Lint] Remove PC_Lint check warnings of camera related drivers.
+ *
+ *
+ * Mar 2 2009 mtk02204
+ * [DUMA00001084] First Check in of MT6516 multimedia drivers
+ *
+ *
+ * Feb 24 2009 mtk02204
+ * [DUMA00001084] First Check in of MT6516 multimedia drivers
+ *
+ *
+ * Dec 27 2008 MTK01813
+ * DUMA_MBJ CheckIn Files
+ * created by clearfsimport
+ *
+ * Dec 10 2008 mtk02204
+ * [DUMA00001084] First Check in of MT6516 multimedia drivers
+ *
+ *
+ * Oct 27 2008 mtk01051
+ * [DUMA00000851] Camera related drivers check in
+ * Modify Copyright Header
+ *
+ *
+ *------------------------------------------------------------------------------
+ * Upper this line, this part is controlled by CC/CQ. DO NOT MODIFY!!
+ *============================================================================
+ ****************************************************************************/
+/* SENSOR FULL SIZE */
+#ifndef __SENSOR_H
+#define __SENSOR_H
+
+
+typedef enum {
+    SENSOR_MODE_INIT = 0,
+    SENSOR_MODE_PREVIEW,
+    SENSOR_MODE_CAPTURE,
+    SENSOR_MODE_VIDEO
+} ISX012MIPI_SENSOR_MODE;
+
+typedef enum _ISX012MIPI_OP_TYPE_ {
+        ISX012MIPI_MODE_NONE,
+        ISX012MIPI_MODE_PREVIEW,
+        ISX012MIPI_MODE_CAPTURE,
+        ISX012MIPI_MODE_QCIF_VIDEO,
+        ISX012MIPI_MODE_CIF_VIDEO,
+        ISX012MIPI_MODE_QVGA_VIDEO
+    } ISX012MIPI_OP_TYPE;
+
+extern ISX012MIPI_OP_TYPE ISX012MIPI_g_iISX012MIPI_Mode;
+
+#define ISX012MIPI_ID_REG                          (0x300A)
+#define ISX012MIPI_INFO_REG                        (0x300B)
+
+/* sensor size */
+#define ISX012MIPI_IMAGE_SENSOR_PV_WIDTH            (800)
+#define ISX012MIPI_IMAGE_SENSOR_PV_HEIGHT           (600)
+#define ISX012MIPI_IMAGE_SENSOR_QSXGA_WITDH         (2560)
+#define ISX012MIPI_IMAGE_SENSOR_QSXGA_HEIGHT        (1920)
+//#define ISX012MIPI_IMAGE_SENSOR_VIDEO_WITDH         (800)
+//#define ISX012MIPI_IMAGE_SENSOR_VIDEO_HEIGHT        (600)
+
+
+/* Sesnor Pixel/Line Numbers in One Period */
+///////#define ISX012MIPI_PV_PERIOD_PIXEL_NUMS    		(1896)  	/* Default preview line length HTS*/
+///////#define ISX012MIPI_PV_PERIOD_LINE_NUMS     		(984)   	/* Default preview frame length  VTS*/
+///////#define ISX012MIPI_FULL_PERIOD_PIXEL_NUMS  		(2844)  	/* Default full size line length */
+///////#define ISX012MIPI_FULL_PERIOD_LINE_NUMS   		(1968)  	/* Default full size frame length */
+///////#define ISX012MIPI_VIDEO_PERIOD_PIXEL_NUMS    	(1896)  	/* Default preview line length HTS*/
+///////#define ISX012MIPI_VIDEO_PERIOD_LINE_NUMS     	(984)   	/* Default preview frame length  VTS*/
+
+/* Sensor Exposure Line Limitation */
+///////#define ISX012MIPI_PV_EXPOSURE_LIMITATION      	(984-4)
+///////#define ISX012MIPI_FULL_EXPOSURE_LIMITATION    	(1968-4)
+
+/* Config the ISP grab start x & start y, Config the ISP grab width & height */
+#define ISX012MIPI_PV_GRAB_START_X 				   (0)
+#define ISX012MIPI_PV_GRAB_START_Y  			(0)
+#define ISX012MIPI_FULL_GRAB_START_X   			(0)
+#define ISX012MIPI_FULL_GRAB_START_Y	  		(0)
+
+/*50Hz,60Hz*/
+#define ISX012MIPI_NUM_50HZ                        (50 * 2)
+#define ISX012MIPI_NUM_60HZ                        (60 * 2)
+
+/* FRAME RATE UNIT */
+#define ISX012MIPI_FRAME_RATE_UNIT                 (10)
+
+/* MAX CAMERA FRAME RATE */
+#define ISX012MIPI_MAX_CAMERA_FPS                  (ISX012MIPI_FRAME_RATE_UNIT * 30)
+
+#define ISX012_PREVIEW_MODE             0
+#define ISX012_VIDEO_MODE               1
+#define ISX012_PREVIEW_FULLSIZE_MODE    2
+
+
+/* SENSOR READ/WRITE ID */
+#define ISX012MIPI_WRITE_ID						0x34
+#define ISX012MIPI_READ_ID							0x35
+#define ISX012MIPI_WRITE_ID1						0x78
+#define ISX012MIPI_READ_ID1						0x79
+
+#define BYTE_LEN 1
+#define WORD_LEN 2
+
+//                                                                 
+// flash mode definition
+typedef enum
+{
+	FLASH_MODE_UNSUPPORTED = -1,
+	FLASH_MODE_AUTO        =  0,
+	FLASH_MODE_SLOWSYNC    =  0, //NOW DO NOT SUPPORT SLOW SYNC, TEMPERALLY THE SAME WITH AUTO
+	FLASH_MODE_FORCE_ON    =  1,
+	FLASH_MODE_FORCE_OFF   =  2,
+	FLASH_MODE_REDEYE      =  3,
+	FLASH_MODE_FORCE_TORCH =  4,
+	FLASH_MODE_TOTAL_NUM,
+	FLASH_MODE_MIN = FLASH_MODE_AUTO,
+	FLASH_MODE_MAX = FLASH_MODE_FORCE_TORCH, //cotta-- modified to TORCH for FLASH in video
+}FLASH_MODE_T;
+//                                                                 
+
+typedef struct _SENSOR_INIT_INFO
+{
+	kal_uint16 address;
+	kal_uint16 data;
+	kal_uint8 type;
+}isx012_short_t;
+
+isx012_short_t ISX012_Pll_Reg[]={
+	/***************pll********************/
+	{0x5008,0x00,BYTE_LEN},
+	{0x0004,0x02,BYTE_LEN},
+	{0x0007,0x00,BYTE_LEN},
+	{0x0008,0x00,BYTE_LEN},
+	{0x00C2,0x0200,WORD_LEN},
+	{0x00c4,0x11,BYTE_LEN},
+	{0x00c5,0x11,BYTE_LEN},
+	/***************mipi timing clk=432MHZ,PCLK=86.2MHz**************/
+	{0x5C01,0x00,BYTE_LEN},					// RGLANESEL
+	{0x5C04,0x04,BYTE_LEN},					// RGTLPX
+	{0x5C05,0x03,BYTE_LEN},					// RGTCLKPRE
+	{0x5C06,0x0E,BYTE_LEN},					// RGTCLKZER
+	{0x5C07,0x02,BYTE_LEN},					// RGTCLKPRE
+	{0x5C08,0x0B,BYTE_LEN},					// RGTCLKPOS
+	{0x5C09,0x05,BYTE_LEN},					// RGTCLKTRA
+	{0x5C0A,0x07,BYTE_LEN},					// RGTHSEXIT
+	{0x5C0B,0x03,BYTE_LEN},					// RGTHSPREP
+	{0x5C0C,0x07,BYTE_LEN},					// RGTHSZERO
+	{0x5C0D,0x05,BYTE_LEN},					// RGTHSTRAI
+	{0x5C0E,0x01,BYTE_LEN},					// RGTLPXESC
+
+	// Preview 800x600@15fps
+	{0x0089,0x00,BYTE_LEN},					  // OUTFMT_MONI(YUV)
+	{0x0090,0x0320,WORD_LEN}, 		// HSIZE_MONI(800)
+	{0x0096,0x0258,WORD_LEN}, 		// VSIZE_MONI(600)
+	{0x0086,0x02,BYTE_LEN},				  // FPSTYPE_MONI(30fps)
+	{0x0083,0x01,BYTE_LEN},				  // SENSMODE_MONI(V1/2)
+
+	// Capture 2560x1920@15fps
+	{0x008A,0x00,BYTE_LEN},				  // OUTFMT_CAP(YUV)
+	{0x0092,0x0A00,WORD_LEN}, 		// HSIZE_CAP(2560))
+	{0x0098,0x0780,WORD_LEN}, 		// VSIZE_CAP(1920)
+	{0x0087,0x03,BYTE_LEN},				  // FPSTYPE_CAP(15fps)
+	{0x0084,0x00,BYTE_LEN},				  // SENSMODE_CAP(Full)
+
+	//                                                                  
+	// Movie 800x600@30fps
+	{0x008B,0x00,BYTE_LEN},					  // OUTFMT_MOVIE(YUV)
+	{0x0094,0x0320,WORD_LEN}, 		// HSIZE_MOVIE(800)
+	{0x009A,0x0258,WORD_LEN}, 		// VSIZE_MOVIE(600)
+	{0x0088,0x02,BYTE_LEN},					  // FPSTYPE_MOVIE(30fps)
+	{0x0085,0x01,BYTE_LEN},					  // SENSMODE_MOVIE(V1/2)
+
+	// H/V Flip
+	{0x008C,0x03,BYTE_LEN},					  // Preview
+	{0x008D,0x03,BYTE_LEN},					  // Capture
+	{0x008E,0x03,BYTE_LEN},					  // Video
+
+	{0x00DE,0x1169,WORD_LEN}, 			// YUVCONFIG
+	{0x6A9E,0x15C0,WORD_LEN}, 				// HMAX Extention ON(Capture 15fps ->
+	{0x00AF,0x11,BYTE_LEN},						// HSENS_MODE(Monitor & Movie H1/2)
+
+	//Fast mode setting
+	{0x500A,0x00,BYTE_LEN},    // FAST_MODECHG_EN
+	{0x500B,0x01,BYTE_LEN},    // FAST_SHT_MODE_SEL
+	{0x500C,0x00FA,WORD_LEN},    // FAST_SHT_LIMIT_COUNT
+
+	//Select sensor inversion link control
+	{0x501A,0x00,BYTE_LEN},    //SENS_REVERSE_CTRL
+
+	//shading
+	{0x6DBC,0x03,BYTE_LEN},    // WHITE_EDGE_MAX :
+	{0x6DF6,0xFF,BYTE_LEN},    // WHITE_SHD_JUDGE_BODY_COLOR_RATIO :
+	{0x6DF7,0xF0,BYTE_LEN},    // WHITE_SHD_JUDGE_RED_RATIO :
+	{0x6DAD,0x0C,BYTE_LEN},    // WHITE_OFSET1_UP :
+	{0x6DAE,0x0C,BYTE_LEN},    // WHITE_OFSET1_DOWN :
+	{0x6DAF,0x11,BYTE_LEN},    // WHITE_OFSET1_RIGHT :
+	{0x6DB0,0x1B,BYTE_LEN},    // WHITE_OFSET1_LEFT :
+	{0x6DB1,0x0D,BYTE_LEN},    // WHITE_OFSET2_UP :
+	{0x6DB2,0x13,BYTE_LEN},    // WHITE_OFSET2_DOWN :
+	{0x6DB3,0x11,BYTE_LEN},    // WHITE_OFSET2_RIGHT :
+	{0x6DB4,0x17,BYTE_LEN},    // WHITE_OFSET2_LEFT :
+
+	//additional additional code
+	{0xF200,0xB9,BYTE_LEN},
+	{0xF201,0xB9,BYTE_LEN},
+	{0xF202,0xC4,BYTE_LEN},
+	{0xF203,0xDE,BYTE_LEN},
+	{0xF204,0x55,BYTE_LEN},
+	{0xF205,0x60,BYTE_LEN},
+	{0xF206,0x8B,BYTE_LEN},
+	{0xF207,0x00,BYTE_LEN},
+	{0xF208,0x77,BYTE_LEN},
+	{0xF209,0xF1,BYTE_LEN},
+	{0xF20A,0x70,BYTE_LEN},
+	{0xF20B,0xFA,BYTE_LEN},
+	{0xF20C,0x55,BYTE_LEN},
+	{0xF20D,0xF0,BYTE_LEN},
+	{0xF20E,0x72,BYTE_LEN},
+	{0xF20F,0x00,BYTE_LEN},
+	{0xF210,0x10,BYTE_LEN},
+	{0xF211,0xB5,BYTE_LEN},
+	{0xF212,0x00,BYTE_LEN},
+	{0xF213,0x00,BYTE_LEN},
+	{0xF214,0x55,BYTE_LEN},
+	{0xF215,0xF4,BYTE_LEN},
+	{0xF216,0x72,BYTE_LEN},
+	{0xF217,0x00,BYTE_LEN},
+	{0xF218,0x78,BYTE_LEN},
+	{0xF219,0xF1,BYTE_LEN},
+	{0xF21A,0xBA,BYTE_LEN},
+	{0xF21B,0xFE,BYTE_LEN},
+	{0xF21C,0x55,BYTE_LEN},
+	{0xF21D,0xC0,BYTE_LEN},
+	{0xF21E,0x8B,BYTE_LEN},
+	{0xF21F,0x00,BYTE_LEN},
+	{0xF220,0x77,BYTE_LEN},
+	{0xF221,0xF1,BYTE_LEN},
+	{0xF222,0x58,BYTE_LEN},
+	{0xF223,0xFA,BYTE_LEN},
+	{0xF224,0x00,BYTE_LEN},
+	{0xF225,0x00,BYTE_LEN},
+	{0xF226,0x00,BYTE_LEN},
+	{0xF227,0x00,BYTE_LEN},
+	{0xF228,0x00,BYTE_LEN},
+	{0xF229,0x00,BYTE_LEN},
+	{0xF22A,0x00,BYTE_LEN},
+	{0xF22B,0x00,BYTE_LEN},
+	{0xF22C,0x00,BYTE_LEN},
+	{0xF22D,0x00,BYTE_LEN},
+	{0xF22E,0x00,BYTE_LEN},
+	{0xF22F,0x00,BYTE_LEN},
+	{0xF230,0x00,BYTE_LEN},
+	{0xF231,0x00,BYTE_LEN},
+	{0xF232,0x00,BYTE_LEN},
+	{0xF233,0x00,BYTE_LEN},
+	{0xF234,0x00,BYTE_LEN},
+	{0xF235,0x00,BYTE_LEN},
+	{0xF236,0x00,BYTE_LEN},
+	{0xF237,0x00,BYTE_LEN},
+	{0xF238,0x00,BYTE_LEN},
+	{0xF239,0x00,BYTE_LEN},
+	{0xF23A,0x00,BYTE_LEN},
+	{0xF23B,0x00,BYTE_LEN},
+	{0xF23C,0x00,BYTE_LEN},
+	{0xF23D,0x00,BYTE_LEN},
+	{0xF23E,0x00,BYTE_LEN},
+	{0xF23F,0x00,BYTE_LEN},
+	{0xF240,0x00,BYTE_LEN},
+	{0xF241,0x00,BYTE_LEN},
+	{0xF242,0x00,BYTE_LEN},
+	{0xF243,0x00,BYTE_LEN},
+	{0xF244,0x7E,BYTE_LEN},
+	{0xF245,0xB4,BYTE_LEN},
+	{0xF246,0x08,BYTE_LEN},
+	{0xF247,0x48,BYTE_LEN},
+	{0xF248,0x00,BYTE_LEN},
+	{0xF249,0x78,BYTE_LEN},
+	{0xF24A,0xC0,BYTE_LEN},
+	{0xF24B,0x07,BYTE_LEN},
+	{0xF24C,0xC0,BYTE_LEN},
+	{0xF24D,0x0F,BYTE_LEN},
+	{0xF24E,0x87,BYTE_LEN},
+	{0xF24F,0xF6,BYTE_LEN},
+	{0xF250,0xED,BYTE_LEN},
+	{0xF251,0xF8,BYTE_LEN},
+	{0xF252,0x8E,BYTE_LEN},
+	{0xF253,0xF6,BYTE_LEN},
+	{0xF254,0x2B,BYTE_LEN},
+	{0xF255,0xFE,BYTE_LEN},
+	{0xF256,0x88,BYTE_LEN},
+	{0xF257,0xF6,BYTE_LEN},
+	{0xF258,0x6B,BYTE_LEN},
+	{0xF259,0xFF,BYTE_LEN},
+	{0xF25A,0x93,BYTE_LEN},
+	{0xF25B,0xF6,BYTE_LEN},
+	{0xF25C,0x6B,BYTE_LEN},
+	{0xF25D,0xFB,BYTE_LEN},
+	{0xF25E,0x87,BYTE_LEN},
+	{0xF25F,0xF6,BYTE_LEN},
+	{0xF260,0x47,BYTE_LEN},
+	{0xF261,0xF9,BYTE_LEN},
+	{0xF262,0x7E,BYTE_LEN},
+	{0xF263,0xBC,BYTE_LEN},
+	{0xF264,0x88,BYTE_LEN},
+	{0xF265,0xF6,BYTE_LEN},
+	{0xF266,0x8F,BYTE_LEN},
+	{0xF267,0xFD,BYTE_LEN},
+	{0xF268,0x9C,BYTE_LEN},
+	{0xF269,0x23,BYTE_LEN},
+	{0xF26A,0x18,BYTE_LEN},
+	{0xF26B,0x00,BYTE_LEN},
+	{0xF26C,0x00,BYTE_LEN},
+	{0xF26D,0xF0,BYTE_LEN},
+	{0xF26E,0x06,BYTE_LEN},
+	{0xF26F,0xF8,BYTE_LEN},
+	{0xF270,0x87,BYTE_LEN},
+	{0xF271,0xF6,BYTE_LEN},
+	{0xF272,0x49,BYTE_LEN},
+	{0xF273,0xF9,BYTE_LEN},
+	{0xF274,0x00,BYTE_LEN},
+	{0xF275,0xF0,BYTE_LEN},
+	{0xF276,0x28,BYTE_LEN},
+	{0xF277,0xF8,BYTE_LEN},
+	{0xF278,0x88,BYTE_LEN},
+	{0xF279,0xF6,BYTE_LEN},
+	{0xF27A,0xA9,BYTE_LEN},
+	{0xF27B,0xFD,BYTE_LEN},
+	{0xF27C,0x70,BYTE_LEN},
+	{0xF27D,0xB5,BYTE_LEN},
+	{0xF27E,0x8E,BYTE_LEN},
+	{0xF27F,0xF6,BYTE_LEN},
+	{0xF280,0xE1,BYTE_LEN},
+	{0xF281,0xFD,BYTE_LEN},
+	{0xF282,0x8F,BYTE_LEN},
+	{0xF283,0xF6,BYTE_LEN},
+	{0xF284,0xA1,BYTE_LEN},
+	{0xF285,0xFA,BYTE_LEN},
+	{0xF286,0x8E,BYTE_LEN},
+	{0xF287,0xF6,BYTE_LEN},
+	{0xF288,0xD1,BYTE_LEN},
+	{0xF289,0xF8,BYTE_LEN},
+	{0xF28A,0x8E,BYTE_LEN},
+	{0xF28B,0xF6,BYTE_LEN},
+	{0xF28C,0x59,BYTE_LEN},
+	{0xF28D,0xFD,BYTE_LEN},
+	{0xF28E,0x0C,BYTE_LEN},
+	{0xF28F,0x4D,BYTE_LEN},
+	{0xF290,0x0C,BYTE_LEN},
+	{0xF291,0x4C,BYTE_LEN},
+	{0xF292,0xA8,BYTE_LEN},
+	{0xF293,0x79,BYTE_LEN},
+	{0xF294,0x61,BYTE_LEN},
+	{0xF295,0x78,BYTE_LEN},
+	{0xF296,0x88,BYTE_LEN},
+	{0xF297,0x42,BYTE_LEN},
+	{0xF298,0x01,BYTE_LEN},
+	{0xF299,0xD0,BYTE_LEN},
+	{0xF29A,0x00,BYTE_LEN},
+	{0xF29B,0x21,BYTE_LEN},
+	{0xF29C,0x03,BYTE_LEN},
+	{0xF29D,0xE0,BYTE_LEN},
+	{0xF29E,0x21,BYTE_LEN},
+	{0xF29F,0x78,BYTE_LEN},
+	{0xF2A0,0x02,BYTE_LEN},
+	{0xF2A1,0x29,BYTE_LEN},
+	{0xF2A2,0x01,BYTE_LEN},
+	{0xF2A3,0xD8,BYTE_LEN},
+	{0xF2A4,0x49,BYTE_LEN},
+	{0xF2A5,0x1C,BYTE_LEN},
+	{0xF2A6,0x21,BYTE_LEN},
+	{0xF2A7,0x70,BYTE_LEN},
+	{0xF2A8,0x00,BYTE_LEN},
+	{0xF2A9,0x28,BYTE_LEN},
+	{0xF2AA,0x04,BYTE_LEN},
+	{0xF2AB,0xD1,BYTE_LEN},
+	{0xF2AC,0x20,BYTE_LEN},
+	{0xF2AD,0x78,BYTE_LEN},
+	{0xF2AE,0x03,BYTE_LEN},
+	{0xF2AF,0x28,BYTE_LEN},
+	{0xF2B0,0x01,BYTE_LEN},
+	{0xF2B1,0xD3,BYTE_LEN},
+	{0xF2B2,0x97,BYTE_LEN},
+	{0xF2B3,0xF6,BYTE_LEN},
+	{0xF2B4,0xD3,BYTE_LEN},
+	{0xF2B5,0xF8,BYTE_LEN},
+	{0xF2B6,0xA8,BYTE_LEN},
+	{0xF2B7,0x79,BYTE_LEN},
+	{0xF2B8,0x60,BYTE_LEN},
+	{0xF2B9,0x70,BYTE_LEN},
+	{0xF2BA,0x70,BYTE_LEN},
+	{0xF2BB,0xBC,BYTE_LEN},
+	{0xF2BC,0x08,BYTE_LEN},
+	{0xF2BD,0xBC,BYTE_LEN},
+	{0xF2BE,0x18,BYTE_LEN},
+	{0xF2BF,0x47,BYTE_LEN},
+	{0xF2C0,0xD8,BYTE_LEN},
+	{0xF2C1,0x25,BYTE_LEN},
+	{0xF2C2,0x18,BYTE_LEN},
+	{0xF2C3,0x00,BYTE_LEN},
+	{0xF2C4,0x1C,BYTE_LEN},
+	{0xF2C5,0x01,BYTE_LEN},
+	{0xF2C6,0x18,BYTE_LEN},
+	{0xF2C7,0x00,BYTE_LEN},
+	{0xF2C8,0x0F,BYTE_LEN},
+	{0xF2C9,0x48,BYTE_LEN},
+	{0xF2CA,0x10,BYTE_LEN},
+	{0xF2CB,0xB5,BYTE_LEN},
+	{0xF2CC,0x00,BYTE_LEN},
+	{0xF2CD,0x78,BYTE_LEN},
+	{0xF2CE,0x02,BYTE_LEN},
+	{0xF2CF,0x28,BYTE_LEN},
+	{0xF2D0,0x16,BYTE_LEN},
+	{0xF2D1,0xD1,BYTE_LEN},
+	{0xF2D2,0x88,BYTE_LEN},
+	{0xF2D3,0xF6,BYTE_LEN},
+	{0xF2D4,0xCB,BYTE_LEN},
+	{0xF2D5,0xFD,BYTE_LEN},
+	{0xF2D6,0x88,BYTE_LEN},
+	{0xF2D7,0xF6,BYTE_LEN},
+	{0xF2D8,0xF7,BYTE_LEN},
+	{0xF2D9,0xFD,BYTE_LEN},
+	{0xF2DA,0x0C,BYTE_LEN},
+	{0xF2DB,0x48,BYTE_LEN},
+	{0xF2DC,0x00,BYTE_LEN},
+	{0xF2DD,0x78,BYTE_LEN},
+	{0xF2DE,0x01,BYTE_LEN},
+	{0xF2DF,0x28,BYTE_LEN},
+	{0xF2E0,0x0E,BYTE_LEN},
+	{0xF2E1,0xD1,BYTE_LEN},
+	{0xF2E2,0x0B,BYTE_LEN},
+	{0xF2E3,0x48,BYTE_LEN},
+	{0xF2E4,0xC0,BYTE_LEN},
+	{0xF2E5,0x78,BYTE_LEN},
+	{0xF2E6,0xC0,BYTE_LEN},
+	{0xF2E7,0x07,BYTE_LEN},
+	{0xF2E8,0x0A,BYTE_LEN},
+	{0xF2E9,0xD1,BYTE_LEN},
+	{0xF2EA,0x0A,BYTE_LEN},
+	{0xF2EB,0x49,BYTE_LEN},
+	{0xF2EC,0x0A,BYTE_LEN},
+	{0xF2ED,0x4A,BYTE_LEN},
+	{0xF2EE,0x08,BYTE_LEN},
+	{0xF2EF,0x7A,BYTE_LEN},
+	{0xF2F0,0xCB,BYTE_LEN},
+	{0xF2F1,0x79,BYTE_LEN},
+	{0xF2F2,0x00,BYTE_LEN},
+	{0xF2F3,0x02,BYTE_LEN},
+	{0xF2F4,0xC0,BYTE_LEN},
+	{0xF2F5,0x18,BYTE_LEN},
+	{0xF2F6,0x00,BYTE_LEN},
+	{0xF2F7,0x04,BYTE_LEN},
+	{0xF2F8,0x00,BYTE_LEN},
+	{0xF2F9,0x0C,BYTE_LEN},
+	{0xF2FA,0x90,BYTE_LEN},
+	{0xF2FB,0x42,BYTE_LEN},
+	{0xF2FC,0x00,BYTE_LEN},
+	{0xF2FD,0xD9,BYTE_LEN},
+	{0xF2FE,0x4A,BYTE_LEN},
+	{0xF2FF,0x82,BYTE_LEN},
+	{0xF300,0x10,BYTE_LEN},
+	{0xF301,0xBC,BYTE_LEN},
+	{0xF302,0x08,BYTE_LEN},
+	{0xF303,0xBC,BYTE_LEN},
+	{0xF304,0x18,BYTE_LEN},
+	{0xF305,0x47,BYTE_LEN},
+	{0xF306,0x00,BYTE_LEN},
+	{0xF307,0x00,BYTE_LEN},
+	{0xF308,0xE3,BYTE_LEN},
+	{0xF309,0x12,BYTE_LEN},
+	{0xF30A,0x18,BYTE_LEN},
+	{0xF30B,0x00,BYTE_LEN},
+	{0xF30C,0x03,BYTE_LEN},
+	{0xF30D,0x13,BYTE_LEN},
+	{0xF30E,0x18,BYTE_LEN},
+	{0xF30F,0x00,BYTE_LEN},
+	{0xF310,0x18,BYTE_LEN},
+	{0xF311,0x1F,BYTE_LEN},
+	{0xF312,0x18,BYTE_LEN},
+	{0xF313,0x00,BYTE_LEN},
+	{0xF314,0xD8,BYTE_LEN},
+	{0xF315,0x23,BYTE_LEN},
+	{0xF316,0x18,BYTE_LEN},
+	{0xF317,0x00,BYTE_LEN},
+	{0xF318,0xCF,BYTE_LEN},
+	{0xF319,0x07,BYTE_LEN},
+	{0xF31A,0x00,BYTE_LEN},
+	{0xF31B,0x00,BYTE_LEN},
+	{0xF31C,0x00,BYTE_LEN},
+	{0xF31D,0x00,BYTE_LEN},
+	{0xF31E,0x00,BYTE_LEN},
+	{0xF31F,0x00,BYTE_LEN}
+};
+
+isx012_short_t ISX012_Init_Reg[] = {
+
+    //ISX012_Initial_Setting_sensor_111218_V3.08.ini//
+#if 0 // move to just before ISX012_Init_Reg calling because of wait
+    /////////////////////////////////////
+    //AF driver setting                //
+    /////////////////////////////////////
+    {0x66C2,0x0C, BYTE_LEN}, //AF_INTERNAL_LENSDRV_ADRS
+    {0x66C3,0x03, BYTE_LEN}, //AF_INTERNAL_LENSDRV_SIZE
+    {0x000B,0x01, BYTE_LEN}, //AF_EXT : AF driver start
+    {0xFFFF,0x21, BYTE_LEN}, //wait, 33ms
+    {0x66C8,0x0000, WORD_LEN}, //AF_INTERNAL_LENSDRV_FIXEDPTN
+    {0x66CA,0x0131, WORD_LEN},
+    {0x66CC,0x01, BYTE_LEN},
+    {0xFFFF,0x21, BYTE_LEN}, //wait, 33ms
+    {0x66C5,0x08, BYTE_LEN}, //AF_INTERNAL_LENSDRV_SHIFT
+    {0x66C8,0x0000, WORD_LEN}, //AF_INTERNAL_LENSDRV_FIXEDPTN
+    {0x66CA,0x0200, WORD_LEN},
+#endif
+
+    {0x01BC,0x50, BYTE_LEN}, // CXC OFF SHD OFF
+    {0xEB00,0x8282, WORD_LEN},	//valid_code
+    {0xEB02,0xff, BYTE_LEN},
+    {0xEB03,0xc4, BYTE_LEN},
+    {0xEB04,0x3f, BYTE_LEN},
+    {0xEB05,0xf1, BYTE_LEN},
+    {0xEB06,0x4f, BYTE_LEN},
+    {0xEB07,0xf8, BYTE_LEN},
+    {0xEB08,0x13, BYTE_LEN},
+    {0xEB09,0x7f, BYTE_LEN},
+    {0xEB0A,0x05, BYTE_LEN},
+    {0xEB0B,0x60, BYTE_LEN},
+    {0xEB0C,0x01, BYTE_LEN},
+    {0xEB0D,0x58, BYTE_LEN},
+    {0xEB0E,0x10, BYTE_LEN},
+    {0xEB0F,0x16, BYTE_LEN},
+    {0xEB10,0x84, BYTE_LEN},
+    {0xEB11,0xc5, BYTE_LEN},
+    {0xEB12,0x3f, BYTE_LEN},
+    {0xEB13,0xf1, BYTE_LEN},
+    {0xEB14,0x4f, BYTE_LEN},
+    {0xEB15,0xfc, BYTE_LEN},
+    {0xEB16,0x13, BYTE_LEN},
+    {0xEB17,0xfe, BYTE_LEN},
+    {0xEB18,0xc4, BYTE_LEN},
+    {0xEB19,0x5f, BYTE_LEN},
+    {0xEB1A,0x01, BYTE_LEN},
+    {0xEB1B,0x58, BYTE_LEN},
+    {0xEB1C,0x00, BYTE_LEN},
+    {0xEB1D,0x16, BYTE_LEN},
+    {0xEB1E,0x84, BYTE_LEN},
+    {0xEB1F,0x05, BYTE_LEN},
+    {0xEB20,0x61, BYTE_LEN},
+    {0xEB21,0x11, BYTE_LEN},
+    {0xEB22,0x50, BYTE_LEN},
+    {0xEB23,0x04, BYTE_LEN},
+    {0xEB24,0x14, BYTE_LEN},
+    {0xEB25,0x00, BYTE_LEN},
+    {0xEB26,0x04, BYTE_LEN},
+    {0xEB27,0x20, BYTE_LEN},
+    {0xEB28,0x01, BYTE_LEN},
+    {0xEB29,0x40, BYTE_LEN},
+    {0xEB2A,0x00, BYTE_LEN},
+    {0xEB2B,0x10, BYTE_LEN},
+    {0xEB2C,0x03, BYTE_LEN},
+    {0xEB2D,0x85, BYTE_LEN},
+    {0xEB2E,0x60, BYTE_LEN},
+    {0xEB2F,0x21, BYTE_LEN},
+    {0xEB30,0x58, BYTE_LEN},
+    {0xEB31,0x00, BYTE_LEN},
+    {0xEB32,0x0e, BYTE_LEN},
+    {0xEB33,0x80, BYTE_LEN},
+    {0xEB34,0x83, BYTE_LEN},
+    {0xEB35,0xa0, BYTE_LEN},
+    {0xEB36,0x00, BYTE_LEN},
+    {0xEB37,0x28, BYTE_LEN},
+    {0xEB38,0x04, BYTE_LEN},
+    {0xEB39,0x08, BYTE_LEN},
+    {0xEB3A,0x82, BYTE_LEN},
+    {0xEB3B,0xc2, BYTE_LEN},
+    {0xEB3C,0xe0, BYTE_LEN},
+    {0xEB3D,0x30, BYTE_LEN},
+    {0xEB3E,0x48, BYTE_LEN},
+    {0xEB3F,0x0c, BYTE_LEN},
+    {0xEB40,0x12, BYTE_LEN},
+    {0xEB41,0x83, BYTE_LEN},
+    {0xEB42,0xc3, BYTE_LEN},
+    {0xEB43,0xe0, BYTE_LEN},
+    {0xEB44,0x10, BYTE_LEN},
+    {0xEB45,0x18, BYTE_LEN},
+    {0xEB46,0x04, BYTE_LEN},
+    {0xEB47,0x06, BYTE_LEN},
+    {0xEB48,0x81, BYTE_LEN},
+    {0xEB49,0x41, BYTE_LEN},
+    {0xEB4A,0x60, BYTE_LEN},
+    {0xEB4B,0x20, BYTE_LEN},
+    {0xEB4C,0x30, BYTE_LEN},
+    {0xEB4D,0x08, BYTE_LEN},
+    {0xEB4E,0x10, BYTE_LEN},
+    {0xEB4F,0x02, BYTE_LEN},
+    {0xEB50,0xc4, BYTE_LEN},
+    {0xEB51,0xa0, BYTE_LEN},
+    {0xEB52,0x30, BYTE_LEN},
+    {0xEB53,0x28, BYTE_LEN},
+    {0xEB54,0x08, BYTE_LEN},
+    {0xEB55,0x06, BYTE_LEN},
+    {0xEB56,0x80, BYTE_LEN},
+    {0xEB57,0x40, BYTE_LEN},
+    {0xEB58,0x00, BYTE_LEN},
+    {0xEB59,0x20, BYTE_LEN},
+    {0xEB5A,0x08, BYTE_LEN},
+    {0xEB5B,0x08, BYTE_LEN},
+    {0xEB5C,0x06, BYTE_LEN},
+    {0xEB5D,0x80, BYTE_LEN},
+    {0xEB5E,0x03, BYTE_LEN},
+    {0xEB5F,0xe0, BYTE_LEN},
+    {0xEB60,0x10, BYTE_LEN},
+    {0xEB61,0x28, BYTE_LEN},
+    {0xEB62,0x04, BYTE_LEN},
+    {0xEB63,0x0a, BYTE_LEN},
+    {0xEB64,0x02, BYTE_LEN},
+    {0xEB65,0x41, BYTE_LEN},
+    {0xEB66,0x00, BYTE_LEN},
+    {0xEB67,0x10, BYTE_LEN},
+    {0xEB68,0x00, BYTE_LEN},
+    {0xEB69,0x04, BYTE_LEN},
+    {0xEB6A,0x00, BYTE_LEN},
+    {0xEB6B,0x82, BYTE_LEN},
+    {0xEB6C,0xc0, BYTE_LEN},
+    {0xEB6D,0xbf, BYTE_LEN},
+    {0xEB6E,0xf0, BYTE_LEN},
+    {0xEB6F,0x2f, BYTE_LEN},
+    {0xEB70,0x04, BYTE_LEN},
+    {0xEB71,0x08, BYTE_LEN},
+    {0xEB72,0x01, BYTE_LEN},
+    {0xEB73,0x02, BYTE_LEN},
+    {0xEB74,0x40, BYTE_LEN},
+    {0xEB75,0x10, BYTE_LEN},
+    {0xEB76,0x00, BYTE_LEN},
+    {0xEB77,0x08, BYTE_LEN},
+    {0xEB78,0x00, BYTE_LEN},
+    {0xEB79,0x02, BYTE_LEN},
+    {0xEB7A,0x40, BYTE_LEN},
+    {0xEB7B,0x40, BYTE_LEN},
+    {0xEB7C,0x10, BYTE_LEN},
+    {0xEB7D,0x28, BYTE_LEN},
+    {0xEB7E,0x04, BYTE_LEN},
+    {0xEB7F,0x0a, BYTE_LEN},
+    {0xEB80,0x02, BYTE_LEN},
+    {0xEB81,0x83, BYTE_LEN},
+    {0xEB82,0xc0, BYTE_LEN},
+    {0xEB83,0xf0, BYTE_LEN},
+    {0xEB84,0x27, BYTE_LEN},
+    {0xEB85,0x0c, BYTE_LEN},
+    {0xEB86,0x04, BYTE_LEN},
+    {0xEB87,0x81, BYTE_LEN},
+    {0xEB88,0x00, BYTE_LEN},
+    {0xEB89,0x41, BYTE_LEN},
+    {0xEB8A,0x30, BYTE_LEN},
+    {0xEB8B,0x28, BYTE_LEN},
+    {0xEB8C,0x08, BYTE_LEN},
+    {0xEB8D,0x0e, BYTE_LEN},
+    {0xEB8E,0x82, BYTE_LEN},
+    {0xEB8F,0xc3, BYTE_LEN},
+    {0xEB90,0xc0, BYTE_LEN},
+    {0xEB91,0x30, BYTE_LEN},
+    {0xEB92,0x30, BYTE_LEN},
+    {0xEB93,0x0c, BYTE_LEN},
+    {0xEB94,0x0e, BYTE_LEN},
+    {0xEB95,0x04, BYTE_LEN},
+    {0xEB96,0x03, BYTE_LEN},
+    {0xEB97,0x81, BYTE_LEN},
+    {0xEB98,0x20, BYTE_LEN},
+    {0xEB99,0x28, BYTE_LEN},
+    {0xEB9A,0x0c, BYTE_LEN},
+    {0xEB9B,0x0a, BYTE_LEN},
+    {0xEB9C,0x03, BYTE_LEN},
+    {0xEB9D,0xc4, BYTE_LEN},
+    {0xEB9E,0x00, BYTE_LEN},
+    {0xEB9F,0x01, BYTE_LEN},
+    {0xEBA0,0x38, BYTE_LEN},
+    {0xEBA1,0x00, BYTE_LEN},
+    {0xEBA2,0x0e, BYTE_LEN},
+    {0xEBA3,0x85, BYTE_LEN},
+    {0xEBA4,0xc4, BYTE_LEN},
+    {0xEBA5,0x00, BYTE_LEN},
+    {0xEBA6,0x41, BYTE_LEN},
+    {0xEBA7,0x40, BYTE_LEN},
+    {0xEBA8,0x0c, BYTE_LEN},
+    {0xEBA9,0x10, BYTE_LEN},
+    {0xEBAA,0x84, BYTE_LEN},
+    {0xEBAB,0x04, BYTE_LEN},
+    {0xEBAC,0x01, BYTE_LEN},
+    {0xEBAD,0x41, BYTE_LEN},
+    {0xEBAE,0x40, BYTE_LEN},
+    {0xEBAF,0x00, BYTE_LEN},
+    {0xEBB0,0x0e, BYTE_LEN},
+    {0xEBB1,0x80, BYTE_LEN},
+    {0xEBB2,0x43, BYTE_LEN},
+    {0xEBB3,0x21, BYTE_LEN},
+    {0xEBB4,0x31, BYTE_LEN},
+    {0xEBB5,0x40, BYTE_LEN},
+    {0xEBB6,0x10, BYTE_LEN},
+    {0xEBB7,0x10, BYTE_LEN},
+    {0xEBB8,0x03, BYTE_LEN},
+    {0xEBB9,0x04, BYTE_LEN},
+    {0xEBBA,0x21, BYTE_LEN},
+    {0xEBBB,0x41, BYTE_LEN},
+    {0xEBBC,0x40, BYTE_LEN},
+    {0xEBBD,0x10, BYTE_LEN},
+    {0xEBBE,0x10, BYTE_LEN},
+    {0xEBBF,0x06, BYTE_LEN},
+    {0xEBC0,0xbc, BYTE_LEN},
+    {0xEBC1,0x01, BYTE_LEN},
+    {0xEBC2,0x6f, BYTE_LEN},
+    {0xEBC3,0xd8, BYTE_LEN},
+    {0xEBC4,0x13, BYTE_LEN},
+    {0xEBC5,0xec, BYTE_LEN},
+    {0xEBC6,0x84, BYTE_LEN},
+    {0xEBC7,0xbb, BYTE_LEN},
+    {0xEBC8,0x40, BYTE_LEN},
+    {0xEBC9,0x4f, BYTE_LEN},
+    {0xEBCA,0xd0, BYTE_LEN},
+    {0xEBCB,0x17, BYTE_LEN},
+    {0xEBCC,0x02, BYTE_LEN},
+    {0xEBCD,0x85, BYTE_LEN},
+    {0xEBCE,0x80, BYTE_LEN},
+    {0xEBCF,0x01, BYTE_LEN},
+    {0xEBD0,0x6f, BYTE_LEN},
+    {0xEBD1,0xc0, BYTE_LEN},
+    {0xEBD2,0x1b, BYTE_LEN},
+    {0xEBD3,0xf6, BYTE_LEN},
+    {0xEBD4,0x04, BYTE_LEN},
+    {0xEBD5,0x3b, BYTE_LEN},
+    {0xEBD6,0xe1, BYTE_LEN},
+    {0xEBD7,0x2e, BYTE_LEN},
+    {0xEBD8,0xd0, BYTE_LEN},
+    {0xEBD9,0x13, BYTE_LEN},
+    {0xEBDA,0xf4, BYTE_LEN},
+    {0xEBDB,0x85, BYTE_LEN},
+    {0xEBDC,0x40, BYTE_LEN},
+    {0xEBDD,0x21, BYTE_LEN},
+    {0xEBDE,0x50, BYTE_LEN},
+    {0xEBDF,0xe0, BYTE_LEN},
+    {0xEBE0,0x17, BYTE_LEN},
+    {0xEBE1,0xf8, BYTE_LEN},
+    {0xEBE2,0x04, BYTE_LEN},
+    {0xEBE3,0xfd, BYTE_LEN},
+    {0xEBE4,0x00, BYTE_LEN},
+    {0xEBE5,0x2f, BYTE_LEN},
+    {0xEBE6,0xd8, BYTE_LEN},
+    {0xEBE7,0x0f, BYTE_LEN},
+    {0xEBE8,0xf2, BYTE_LEN},
+    {0xEBE9,0x03, BYTE_LEN},
+    {0xEBEA,0x3e, BYTE_LEN},
+    {0xEBEB,0x81, BYTE_LEN},
+    {0xEBEC,0x4f, BYTE_LEN},
+    {0xEBED,0xe0, BYTE_LEN},
+    {0xEBEE,0x1b, BYTE_LEN},
+    {0xEBEF,0xf4, BYTE_LEN},
+    {0xEBF0,0x06, BYTE_LEN},
+    {0xEBF1,0x7d, BYTE_LEN},
+    {0xEBF2,0x61, BYTE_LEN},
+    {0xEBF3,0x1f, BYTE_LEN},
+    {0xEBF4,0xd0, BYTE_LEN},
+    {0xEBF5,0x0b, BYTE_LEN},
+    {0xEBF6,0xf6, BYTE_LEN},
+    {0xEBF7,0x82, BYTE_LEN},
+    {0xEBF8,0xbd, BYTE_LEN},
+    {0xEBF9,0x40, BYTE_LEN},
+    {0xEBFA,0x3f, BYTE_LEN},
+    {0xEBFB,0xd0, BYTE_LEN},
+    {0xEBFC,0x0f, BYTE_LEN},
+    {0xEBFD,0xf4, BYTE_LEN},
+    {0xEBFE,0x06, BYTE_LEN},
+    {0xEBFF,0xbf, BYTE_LEN},
+    {0xEC00,0xc1, BYTE_LEN},
+    {0xEC01,0x3f, BYTE_LEN},
+    {0xEC02,0xd8, BYTE_LEN},
+    {0xEC03,0x0b, BYTE_LEN},
+    {0xEC04,0xf4, BYTE_LEN},
+    {0xEC05,0xff, BYTE_LEN},
+    {0xEC06,0x3d, BYTE_LEN},
+    {0xEC07,0x60, BYTE_LEN},
+    {0xEC08,0x2f, BYTE_LEN},
+    {0xEC09,0xd8, BYTE_LEN},
+    {0xEC0A,0x0b, BYTE_LEN},
+    {0xEC0B,0xf4, BYTE_LEN},
+    {0xEC0C,0x02, BYTE_LEN},
+    {0xEC0D,0xbd, BYTE_LEN},
+    {0xEC0E,0xc1, BYTE_LEN},
+    {0xEC0F,0x6f, BYTE_LEN},
+    {0xEC10,0xf0, BYTE_LEN},
+    {0xEC11,0x0f, BYTE_LEN},
+    {0xEC12,0xf8, BYTE_LEN},
+    {0xEC13,0x81, BYTE_LEN},
+    {0xEC14,0x3d, BYTE_LEN},
+    {0xEC15,0x80, BYTE_LEN},
+    {0xEC16,0x0f, BYTE_LEN},
+    {0xEC17,0xe0, BYTE_LEN},
+    {0xEC18,0x07, BYTE_LEN},
+    {0xEC19,0xfa, BYTE_LEN},
+    {0xEC1A,0x02, BYTE_LEN},
+    {0xEC1B,0xbe, BYTE_LEN},
+    {0xEC1C,0x80, BYTE_LEN},
+    {0xEC1D,0x7f, BYTE_LEN},
+    {0xEC1E,0xf8, BYTE_LEN},
+    {0xEC1F,0x1f, BYTE_LEN},
+    {0xEC20,0xfe, BYTE_LEN},
+    {0xEC21,0x05, BYTE_LEN},
+    {0xEC22,0x80, BYTE_LEN},
+    {0xEC23,0x00, BYTE_LEN},
+    {0xEC24,0x10, BYTE_LEN},
+    {0xEC25,0xf0, BYTE_LEN},
+    {0xEC26,0x03, BYTE_LEN},
+    {0xEC27,0x00, BYTE_LEN},
+    {0xEC28,0x82, BYTE_LEN},
+    {0xEC29,0x7f, BYTE_LEN},
+    {0xEC2A,0xc1, BYTE_LEN},
+    {0xEC2B,0x5f, BYTE_LEN},
+    {0xEC2C,0xf0, BYTE_LEN},
+    {0xEC2D,0x2b, BYTE_LEN},
+    {0xEC2E,0x02, BYTE_LEN},
+    {0xEC2F,0x8a, BYTE_LEN},
+    {0xEC30,0x80, BYTE_LEN},
+    {0xEC31,0x81, BYTE_LEN},
+    {0xEC32,0x40, BYTE_LEN},
+    {0xEC33,0x18, BYTE_LEN},
+    {0xEC34,0x10, BYTE_LEN},
+    {0xEC35,0x02, BYTE_LEN},
+    {0xEC36,0x03, BYTE_LEN},
+    {0xEC37,0xc1, BYTE_LEN},
+    {0xEC38,0xe0, BYTE_LEN},
+    {0xEC39,0x5f, BYTE_LEN},
+    {0xEC3A,0x00, BYTE_LEN},
+    {0xEC3B,0x14, BYTE_LEN},
+    {0xEC3C,0x00, BYTE_LEN},
+    {0xEC3D,0x0b, BYTE_LEN},
+    {0xEC3E,0xc2, BYTE_LEN},
+    {0xEC3F,0x82, BYTE_LEN},
+    {0xEC40,0xa0, BYTE_LEN},
+    {0xEC41,0x08, BYTE_LEN},
+    {0xEC42,0x14, BYTE_LEN},
+    {0xEC43,0x06, BYTE_LEN},
+    {0xEC44,0x05, BYTE_LEN},
+    {0xEC45,0x42, BYTE_LEN},
+    {0xEC46,0xc1, BYTE_LEN},
+    {0xEC47,0x60, BYTE_LEN},
+    {0xEC48,0x18, BYTE_LEN},
+    {0xEC49,0x14, BYTE_LEN},
+    {0xEC4A,0x0a, BYTE_LEN},
+    {0xEC4B,0x85, BYTE_LEN},
+    {0xEC4C,0x82, BYTE_LEN},
+    {0xEC4D,0x62, BYTE_LEN},
+    {0xEC4E,0xa0, BYTE_LEN},
+    {0xEC4F,0x18, BYTE_LEN},
+    {0xEC50,0x28, BYTE_LEN},
+    {0xEC51,0x0e, BYTE_LEN},
+    {0xEC52,0x08, BYTE_LEN},
+    {0xEC53,0x02, BYTE_LEN},
+    {0xEC54,0x02, BYTE_LEN},
+    {0xEC55,0x71, BYTE_LEN},
+    {0xEC56,0x28, BYTE_LEN},
+    {0xEC57,0x1c, BYTE_LEN},
+    {0xEC58,0x0c, BYTE_LEN},
+    {0xEC59,0x08, BYTE_LEN},
+    {0xEC5A,0x04, BYTE_LEN},
+    {0xEC5B,0x02, BYTE_LEN},
+    {0xEC5C,0xa1, BYTE_LEN},
+    {0xEC5D,0x28, BYTE_LEN},
+    {0xEC5E,0x28, BYTE_LEN},
+    {0xEC5F,0x0a, BYTE_LEN},
+    {0xEC60,0x09, BYTE_LEN},
+    {0xEC61,0x84, BYTE_LEN},
+    {0xEC62,0x82, BYTE_LEN},
+    {0xEC63,0xa0, BYTE_LEN},
+    {0xEC64,0x20, BYTE_LEN},
+    {0xEC65,0x1c, BYTE_LEN},
+    {0xEC66,0x0e, BYTE_LEN},
+    {0xEC67,0x88, BYTE_LEN},
+    {0xEC68,0x00, BYTE_LEN},
+    {0xEC69,0xa2, BYTE_LEN},
+    {0xEC6A,0x80, BYTE_LEN},
+    {0xEC6B,0x28, BYTE_LEN},
+    {0xEC6C,0x28, BYTE_LEN},
+    {0xEC6D,0x0a, BYTE_LEN},
+    {0xEC6E,0x8a, BYTE_LEN},
+    {0xEC6F,0x42, BYTE_LEN},
+    {0xEC70,0x02, BYTE_LEN},
+    {0xEC71,0xa1, BYTE_LEN},
+    {0xEC72,0x20, BYTE_LEN},
+    {0xEC73,0x28, BYTE_LEN},
+    {0xEC74,0x08, BYTE_LEN},
+    {0xEC75,0x87, BYTE_LEN},
+    {0xEC76,0x03, BYTE_LEN},
+    {0xEC77,0x22, BYTE_LEN},
+    {0xEC78,0x80, BYTE_LEN},
+    {0xEC79,0x28, BYTE_LEN},
+    {0xEC7A,0x20, BYTE_LEN},
+    {0xEC7B,0x0a, BYTE_LEN},
+
+ //SHD1  D65 R76G76B76
+    {0xED00,0x9191, WORD_LEN},//
+    {0xED02,0xD8, BYTE_LEN},
+    {0xED03,0x51, BYTE_LEN},
+    {0xED04,0x92, BYTE_LEN},
+    {0xED05,0x7D, BYTE_LEN},
+    {0xED06,0xD6, BYTE_LEN},
+    {0xED07,0xD4, BYTE_LEN},
+    {0xED08,0x1F, BYTE_LEN},
+    {0xED09,0x3F, BYTE_LEN},
+    {0xED0A,0xC9, BYTE_LEN},
+    {0xED0B,0x67, BYTE_LEN},
+    {0xED0C,0x4E, BYTE_LEN},
+    {0xED0D,0xE6, BYTE_LEN},
+    {0xED0E,0x59, BYTE_LEN},
+    {0xED0F,0x53, BYTE_LEN},
+    {0xED10,0x7A, BYTE_LEN},
+    {0xED11,0xDA, BYTE_LEN},
+    {0xED12,0x14, BYTE_LEN},
+    {0xED13,0x1F, BYTE_LEN},
+    {0xED14,0x3A, BYTE_LEN},
+    {0xED15,0xBD, BYTE_LEN},
+    {0xED16,0x47, BYTE_LEN},
+    {0xED17,0x4C, BYTE_LEN},
+    {0xED18,0xD7, BYTE_LEN},
+    {0xED19,0xE9, BYTE_LEN},
+    {0xED1A,0x91, BYTE_LEN},
+    {0xED1B,0x78, BYTE_LEN},
+    {0xED1C,0x90, BYTE_LEN},
+    {0xED1D,0x74, BYTE_LEN},
+    {0xED1E,0x1D, BYTE_LEN},
+    {0xED1F,0x1C, BYTE_LEN},
+    {0xED20,0xFD, BYTE_LEN},
+    {0xED21,0x46, BYTE_LEN},
+    {0xED22,0x43, BYTE_LEN},
+    {0xED23,0xAD, BYTE_LEN},
+    {0xED24,0x29, BYTE_LEN},
+    {0xED25,0x50, BYTE_LEN},
+    {0xED26,0x69, BYTE_LEN},
+    {0xED27,0xFA, BYTE_LEN},
+    {0xED28,0x83, BYTE_LEN},
+    {0xED29,0x9A, BYTE_LEN},
+    {0xED2A,0x02, BYTE_LEN},
+    {0xED2B,0xD9, BYTE_LEN},
+    {0xED2C,0xE6, BYTE_LEN},
+    {0xED2D,0x42, BYTE_LEN},
+    {0xED2E,0xCD, BYTE_LEN},
+    {0xED2F,0xA1, BYTE_LEN},
+    {0xED30,0x51, BYTE_LEN},
+    {0xED31,0x77, BYTE_LEN},
+    {0xED32,0x94, BYTE_LEN},
+    {0xED33,0x94, BYTE_LEN},
+    {0xED34,0x9D, BYTE_LEN},
+    {0xED35,0x1C, BYTE_LEN},
+    {0xED36,0xDD, BYTE_LEN},
+    {0xED37,0x06, BYTE_LEN},
+    {0xED38,0x41, BYTE_LEN},
+    {0xED39,0x98, BYTE_LEN},
+    {0xED3A,0xD9, BYTE_LEN},
+    {0xED3B,0x4E, BYTE_LEN},
+    {0xED3C,0x60, BYTE_LEN},
+    {0xED3D,0x7E, BYTE_LEN},
+    {0xED3E,0x73, BYTE_LEN},
+    {0xED3F,0x97, BYTE_LEN},
+    {0xED40,0xD8, BYTE_LEN},
+    {0xED41,0xEC, BYTE_LEN},
+    {0xED42,0x25, BYTE_LEN},
+    {0xED43,0x37, BYTE_LEN},
+    {0xED44,0x8E, BYTE_LEN},
+    {0xED45,0xB9, BYTE_LEN},
+    {0xED46,0x8E, BYTE_LEN},
+    {0xED47,0x6A, BYTE_LEN},
+    {0xED48,0x06, BYTE_LEN},
+    {0xED49,0xD4, BYTE_LEN},
+    {0xED4A,0x1C, BYTE_LEN},
+    {0xED4B,0x1C, BYTE_LEN},
+    {0xED4C,0xFD, BYTE_LEN},
+    {0xED4D,0xE6, BYTE_LEN},
+    {0xED4E,0x41, BYTE_LEN},
+    {0xED4F,0x95, BYTE_LEN},
+    {0xED50,0x89, BYTE_LEN},
+    {0xED51,0x8E, BYTE_LEN},
+    {0xED52,0x5B, BYTE_LEN},
+    {0xED53,0x2E, BYTE_LEN},
+    {0xED54,0x03, BYTE_LEN},
+    {0xED55,0x95, BYTE_LEN},
+    {0xED56,0xB8, BYTE_LEN},
+    {0xED57,0x10, BYTE_LEN},
+    {0xED58,0x25, BYTE_LEN},
+    {0xED59,0x2C, BYTE_LEN},
+    {0xED5A,0x4A, BYTE_LEN},
+    {0xED5B,0x59, BYTE_LEN},
+    {0xED5C,0x8B, BYTE_LEN},
+    {0xED5D,0x58, BYTE_LEN},
+    {0xED5E,0x20, BYTE_LEN},
+    {0xED5F,0x63, BYTE_LEN},
+    {0xED60,0x98, BYTE_LEN},
+    {0xED61,0xE4, BYTE_LEN},
+    {0xED62,0xC0, BYTE_LEN},
+    {0xED63,0xC6, BYTE_LEN},
+    {0xED64,0x41, BYTE_LEN},
+    {0xED65,0xAF, BYTE_LEN},
+    {0xED66,0x91, BYTE_LEN},
+    {0xED67,0x4F, BYTE_LEN},
+    {0xED68,0x5E, BYTE_LEN},
+    {0xED69,0x48, BYTE_LEN},
+    {0xED6A,0x93, BYTE_LEN},
+    {0xED6B,0x14, BYTE_LEN},
+    {0xED6C,0xB0, BYTE_LEN},
+    {0xED6D,0x9C, BYTE_LEN},
+    {0xED6E,0xA4, BYTE_LEN},
+    {0xED6F,0x26, BYTE_LEN},
+    {0xED70,0x1A, BYTE_LEN},
+    {0xED71,0x21, BYTE_LEN},
+    {0xED72,0x89, BYTE_LEN},
+    {0xED73,0x48, BYTE_LEN},
+    {0xED74,0x60, BYTE_LEN},
+    {0xED75,0xD2, BYTE_LEN},
+    {0xED76,0x93, BYTE_LEN},
+    {0xED77,0xAC, BYTE_LEN},
+    {0xED78,0x9C, BYTE_LEN},
+    {0xED79,0x25, BYTE_LEN},
+    {0xED7A,0x33, BYTE_LEN},
+    {0xED7B,0x9B, BYTE_LEN},
+    {0xED7C,0x49, BYTE_LEN},
+    {0xED7D,0x0F, BYTE_LEN},
+    {0xED7E,0x69, BYTE_LEN},
+    {0xED7F,0xBE, BYTE_LEN},
+    {0xED80,0x73, BYTE_LEN},
+    {0xED81,0x16, BYTE_LEN},
+    {0xED82,0xC6, BYTE_LEN},
+    {0xED83,0xCC, BYTE_LEN},
+    {0xED84,0x84, BYTE_LEN},
+    {0xED85,0x28, BYTE_LEN},
+    {0xED86,0x0F, BYTE_LEN},
+    {0xED87,0xA1, BYTE_LEN},
+    {0xED88,0x88, BYTE_LEN},
+    {0xED89,0x40, BYTE_LEN},
+    {0xED8A,0x06, BYTE_LEN},
+    {0xED8B,0xA2, BYTE_LEN},
+    {0xED8C,0x90, BYTE_LEN},
+    {0xED8D,0x87, BYTE_LEN},
+    {0xED8E,0xA0, BYTE_LEN},
+    {0xED8F,0x24, BYTE_LEN},
+    {0xED90,0x27, BYTE_LEN},
+    {0xED91,0x54, BYTE_LEN},
+    {0xED92,0xF1, BYTE_LEN},
+    {0xED93,0xCB, BYTE_LEN},
+    {0xED94,0x62, BYTE_LEN},
+    {0xED95,0xAC, BYTE_LEN},
+    {0xED96,0x23, BYTE_LEN},
+    {0xED97,0x1A, BYTE_LEN},
+    {0xED98,0xF1, BYTE_LEN},
+    {0xED99,0x94, BYTE_LEN},
+    {0xED9A,0x65, BYTE_LEN},
+    {0xED9B,0x31, BYTE_LEN},
+    {0xED9C,0x32, BYTE_LEN},
+    {0xED9D,0x09, BYTE_LEN},
+    {0xED9E,0x4A, BYTE_LEN},
+    {0xED9F,0x43, BYTE_LEN},
+    {0xEDA0,0x22, BYTE_LEN},
+    {0xEDA1,0x02, BYTE_LEN},
+    {0xEDA2,0x10, BYTE_LEN},
+    {0xEDA3,0x80, BYTE_LEN},
+    {0xEDA4,0x20, BYTE_LEN},
+    {0xEDA5,0x64, BYTE_LEN},
+    {0xEDA6,0x21, BYTE_LEN},
+    {0xEDA7,0x25, BYTE_LEN},
+    {0xEDA8,0xA1, BYTE_LEN},
+    {0xEDA9,0x49, BYTE_LEN},
+    {0xEDAA,0x54, BYTE_LEN},
+    {0xEDAB,0xF2, BYTE_LEN},
+    {0xEDAC,0xA2, BYTE_LEN},
+    {0xEDAD,0x18, BYTE_LEN},
+    {0xEDAE,0xE8, BYTE_LEN},
+    {0xEDAF,0xB4, BYTE_LEN},
+    {0xEDB0,0x86, BYTE_LEN},
+    {0xEDB1,0x3D, BYTE_LEN},
+    {0xEDB2,0x75, BYTE_LEN},
+    {0xEDB3,0xF1, BYTE_LEN},
+    {0xEDB4,0xCC, BYTE_LEN},
+    {0xEDB5,0x50, BYTE_LEN},
+    {0xEDB6,0xB0, BYTE_LEN},
+    {0xEDB7,0x12, BYTE_LEN},
+    {0xEDB8,0x92, BYTE_LEN},
+    {0xEDB9,0x94, BYTE_LEN},
+    {0xEDBA,0x50, BYTE_LEN},
+    {0xEDBB,0x04, BYTE_LEN},
+    {0xEDBC,0x23, BYTE_LEN},
+    {0xEDBD,0x1B, BYTE_LEN},
+    {0xEDBE,0x19, BYTE_LEN},
+    {0xEDBF,0xC9, BYTE_LEN},
+    {0xEDC0,0x4D, BYTE_LEN},
+    {0xEDC1,0x98, BYTE_LEN},
+    {0xEDC2,0x22, BYTE_LEN},
+    {0xEDC3,0x16, BYTE_LEN},
+    {0xEDC4,0xC7, BYTE_LEN},
+    {0xEDC5,0x5C, BYTE_LEN},
+    {0xEDC6,0x06, BYTE_LEN},
+    {0xEDC7,0x3C, BYTE_LEN},
+    {0xEDC8,0xC3, BYTE_LEN},
+    {0xEDC9,0x71, BYTE_LEN},
+    {0xEDCA,0x90, BYTE_LEN},
+    {0xEDCB,0x64, BYTE_LEN},
+    {0xEDCC,0x96, BYTE_LEN},
+    {0xEDCD,0x53, BYTE_LEN},
+    {0xEDCE,0x96, BYTE_LEN},
+    {0xEDCF,0xC5, BYTE_LEN},
+    {0xEDD0,0x20, BYTE_LEN},
+    {0xEDD1,0xC5, BYTE_LEN},
+    {0xEDD2,0x2B, BYTE_LEN},
+    {0xEDD3,0x3B, BYTE_LEN},
+    {0xEDD4,0x61, BYTE_LEN},
+    {0xEDD5,0x4A, BYTE_LEN},
+    {0xEDD6,0x50, BYTE_LEN},
+    {0xEDD7,0xB0, BYTE_LEN},
+    {0xEDD8,0x92, BYTE_LEN},
+    {0xEDD9,0x15, BYTE_LEN},
+    {0xEDDA,0xC0, BYTE_LEN},
+    {0xEDDB,0xFC, BYTE_LEN},
+    {0xEDDC,0xC5, BYTE_LEN},
+    {0xEDDD,0x37, BYTE_LEN},
+    {0xEDDE,0xAE, BYTE_LEN},
+    {0xEDDF,0x31, BYTE_LEN},
+    {0xEDE0,0xD0, BYTE_LEN},
+    {0xEDE1,0x76, BYTE_LEN},
+    {0xEDE2,0x66, BYTE_LEN},
+    {0xEDE3,0x54, BYTE_LEN},
+    {0xEDE4,0x9B, BYTE_LEN},
+    {0xEDE5,0xFF, BYTE_LEN},
+    {0xEDE6,0x44, BYTE_LEN},
+    {0xEDE7,0x06, BYTE_LEN},
+    {0xEDE8,0x3A, BYTE_LEN},
+    {0xEDE9,0x78, BYTE_LEN},
+    {0xEDEA,0x59, BYTE_LEN},
+    {0xEDEB,0x0D, BYTE_LEN},
+    {0xEDEC,0x5B, BYTE_LEN},
+    {0xEDED,0x34, BYTE_LEN},
+    {0xEDEE,0x03, BYTE_LEN},
+    {0xEDEF,0x97, BYTE_LEN},
+    {0xEDF0,0xD1, BYTE_LEN},
+    {0xEDF1,0x10, BYTE_LEN},
+    {0xEDF2,0x66, BYTE_LEN},
+    {0xEDF3,0x38, BYTE_LEN},
+    {0xEDF4,0xA3, BYTE_LEN},
+    {0xEDF5,0xB1, BYTE_LEN},
+    {0xEDF6,0x0F, BYTE_LEN},
+    {0xEDF7,0x72, BYTE_LEN},
+    {0xEDF8,0x64, BYTE_LEN},
+    {0xEDF9,0x04, BYTE_LEN},
+    {0xEDFA,0x1F, BYTE_LEN},
+    {0xEDFB,0x2A, BYTE_LEN},
+    {0xEDFC,0x5D, BYTE_LEN},
+    {0xEDFD,0x67, BYTE_LEN},
+    {0xEDFE,0x46, BYTE_LEN},
+    {0xEDFF,0xBD, BYTE_LEN},
+    {0xEE00,0x99, BYTE_LEN},
+    {0xEE01,0x50, BYTE_LEN},
+    {0xEE02,0x6A, BYTE_LEN},
+    {0xEE03,0xF2, BYTE_LEN},
+    {0xEE04,0xF3, BYTE_LEN},
+    {0xEE05,0x19, BYTE_LEN},
+    {0xEE06,0xF6, BYTE_LEN},
+    {0xEE07,0x88, BYTE_LEN},
+    {0xEE08,0x66, BYTE_LEN},
+    {0xEE09,0x3E, BYTE_LEN},
+    {0xEE0A,0xB0, BYTE_LEN},
+    {0xEE0B,0x59, BYTE_LEN},
+    {0xEE0C,0x50, BYTE_LEN},
+    {0xEE0D,0x72, BYTE_LEN},
+    {0xEE0E,0x58, BYTE_LEN},
+    {0xEE0F,0x44, BYTE_LEN},
+    {0xEE10,0x9E, BYTE_LEN},
+    {0xEE11,0x28, BYTE_LEN},
+    {0xEE12,0x1D, BYTE_LEN},
+    {0xEE13,0x88, BYTE_LEN},
+    {0xEE14,0x50, BYTE_LEN},
+    {0xEE15,0x09, BYTE_LEN},
+    {0xEE16,0x6A, BYTE_LEN},
+    {0xEE17,0x54, BYTE_LEN},
+    {0xEE18,0x80, BYTE_LEN},
+    {0xEE19,0x00, BYTE_LEN},
+    {0xEE1A,0xD5, BYTE_LEN},
+    {0xEE1B,0x9E, BYTE_LEN},
+    {0xEE1C,0x35, BYTE_LEN},
+    {0xEE1D,0x95, BYTE_LEN},
+    {0xEE1E,0x47, BYTE_LEN},
+    {0xEE1F,0x4C, BYTE_LEN},
+    {0xEE20,0xE2, BYTE_LEN},
+    {0xEE21,0x11, BYTE_LEN},
+    {0xEE22,0xD3, BYTE_LEN},
+    {0xEE23,0x7B, BYTE_LEN},
+    {0xEE24,0xE4, BYTE_LEN},
+    {0xEE25,0xB4, BYTE_LEN},
+    {0xEE26,0x1F, BYTE_LEN},
+    {0xEE27,0x39, BYTE_LEN},
+    {0xEE28,0xCD, BYTE_LEN},
+    {0xEE29,0x87, BYTE_LEN},
+    {0xEE2A,0x4D, BYTE_LEN},
+    {0xEE2B,0xC2, BYTE_LEN},
+    {0xEE2C,0xF1, BYTE_LEN},
+    {0xEE2D,0x8E, BYTE_LEN},
+    {0xEE2E,0x77, BYTE_LEN},
+    {0xEE2F,0xFA, BYTE_LEN},
+    {0xEE30,0x63, BYTE_LEN},
+    {0xEE31,0x1E, BYTE_LEN},
+    {0xEE32,0x03, BYTE_LEN},
+    {0xEE33,0x69, BYTE_LEN},
+    {0xEE34,0xE7, BYTE_LEN},
+    {0xEE35,0x3E, BYTE_LEN},
+    {0xEE36,0xD1, BYTE_LEN},
+    {0xEE37,0x69, BYTE_LEN},
+    {0xEE38,0xCF, BYTE_LEN},
+    {0xEE39,0x73, BYTE_LEN},
+    {0xEE3A,0xE2, BYTE_LEN},
+    {0xEE3B,0xB3, BYTE_LEN},
+    {0xEE3C,0x9D, BYTE_LEN},
+    {0xEE3D,0xFD, BYTE_LEN},
+    {0xEE3E,0x50, BYTE_LEN},
+    {0xEE3F,0x07, BYTE_LEN},
+    {0xEE40,0x3F, BYTE_LEN},
+    {0xEE41,0xB9, BYTE_LEN},
+    {0xEE42,0xE9, BYTE_LEN},
+    {0xEE43,0x4E, BYTE_LEN},
+    {0xEE44,0x73, BYTE_LEN},
+    {0xEE45,0xCC, BYTE_LEN},
+    {0xEE46,0x13, BYTE_LEN},
+    {0xEE47,0x9C, BYTE_LEN},
+    {0xEE48,0xED, BYTE_LEN},
+    {0xEE49,0xB8, BYTE_LEN},
+    {0xEE4A,0xC6, BYTE_LEN},
+    {0xEE4B,0x38, BYTE_LEN},
+    {0xEE4C,0x9F, BYTE_LEN},
+    {0xEE4D,0x99, BYTE_LEN},
+    {0xEE4E,0x0D, BYTE_LEN},
+    {0xEE4F,0x66, BYTE_LEN},
+    {0xEE50,0x56, BYTE_LEN},
+    {0xEE51,0x93, BYTE_LEN},
+    {0xEE52,0x19, BYTE_LEN},
+    {0xEE53,0xD8, BYTE_LEN},
+    {0xEE54,0x9C, BYTE_LEN},
+    {0xEE55,0xE6, BYTE_LEN},
+    {0xEE56,0x37, BYTE_LEN},
+    {0xEE57,0xBB, BYTE_LEN},
+    {0xEE58,0xC1, BYTE_LEN},
+    {0xEE59,0xCE, BYTE_LEN},
+    {0xEE5A,0x71, BYTE_LEN},
+    {0xEE5B,0xCE, BYTE_LEN},
+    {0xEE5C,0xE3, BYTE_LEN},
+    {0xEE5D,0x1B, BYTE_LEN},
+    {0xEE5E,0xED, BYTE_LEN},
+    {0xEE5F,0x84, BYTE_LEN},
+    {0xEE60,0x66, BYTE_LEN},
+    {0xEE61,0x37, BYTE_LEN},
+    {0xEE62,0x88, BYTE_LEN},
+    {0xEE63,0xE9, BYTE_LEN},
+    {0xEE64,0x4C, BYTE_LEN},
+    {0xEE65,0x5D, BYTE_LEN},
+    {0xEE66,0x0C, BYTE_LEN},
+    {0xEE67,0xD3, BYTE_LEN},
+    {0xEE68,0x96, BYTE_LEN},
+    {0xEE69,0xBE, BYTE_LEN},
+    {0xEE6A,0xC4, BYTE_LEN},
+    {0xEE6B,0x45, BYTE_LEN},
+    {0xEE6C,0x30, BYTE_LEN},
+    {0xEE6D,0x82, BYTE_LEN},
+    {0xEE6E,0xA9, BYTE_LEN},
+    {0xEE6F,0x8C, BYTE_LEN},
+    {0xEE70,0x66, BYTE_LEN},
+    {0xEE71,0x64, BYTE_LEN},
+    {0xEE72,0x83, BYTE_LEN},
+    {0xEE73,0x1B, BYTE_LEN},
+    {0xEE74,0xEA, BYTE_LEN},
+    {0xEE75,0x90, BYTE_LEN},
+    {0xEE76,0xE6, BYTE_LEN},
+    {0xEE77,0x37, BYTE_LEN},
+    {0xEE78,0x81, BYTE_LEN},
+    {0xEE79,0xB1, BYTE_LEN},
+    {0xEE7A,0x0C, BYTE_LEN},
+    {0xEE7B,0x58, BYTE_LEN},
+    {0xEE7C,0xE2, BYTE_LEN},
+    {0xEE7D,0x72, BYTE_LEN},
+    {0xEE7E,0x14, BYTE_LEN},
+    {0xEE7F,0xAA, BYTE_LEN},
+    {0xEE80,0xF8, BYTE_LEN},
+    {0xEE81,0x24, BYTE_LEN},
+    {0xEE82,0x29, BYTE_LEN},
+    {0xEE83,0x44, BYTE_LEN},
+    {0xEE84,0x79, BYTE_LEN},
+    {0xEE85,0x0A, BYTE_LEN},
+    {0xEE86,0x56, BYTE_LEN},
+    {0xEE87,0xCE, BYTE_LEN},
+    {0xEE88,0x52, BYTE_LEN},
+    {0xEE89,0x97, BYTE_LEN},
+    {0xEE8A,0xC5, BYTE_LEN},
+    {0xEE8B,0x60, BYTE_LEN},
+    {0xEE8C,0xA6, BYTE_LEN},
+    {0xEE8D,0x36, BYTE_LEN},
+    {0xEE8E,0x92, BYTE_LEN},
+    {0xEE8F,0x59, BYTE_LEN},
+    {0xEE90,0x8D, BYTE_LEN},
+    {0xEE91,0x59, BYTE_LEN},
+    {0xEE92,0xF2, BYTE_LEN},
+    {0xEE93,0xF2, BYTE_LEN},
+    {0xEE94,0x13, BYTE_LEN},
+    {0xEE95,0xA6, BYTE_LEN},
+    {0xEE96,0x90, BYTE_LEN},
+    {0xEE97,0x64, BYTE_LEN},
+    {0xEE98,0x25, BYTE_LEN},
+    {0xEE99,0x18, BYTE_LEN},
+    {0xEE9A,0xE9, BYTE_LEN},
+    {0xEE9B,0x08, BYTE_LEN},
+    {0xEE9C,0x48, BYTE_LEN},
+    {0xEE9D,0x4A, BYTE_LEN},
+    {0xEE9E,0x72, BYTE_LEN},
+    {0xEE9F,0x13, BYTE_LEN},
+    {0xEEA0,0xA0, BYTE_LEN},
+    {0xEEA1,0x64, BYTE_LEN},
+    {0xEEA2,0x45, BYTE_LEN},
+    {0xEEA3,0x2D, BYTE_LEN},
+    {0xEEA4,0x81, BYTE_LEN},
+    {0xEEA5,0xE9, BYTE_LEN},
+    {0xEEA6,0x8C, BYTE_LEN},
+    {0xEEA7,0x61, BYTE_LEN},
+    {0xEEA8,0x38, BYTE_LEN},
+    {0xEEA9,0x63, BYTE_LEN},
+    {0xEEAA,0x15, BYTE_LEN},
+    {0xEEAB,0xB3, BYTE_LEN},
+    {0xEEAC,0xB0, BYTE_LEN},
+    {0xEEAD,0xA4, BYTE_LEN},
+    {0xEEAE,0x26, BYTE_LEN},
+    {0xEEAF,0x0E, BYTE_LEN},
+    {0xEEB0,0x91, BYTE_LEN},
+    {0xEEB1,0xC8, BYTE_LEN},
+    {0xEEB2,0x40, BYTE_LEN},
+    {0xEEB3,0x08, BYTE_LEN},
+    {0xEEB4,0xA2, BYTE_LEN},
+    {0xEEB5,0x10, BYTE_LEN},
+    {0xEEB6,0x86, BYTE_LEN},
+    {0xEEB7,0x90, BYTE_LEN},
+    {0xEEB8,0x24, BYTE_LEN},
+    {0xEEB9,0x25, BYTE_LEN},
+    {0xEEBA,0x49, BYTE_LEN},
+    {0xEEBB,0xB1, BYTE_LEN},
+    {0xEEBC,0x4A, BYTE_LEN},
+    {0xEEBD,0x5D, BYTE_LEN},
+    {0xEEBE,0x1C, BYTE_LEN},
+    {0xEEBF,0x83, BYTE_LEN},
+    {0xEEC0,0x18, BYTE_LEN},
+    {0xEEC1,0xCD, BYTE_LEN},
+    {0xEEC2,0x58, BYTE_LEN},
+    {0xEEC3,0x45, BYTE_LEN},
+    {0xEEC4,0x2C, BYTE_LEN},
+    {0xEEC5,0x2B, BYTE_LEN},
+    {0xEEC6,0x91, BYTE_LEN},
+    {0xEEC7,0xC9, BYTE_LEN},
+    {0xEEC8,0x42, BYTE_LEN},
+    {0xEEC9,0x1C, BYTE_LEN},
+    {0xEECA,0x02, BYTE_LEN},
+    {0xEECB,0x10, BYTE_LEN},
+    {0xEECC,0x80, BYTE_LEN},
+    {0xEECD,0x1C, BYTE_LEN},
+    {0xEECE,0x04, BYTE_LEN},
+    {0xEECF,0x21, BYTE_LEN},
+    {0xEED0,0x21, BYTE_LEN},
+    {0xEED1,0x29, BYTE_LEN},
+    {0xEED2,0xC9, BYTE_LEN},
+    {0xEED3,0x51, BYTE_LEN},
+    {0xEED4,0xA4, BYTE_LEN},
+    {0xEED5,0x52, BYTE_LEN},
+    {0xEED6,0x17, BYTE_LEN},
+    {0xEED7,0xC6, BYTE_LEN},
+    {0xEED8,0x60, BYTE_LEN},
+    {0xEED9,0x86, BYTE_LEN},
+    {0xEEDA,0x34, BYTE_LEN},
+    {0xEEDB,0x66, BYTE_LEN},
+    {0xEEDC,0x81, BYTE_LEN},
+    {0xEEDD,0xCB, BYTE_LEN},
+    {0xEEDE,0x4E, BYTE_LEN},
+    {0xEEDF,0x84, BYTE_LEN},
+    {0xEEE0,0xD2, BYTE_LEN},
+    {0xEEE1,0x11, BYTE_LEN},
+    {0xEEE2,0x90, BYTE_LEN},
+    {0xEEE3,0x44, BYTE_LEN},
+    {0xEEE4,0x44, BYTE_LEN},
+    {0xEEE5,0x22, BYTE_LEN},
+    {0xEEE6,0x18, BYTE_LEN},
+    {0xEEE7,0xD1, BYTE_LEN},
+    {0xEEE8,0xC8, BYTE_LEN},
+    {0xEEE9,0x4B, BYTE_LEN},
+    {0xEEEA,0x6A, BYTE_LEN},
+    {0xEEEB,0x12, BYTE_LEN},
+    {0xEEEC,0x95, BYTE_LEN},
+    {0xEEED,0xB0, BYTE_LEN},
+    {0xEEEE,0xF0, BYTE_LEN},
+    {0xEEEF,0xE5, BYTE_LEN},
+    {0xEEF0,0x32, BYTE_LEN},
+    {0xEEF1,0xAD, BYTE_LEN},
+    {0xEEF2,0xC1, BYTE_LEN},
+    {0xEEF3,0xCD, BYTE_LEN},
+    {0xEEF4,0x60, BYTE_LEN},
+    {0xEEF5,0x18, BYTE_LEN},
+    {0xEEF6,0xD3, BYTE_LEN},
+    {0xEEF7,0x15, BYTE_LEN},
+    {0xEEF8,0xB1, BYTE_LEN},
+    {0xEEF9,0x00, BYTE_LEN},
+    {0xEEFA,0x85, BYTE_LEN},
+    {0xEEFB,0x28, BYTE_LEN},
+    {0xEEFC,0x34, BYTE_LEN},
+    {0xEEFD,0xC1, BYTE_LEN},
+    {0xEEFE,0x09, BYTE_LEN},
+    {0xEEFF,0x4E, BYTE_LEN},
+    {0xEF00,0x80, BYTE_LEN},
+    {0xEF01,0xB2, BYTE_LEN},
+    {0xEF02,0x14, BYTE_LEN},
+    {0xEF03,0xAC, BYTE_LEN},
+    {0xEF04,0xA0, BYTE_LEN},
+    {0xEF05,0x05, BYTE_LEN},
+    {0xEF06,0x30, BYTE_LEN},
+    {0xEF07,0x8B, BYTE_LEN},
+    {0xEF08,0x71, BYTE_LEN},
+    {0xEF09,0x8D, BYTE_LEN},
+    {0xEF0A,0x71, BYTE_LEN},
+    {0xEF0B,0xA0, BYTE_LEN},
+    {0xEF0C,0x53, BYTE_LEN},
+    {0xEF0D,0x1A, BYTE_LEN},
+    {0xEF0E,0xD7, BYTE_LEN},
+    {0xEF0F,0x18, BYTE_LEN},
+    {0xEF10,0xC6, BYTE_LEN},
+    {0xEF11,0x31, BYTE_LEN},
+    {0xEF12,0x6F, BYTE_LEN},
+    {0xEF13,0xB1, BYTE_LEN},
+    {0xEF14,0x0B, BYTE_LEN},
+    {0xEF15,0x59, BYTE_LEN},
+    {0xEF16,0xD8, BYTE_LEN},
+    {0xEF17,0x42, BYTE_LEN},
+    {0xEF18,0x96, BYTE_LEN},
+    {0xEF19,0xB8, BYTE_LEN},
+    {0xEF1A,0xC8, BYTE_LEN},
+    {0xEF1B,0xC5, BYTE_LEN},
+    {0xEF1C,0x30, BYTE_LEN},
+    {0xEF1D,0x89, BYTE_LEN},
+    {0xEF1E,0x29, BYTE_LEN},
+    {0xEF1F,0x8D, BYTE_LEN},
+    {0xEF20,0x69, BYTE_LEN},
+    {0xEF21,0x94, BYTE_LEN},
+    {0xEF22,0xE3, BYTE_LEN},
+    {0xEF23,0x1D, BYTE_LEN},
+    {0xEF24,0xF6, BYTE_LEN},
+    {0xEF25,0x20, BYTE_LEN},
+    {0xEF26,0xA7, BYTE_LEN},
+    {0xEF27,0x3A, BYTE_LEN},
+    {0xEF28,0xAF, BYTE_LEN},
+    {0xEF29,0xE1, BYTE_LEN},
+    {0xEF2A,0xCD, BYTE_LEN},
+    {0xEF2B,0x67, BYTE_LEN},
+    {0xEF2C,0x52, BYTE_LEN},
+    {0xEF2D,0x53, BYTE_LEN},
+    {0xEF2E,0x99, BYTE_LEN},
+    {0xEF2F,0xD0, BYTE_LEN},
+    {0xEF30,0x48, BYTE_LEN},
+    {0xEF31,0xC6, BYTE_LEN},
+    {0xEF32,0x34, BYTE_LEN},
+    {0xEF33,0x9A, BYTE_LEN},
+    {0xEF34,0x99, BYTE_LEN},
+    {0xEF35,0x0D, BYTE_LEN},
+    {0xEF36,0x6B, BYTE_LEN},
+    {0xEF37,0x96, BYTE_LEN},
+    {0xEF38,0x03, BYTE_LEN},
+    {0xEF39,0x9C, BYTE_LEN},
+    {0xEF3A,0xF1, BYTE_LEN},
+    {0xEF3B,0xD0, BYTE_LEN},
+    {0xEF3C,0xE7, BYTE_LEN},
+    {0xEF3D,0x40, BYTE_LEN},
+    {0xEF3E,0xFD, BYTE_LEN},
+    {0xEF3F,0x69, BYTE_LEN},
+    {0xEF40,0x50, BYTE_LEN},
+    {0xEF41,0x7C, BYTE_LEN},
+    {0xEF42,0x04, BYTE_LEN},
+    {0xEF43,0x54, BYTE_LEN},
+    {0xEF44,0x1E, BYTE_LEN},
+    {0xEF45,0xF9, BYTE_LEN},
+    {0xEF46,0x70, BYTE_LEN},
+    {0xEF47,0x47, BYTE_LEN},
+    {0xEF48,0x3D, BYTE_LEN},
+    {0xEF49,0xD2, BYTE_LEN},
+    {0xEF4A,0x59, BYTE_LEN},
+    {0xEF4B,0x8F, BYTE_LEN},
+    {0xEF4C,0x75, BYTE_LEN},
+    {0xEF4D,0xE4, BYTE_LEN},
+    {0xEF4E,0xC3, BYTE_LEN},
+    {0xEF4F,0x1D, BYTE_LEN},
+    {0xEF50,0xFE, BYTE_LEN},
+    {0xEF51,0x40, BYTE_LEN},
+    {0xEF52,0x47, BYTE_LEN},
+    {0xEF53,0x3E, BYTE_LEN},
+
+
+
+ //SHD2 TL84 R75G76B76
+    {0xEF54,0x15, BYTE_LEN},
+    {0xEF55,0xCA, BYTE_LEN},
+    {0xEF56,0x51, BYTE_LEN},
+    {0xEF57,0x92, BYTE_LEN},
+    {0xEF58,0x7C, BYTE_LEN},
+    {0xEF59,0x54, BYTE_LEN},
+    {0xEF5A,0xA3, BYTE_LEN},
+    {0xEF5B,0x1B, BYTE_LEN},
+    {0xEF5C,0xF1, BYTE_LEN},
+    {0xEF5D,0x68, BYTE_LEN},
+    {0xEF5E,0x45, BYTE_LEN},
+    {0xEF5F,0x06, BYTE_LEN},
+    {0xEF60,0xC2, BYTE_LEN},
+    {0xEF61,0x10, BYTE_LEN},
+    {0xEF62,0x83, BYTE_LEN},
+    {0xEF63,0xE6, BYTE_LEN},
+    {0xEF64,0x13, BYTE_LEN},
+    {0xEF65,0x9E, BYTE_LEN},
+    {0xEF66,0xEC, BYTE_LEN},
+    {0xEF67,0x78, BYTE_LEN},
+    {0xEF68,0xE7, BYTE_LEN},
+    {0xEF69,0x3D, BYTE_LEN},
+    {0xEF6A,0x06, BYTE_LEN},
+    {0xEF6B,0xBA, BYTE_LEN},
+    {0xEF6C,0x90, BYTE_LEN},
+    {0xEF6D,0x82, BYTE_LEN},
+    {0xEF6E,0xC4, BYTE_LEN},
+    {0xEF6F,0xA3, BYTE_LEN},
+    {0xEF70,0x1B, BYTE_LEN},
+    {0xEF71,0xD0, BYTE_LEN},
+    {0xEF72,0x50, BYTE_LEN},
+    {0xEF73,0x66, BYTE_LEN},
+    {0xEF74,0x33, BYTE_LEN},
+    {0xEF75,0xB5, BYTE_LEN},
+    {0xEF76,0xE1, BYTE_LEN},
+    {0xEF77,0x8E, BYTE_LEN},
+    {0xEF78,0x82, BYTE_LEN},
+    {0xEF79,0xD4, BYTE_LEN},
+    {0xEF7A,0x23, BYTE_LEN},
+    {0xEF7B,0x1B, BYTE_LEN},
+    {0xEF7C,0xBF, BYTE_LEN},
+    {0xEF7D,0x78, BYTE_LEN},
+    {0xEF7E,0x05, BYTE_LEN},
+    {0xEF7F,0x2A, BYTE_LEN},
+    {0xEF80,0x59, BYTE_LEN},
+    {0xEF81,0xC1, BYTE_LEN},
+    {0xEF82,0x4B, BYTE_LEN},
+    {0xEF83,0x6A, BYTE_LEN},
+    {0xEF84,0xCC, BYTE_LEN},
+    {0xEF85,0xF3, BYTE_LEN},
+    {0xEF86,0x1C, BYTE_LEN},
+    {0xEF87,0xC5, BYTE_LEN},
+    {0xEF88,0x44, BYTE_LEN},
+    {0xEF89,0xA5, BYTE_LEN},
+    {0xEF8A,0x25, BYTE_LEN},
+    {0xEF8B,0x1F, BYTE_LEN},
+    {0xEF8C,0x41, BYTE_LEN},
+    {0xEF8D,0x89, BYTE_LEN},
+    {0xEF8E,0x52, BYTE_LEN},
+    {0xEF8F,0xFE, BYTE_LEN},
+    {0xEF90,0x72, BYTE_LEN},
+    {0xEF91,0x9C, BYTE_LEN},
+    {0xEF92,0xDF, BYTE_LEN},
+    {0xEF93,0xD4, BYTE_LEN},
+    {0xEF94,0x25, BYTE_LEN},
+    {0xEF95,0x27, BYTE_LEN},
+    {0xEF96,0x12, BYTE_LEN},
+    {0xEF97,0x19, BYTE_LEN},
+    {0xEF98,0x48, BYTE_LEN},
+    {0xEF99,0x43, BYTE_LEN},
+    {0xEF9A,0x60, BYTE_LEN},
+    {0xEF9B,0x82, BYTE_LEN},
+    {0xEF9C,0x96, BYTE_LEN},
+    {0xEF9D,0xDA, BYTE_LEN},
+    {0xEF9E,0x00, BYTE_LEN},
+    {0xEF9F,0x87, BYTE_LEN},
+    {0xEFA0,0x2E, BYTE_LEN},
+    {0xEFA1,0x37, BYTE_LEN},
+    {0xEFA2,0x71, BYTE_LEN},
+    {0xEFA3,0x08, BYTE_LEN},
+    {0xEFA4,0x40, BYTE_LEN},
+    {0xEFA5,0x12, BYTE_LEN},
+    {0xEFA6,0xC2, BYTE_LEN},
+    {0xEFA7,0x92, BYTE_LEN},
+    {0xEFA8,0xB2, BYTE_LEN},
+    {0xEFA9,0xC8, BYTE_LEN},
+    {0xEFAA,0xA6, BYTE_LEN},
+    {0xEFAB,0x39, BYTE_LEN},
+    {0xEFAC,0x85, BYTE_LEN},
+    {0xEFAD,0x51, BYTE_LEN},
+    {0xEFAE,0xCA, BYTE_LEN},
+    {0xEFAF,0x48, BYTE_LEN},
+    {0xEFB0,0x28, BYTE_LEN},
+    {0xEFB1,0xD2, BYTE_LEN},
+    {0xEFB2,0x11, BYTE_LEN},
+    {0xEFB3,0xA0, BYTE_LEN},
+    {0xEFB4,0xDC, BYTE_LEN},
+    {0xEFB5,0x25, BYTE_LEN},
+    {0xEFB6,0x38, BYTE_LEN},
+    {0xEFB7,0xEB, BYTE_LEN},
+    {0xEFB8,0x61, BYTE_LEN},
+    {0xEFB9,0x0D, BYTE_LEN},
+    {0xEFBA,0x5D, BYTE_LEN},
+    {0xEFBB,0x9E, BYTE_LEN},
+    {0xEFBC,0x02, BYTE_LEN},
+    {0xEFBD,0x94, BYTE_LEN},
+    {0xEFBE,0xA4, BYTE_LEN},
+    {0xEFBF,0xAC, BYTE_LEN},
+    {0xEFC0,0x05, BYTE_LEN},
+    {0xEFC1,0x34, BYTE_LEN},
+    {0xEFC2,0xE2, BYTE_LEN},
+    {0xEFC3,0x59, BYTE_LEN},
+    {0xEFC4,0x10, BYTE_LEN},
+    {0xEFC5,0x77, BYTE_LEN},
+    {0xEFC6,0x60, BYTE_LEN},
+    {0xEFC7,0x03, BYTE_LEN},
+    {0xEFC8,0x99, BYTE_LEN},
+    {0xEFC9,0xC0, BYTE_LEN},
+    {0xEFCA,0x24, BYTE_LEN},
+    {0xEFCB,0xA6, BYTE_LEN},
+    {0xEFCC,0x34, BYTE_LEN},
+    {0xEFCD,0xD2, BYTE_LEN},
+    {0xEFCE,0x31, BYTE_LEN},
+    {0xEFCF,0x90, BYTE_LEN},
+    {0xEFD0,0x89, BYTE_LEN},
+    {0xEFD1,0x14, BYTE_LEN},
+    {0xEFD2,0xC4, BYTE_LEN},
+    {0xEFD3,0x9E, BYTE_LEN},
+    {0xEFD4,0xEA, BYTE_LEN},
+    {0xEFD5,0x28, BYTE_LEN},
+    {0xEFD6,0x07, BYTE_LEN},
+    {0xEFD7,0x3A, BYTE_LEN},
+    {0xEFD8,0xE5, BYTE_LEN},
+    {0xEFD9,0x11, BYTE_LEN},
+    {0xEFDA,0x90, BYTE_LEN},
+    {0xEFDB,0x88, BYTE_LEN},
+    {0xEFDC,0x8A, BYTE_LEN},
+    {0xEFDD,0x34, BYTE_LEN},
+    {0xEFDE,0x25, BYTE_LEN},
+    {0xEFDF,0x24, BYTE_LEN},
+    {0xEFE0,0xDD, BYTE_LEN},
+    {0xEFE1,0x08, BYTE_LEN},
+    {0xEFE2,0x46, BYTE_LEN},
+    {0xEFE3,0x2D, BYTE_LEN},
+    {0xEFE4,0xD2, BYTE_LEN},
+    {0xEFE5,0xD1, BYTE_LEN},
+    {0xEFE6,0x8E, BYTE_LEN},
+    {0xEFE7,0x64, BYTE_LEN},
+    {0xEFE8,0x04, BYTE_LEN},
+    {0xEFE9,0x00, BYTE_LEN},
+    {0xEFEA,0x00, BYTE_LEN},
+    {0xEFEB,0x00, BYTE_LEN},
+    {0xEFEC,0x00, BYTE_LEN},
+    {0xEFED,0x00, BYTE_LEN},
+
+
+ //SHD3 A R76G76B76
+    {0xEFEE,0x6F, BYTE_LEN},
+    {0xEFEF,0x1A, BYTE_LEN},
+    {0xEFF0,0x15, BYTE_LEN},
+    {0xEFF1,0xAE, BYTE_LEN},
+    {0xEFF2,0x5E, BYTE_LEN},
+    {0xEFF3,0x25, BYTE_LEN},
+    {0xEFF4,0x2A, BYTE_LEN},
+    {0xEFF5,0x51, BYTE_LEN},
+    {0xEFF6,0x99, BYTE_LEN},
+    {0xEFF7,0x4A, BYTE_LEN},
+    {0xEFF8,0x52, BYTE_LEN},
+    {0xEFF9,0x61, BYTE_LEN},
+    {0xEFFA,0xE2, BYTE_LEN},
+    {0xEFFB,0x13, BYTE_LEN},
+    {0xEFFC,0x9C, BYTE_LEN},
+    {0xEFFD,0xA0, BYTE_LEN},
+    {0xEFFE,0x84, BYTE_LEN},
+    {0xEFFF,0xA3, BYTE_LEN},
+    {0xF000,0x16, BYTE_LEN},
+    {0xF001,0xD1, BYTE_LEN},
+    {0xF002,0x28, BYTE_LEN},
+    {0xF003,0x49, BYTE_LEN},
+    {0xF004,0x67, BYTE_LEN},
+    {0xF005,0xCA, BYTE_LEN},
+    {0xF006,0x93, BYTE_LEN},
+    {0xF007,0x9B, BYTE_LEN},
+    {0xF008,0x72, BYTE_LEN},
+    {0xF009,0x54, BYTE_LEN},
+    {0xF00A,0x20, BYTE_LEN},
+    {0xF00B,0xF1, BYTE_LEN},
+    {0xF00C,0x44, BYTE_LEN},
+    {0xF00D,0x47, BYTE_LEN},
+    {0xF00E,0x3B, BYTE_LEN},
+    {0xF00F,0xFE, BYTE_LEN},
+    {0xF010,0x81, BYTE_LEN},
+    {0xF011,0x51, BYTE_LEN},
+    {0xF012,0x9B, BYTE_LEN},
+    {0xF013,0x88, BYTE_LEN},
+    {0xF014,0x84, BYTE_LEN},
+    {0xF015,0x9F, BYTE_LEN},
+    {0xF016,0xD9, BYTE_LEN},
+    {0xF017,0x10, BYTE_LEN},
+    {0xF018,0x06, BYTE_LEN},
+    {0xF019,0x2E, BYTE_LEN},
+    {0xF01A,0x7D, BYTE_LEN},
+    {0xF01B,0x51, BYTE_LEN},
+    {0xF01C,0x8D, BYTE_LEN},
+    {0xF01D,0x7B, BYTE_LEN},
+    {0xF01E,0x7E, BYTE_LEN},
+    {0xF01F,0x44, BYTE_LEN},
+    {0xF020,0xA2, BYTE_LEN},
+    {0xF021,0xE1, BYTE_LEN},
+    {0xF022,0xC4, BYTE_LEN},
+    {0xF023,0xA5, BYTE_LEN},
+    {0xF024,0x27, BYTE_LEN},
+    {0xF025,0x29, BYTE_LEN},
+    {0xF026,0xB9, BYTE_LEN},
+    {0xF027,0xC9, BYTE_LEN},
+    {0xF028,0x59, BYTE_LEN},
+    {0xF029,0x68, BYTE_LEN},
+    {0xF02A,0x93, BYTE_LEN},
+    {0xF02B,0xA1, BYTE_LEN},
+    {0xF02C,0x08, BYTE_LEN},
+    {0xF02D,0x91, BYTE_LEN},
+    {0xF02E,0xC6, BYTE_LEN},
+    {0xF02F,0x29, BYTE_LEN},
+    {0xF030,0x17, BYTE_LEN},
+    {0xF031,0x19, BYTE_LEN},
+    {0xF032,0x88, BYTE_LEN},
+    {0xF033,0x44, BYTE_LEN},
+    {0xF034,0x84, BYTE_LEN},
+    {0xF035,0x42, BYTE_LEN},
+    {0xF036,0x99, BYTE_LEN},
+    {0xF037,0x01, BYTE_LEN},
+    {0xF038,0x49, BYTE_LEN},
+    {0xF039,0x68, BYTE_LEN},
+    {0xF03A,0x34, BYTE_LEN},
+    {0xF03B,0x4B, BYTE_LEN},
+    {0xF03C,0x99, BYTE_LEN},
+    {0xF03D,0x08, BYTE_LEN},
+    {0xF03E,0x40, BYTE_LEN},
+    {0xF03F,0x1C, BYTE_LEN},
+    {0xF040,0xE2, BYTE_LEN},
+    {0xF041,0x13, BYTE_LEN},
+    {0xF042,0xC8, BYTE_LEN},
+    {0xF043,0xFC, BYTE_LEN},
+    {0xF044,0x67, BYTE_LEN},
+    {0xF045,0x44, BYTE_LEN},
+    {0xF046,0xBC, BYTE_LEN},
+    {0xF047,0x39, BYTE_LEN},
+    {0xF048,0x0B, BYTE_LEN},
+    {0xF049,0x4C, BYTE_LEN},
+    {0xF04A,0x38, BYTE_LEN},
+    {0xF04B,0xA2, BYTE_LEN},
+    {0xF04C,0x92, BYTE_LEN},
+    {0xF04D,0xAD, BYTE_LEN},
+    {0xF04E,0xA8, BYTE_LEN},
+    {0xF04F,0x46, BYTE_LEN},
+    {0xF050,0x42, BYTE_LEN},
+    {0xF051,0x46, BYTE_LEN},
+    {0xF052,0x8A, BYTE_LEN},
+    {0xF053,0x0F, BYTE_LEN},
+    {0xF054,0x69, BYTE_LEN},
+    {0xF055,0xE0, BYTE_LEN},
+    {0xF056,0xB2, BYTE_LEN},
+    {0xF057,0x95, BYTE_LEN},
+    {0xF058,0xB4, BYTE_LEN},
+    {0xF059,0x60, BYTE_LEN},
+    {0xF05A,0x46, BYTE_LEN},
+    {0xF05B,0x3C, BYTE_LEN},
+    {0xF05C,0x39, BYTE_LEN},
+    {0xF05D,0x72, BYTE_LEN},
+    {0xF05E,0x13, BYTE_LEN},
+    {0xF05F,0x8C, BYTE_LEN},
+    {0xF060,0xEE, BYTE_LEN},
+    {0xF061,0xB3, BYTE_LEN},
+    {0xF062,0x1C, BYTE_LEN},
+    {0xF063,0xDC, BYTE_LEN},
+    {0xF064,0x0C, BYTE_LEN},
+    {0xF065,0x47, BYTE_LEN},
+    {0xF066,0x3D, BYTE_LEN},
+    {0xF067,0x25, BYTE_LEN},
+    {0xF068,0x3A, BYTE_LEN},
+    {0xF069,0x53, BYTE_LEN},
+    {0xF06A,0xA4, BYTE_LEN},
+    {0xF06B,0xDA, BYTE_LEN},
+    {0xF06C,0x74, BYTE_LEN},
+    {0xF06D,0xA4, BYTE_LEN},
+    {0xF06E,0x14, BYTE_LEN},
+    {0xF06F,0x6D, BYTE_LEN},
+    {0xF070,0x68, BYTE_LEN},
+    {0xF071,0x44, BYTE_LEN},
+    {0xF072,0x3E, BYTE_LEN},
+    {0xF073,0x1A, BYTE_LEN},
+    {0xF074,0xD3, BYTE_LEN},
+    {0xF075,0xA2, BYTE_LEN},
+    {0xF076,0x5A, BYTE_LEN},
+    {0xF077,0x15, BYTE_LEN},
+    {0xF078,0xAC, BYTE_LEN},
+    {0xF079,0x5A, BYTE_LEN},
+    {0xF07A,0x85, BYTE_LEN},
+    {0xF07B,0x2A, BYTE_LEN},
+    {0xF07C,0x53, BYTE_LEN},
+    {0xF07D,0x9A, BYTE_LEN},
+    {0xF07E,0x3A, BYTE_LEN},
+    {0xF07F,0xD5, BYTE_LEN},
+    {0xF080,0xA9, BYTE_LEN},
+    {0xF081,0x26, BYTE_LEN},
+    {0xF082,0x05, BYTE_LEN},
+    {0xF083,0x00, BYTE_LEN},
+    {0xF084,0x00, BYTE_LEN},
+    {0xF085,0x00, BYTE_LEN},
+    {0xF086,0x00, BYTE_LEN},
+    {0xF087,0x00, BYTE_LEN},
+    {0xF088,0xE9, BYTE_LEN},
+    {0xF089,0x21, BYTE_LEN},
+    {0xF08A,0x50, BYTE_LEN},
+    {0xF08B,0x82, BYTE_LEN},
+    {0xF08C,0xF2, BYTE_LEN},
+    {0xF08D,0x83, BYTE_LEN},
+    {0xF08E,0x1E, BYTE_LEN},
+    {0xF08F,0xF2, BYTE_LEN},
+    {0xF090,0xD4, BYTE_LEN},
+    {0xF091,0x07, BYTE_LEN},
+    {0xF092,0x3E, BYTE_LEN},
+    {0xF093,0xD8, BYTE_LEN},
+    {0xF094,0x81, BYTE_LEN},
+    {0xF095,0xCF, BYTE_LEN},
+    {0xF096,0x77, BYTE_LEN},
+    {0xF097,0x8E, BYTE_LEN},
+    {0xF098,0x23, BYTE_LEN},
+    {0xF099,0x9B, BYTE_LEN},
+    {0xF09A,0xD4, BYTE_LEN},
+    {0xF09B,0xA0, BYTE_LEN},
+    {0xF09C,0x46, BYTE_LEN},
+    {0xF09D,0x37, BYTE_LEN},
+    {0xF09E,0xD2, BYTE_LEN},
+    {0xF09F,0x19, BYTE_LEN},
+    {0xF0A0,0x0F, BYTE_LEN},
+    {0xF0A1,0x77, BYTE_LEN},
+    {0xF0A2,0x74, BYTE_LEN},
+    {0xF0A3,0xC3, BYTE_LEN},
+    {0xF0A4,0x19, BYTE_LEN},
+    {0xF0A5,0xC2, BYTE_LEN},
+    {0xF0A6,0xE8, BYTE_LEN},
+    {0xF0A7,0xC5, BYTE_LEN},
+    {0xF0A8,0x2F, BYTE_LEN},
+    {0xF0A9,0x91, BYTE_LEN},
+    {0xF0AA,0x71, BYTE_LEN},
+    {0xF0AB,0x0D, BYTE_LEN},
+    {0xF0AC,0x74, BYTE_LEN},
+    {0xF0AD,0x7C, BYTE_LEN},
+    {0xF0AE,0x53, BYTE_LEN},
+    {0xF0AF,0x99, BYTE_LEN},
+    {0xF0B0,0xB7, BYTE_LEN},
+    {0xF0B1,0x44, BYTE_LEN},
+    {0xF0B2,0xC5, BYTE_LEN},
+    {0xF0B3,0x28, BYTE_LEN},
+    {0xF0B4,0x4C, BYTE_LEN},
+    {0xF0B5,0x11, BYTE_LEN},
+    {0xF0B6,0x0B, BYTE_LEN},
+    {0xF0B7,0x61, BYTE_LEN},
+    {0xF0B8,0x56, BYTE_LEN},
+    {0xF0B9,0x73, BYTE_LEN},
+    {0xF0BA,0x9A, BYTE_LEN},
+    {0xF0BB,0xBB, BYTE_LEN},
+    {0xF0BC,0x28, BYTE_LEN},
+    {0xF0BD,0x45, BYTE_LEN},
+    {0xF0BE,0x25, BYTE_LEN},
+    {0xF0BF,0x1B, BYTE_LEN},
+    {0xF0C0,0x19, BYTE_LEN},
+    {0xF0C1,0x89, BYTE_LEN},
+    {0xF0C2,0x4F, BYTE_LEN},
+    {0xF0C3,0xC8, BYTE_LEN},
+    {0xF0C4,0x02, BYTE_LEN},
+    {0xF0C5,0x19, BYTE_LEN},
+    {0xF0C6,0xCE, BYTE_LEN},
+    {0xF0C7,0x94, BYTE_LEN},
+    {0xF0C8,0xA5, BYTE_LEN},
+    {0xF0C9,0x26, BYTE_LEN},
+    {0xF0CA,0x11, BYTE_LEN},
+    {0xF0CB,0x19, BYTE_LEN},
+    {0xF0CC,0xC8, BYTE_LEN},
+    {0xF0CD,0x42, BYTE_LEN},
+    {0xF0CE,0x50, BYTE_LEN},
+    {0xF0CF,0x22, BYTE_LEN},
+    {0xF0D0,0x15, BYTE_LEN},
+    {0xF0D1,0xC2, BYTE_LEN},
+    {0xF0D2,0x74, BYTE_LEN},
+    {0xF0D3,0xA6, BYTE_LEN},
+    {0xF0D4,0x2C, BYTE_LEN},
+    {0xF0D5,0x33, BYTE_LEN},
+    {0xF0D6,0x71, BYTE_LEN},
+    {0xF0D7,0x08, BYTE_LEN},
+    {0xF0D8,0x40, BYTE_LEN},
+    {0xF0D9,0x0E, BYTE_LEN},
+    {0xF0DA,0x52, BYTE_LEN},
+    {0xF0DB,0x12, BYTE_LEN},
+    {0xF0DC,0xA9, BYTE_LEN},
+    {0xF0DD,0x1C, BYTE_LEN},
+    {0xF0DE,0xE6, BYTE_LEN},
+    {0xF0DF,0x35, BYTE_LEN},
+    {0xF0E0,0x77, BYTE_LEN},
+    {0xF0E1,0x29, BYTE_LEN},
+    {0xF0E2,0x4A, BYTE_LEN},
+    {0xF0E3,0x48, BYTE_LEN},
+    {0xF0E4,0x26, BYTE_LEN},
+    {0xF0E5,0xA2, BYTE_LEN},
+    {0xF0E6,0x11, BYTE_LEN},
+    {0xF0E7,0x9A, BYTE_LEN},
+    {0xF0E8,0x74, BYTE_LEN},
+    {0xF0E9,0x05, BYTE_LEN},
+    {0xF0EA,0x32, BYTE_LEN},
+    {0xF0EB,0xC7, BYTE_LEN},
+    {0xF0EC,0xB1, BYTE_LEN},
+    {0xF0ED,0x4C, BYTE_LEN},
+    {0xF0EE,0x5A, BYTE_LEN},
+    {0xF0EF,0x8C, BYTE_LEN},
+    {0xF0F0,0x92, BYTE_LEN},
+    {0xF0F1,0x13, BYTE_LEN},
+    {0xF0F2,0x9F, BYTE_LEN},
+    {0xF0F3,0x54, BYTE_LEN},
+    {0xF0F4,0xE5, BYTE_LEN},
+    {0xF0F5,0x2E, BYTE_LEN},
+    {0xF0F6,0xA0, BYTE_LEN},
+    {0xF0F7,0xF9, BYTE_LEN},
+    {0xF0F8,0x0E, BYTE_LEN},
+    {0xF0F9,0x6E, BYTE_LEN},
+    {0xF0FA,0x2A, BYTE_LEN},
+    {0xF0FB,0xA3, BYTE_LEN},
+    {0xF0FC,0x17, BYTE_LEN},
+    {0xF0FD,0xB7, BYTE_LEN},
+    {0xF0FE,0xBC, BYTE_LEN},
+    {0xF0FF,0x05, BYTE_LEN},
+    {0xF100,0x30, BYTE_LEN},
+    {0xF101,0x9E, BYTE_LEN},
+    {0xF102,0xF9, BYTE_LEN},
+    {0xF103,0x8D, BYTE_LEN},
+    {0xF104,0x7E, BYTE_LEN},
+    {0xF105,0xBA, BYTE_LEN},
+    {0xF106,0x03, BYTE_LEN},
+    {0xF107,0x9C, BYTE_LEN},
+    {0xF108,0xD7, BYTE_LEN},
+    {0xF109,0x94, BYTE_LEN},
+    {0xF10A,0x26, BYTE_LEN},
+    {0xF10B,0x34, BYTE_LEN},
+    {0xF10C,0xAE, BYTE_LEN},
+    {0xF10D,0x29, BYTE_LEN},
+    {0xF10E,0x0E, BYTE_LEN},
+    {0xF10F,0x77, BYTE_LEN},
+    {0xF110,0x3E, BYTE_LEN},
+    {0xF111,0x14, BYTE_LEN},
+    {0xF112,0x22, BYTE_LEN},
+    {0xF113,0x08, BYTE_LEN},
+    {0xF114,0x09, BYTE_LEN},
+    {0xF115,0xE8, BYTE_LEN},
+    {0xF116,0x3E, BYTE_LEN},
+    {0xF117,0xED, BYTE_LEN},
+    {0xF118,0xB9, BYTE_LEN},
+    {0xF119,0x0F, BYTE_LEN},
+    {0xF11A,0x7F, BYTE_LEN},
+    {0xF11B,0xD8, BYTE_LEN},
+    {0xF11C,0x03, BYTE_LEN},
+    {0xF11D,0x00, BYTE_LEN},
+    {0xF11E,0x00, BYTE_LEN},
+    {0xF11F,0x00, BYTE_LEN},
+    {0xF120,0x00, BYTE_LEN},
+    {0xF121,0x00, BYTE_LEN},
+
+
+    //threshold L50용
+	//2014.03.28 : TL84 정물=Sh2, A 정물=Sh2, 실내 TL84=Sh2, 스타벅스 A=Sh1 적용
+    {0x6C32,0x173E, WORD_LEN},   // SHD_INP_TH_HB_H_R2
+    {0x6C34,0x16B2, WORD_LEN},   // SHD_INP_TH_HB_L_R2
+    {0x6C36,0x0F00, WORD_LEN},   // SHD_INP_TH_LB_H_R2
+    {0x6C38,0x0E74, WORD_LEN},   // SHD_INP_TH_LB_L_R2
+    {0x6C3C,0x0000, WORD_LEN},   // SHD_INP_TH_HB_H_RB
+    {0x6C3E,0x0000, WORD_LEN},   // SHD_INP_TH_HB_L_RB
+    {0x6C40,0x0000, WORD_LEN},   // SHD_INP_TH_LB_H_RB
+    {0x6C42,0x0000, WORD_LEN},   // SHD_INP_TH_LB_L_RB
+
+
+    //PreWB offset SHD2(CWF)
+    //{0x6828,0x0016, WORD_LEN},   // SHD_PRER_OFFSET_R2 :
+
+    //PreWB offset SHD2(TL84)
+    {0x6828,0x0013, WORD_LEN},   // SHD_PRER_OFFSET_R2 :
+
+    //PreWB offset SHD3(A)
+    {0x682C,0xFFEC, WORD_LEN},   // SHD_PRER_OFFSET_RB :
+    {0x6830,0xFFEE, WORD_LEN},   // SHD_PREB_OFFSET_RB :
+
+    //CXC/SHDEN
+    {0x01BC,0x57, BYTE_LEN},//CXCONSHDONINPONGAINOFF
+
+    {0x6804,0x1207, WORD_LEN},//NORMR
+    {0x6806,0x1053, WORD_LEN},//NORMB
+    {0x6808,0x0164, WORD_LEN},//AWBPRER//0x0158, WORD_LEN},//AWBPRER
+    {0x680A,0x0247, WORD_LEN},//AWBPREB//0x024D, WORD_LEN},//AWBPREB
+    {0x6810,0x0FFA, WORD_LEN},//AWB_PRE_ADJ_RG
+    {0x6812,0x0FFF, WORD_LEN},//AWB_PRE_ADJ_BG
+    {0x6814,0x0A62, WORD_LEN},//AWB_C14_RG
+    {0x6816,0x17EF, WORD_LEN},//AWB_C14_BG
+
+    {0x6818,0x83, BYTE_LEN},//referanceR
+    {0x6819,0x82, BYTE_LEN},//referanceB
+
+    {0x62C6,0x006D, WORD_LEN},//
+    {0x62C8,0x0E77, WORD_LEN},//
+    {0x62CA,0x0EEF, WORD_LEN},//
+    {0x62CC,0x037F, WORD_LEN},//
+    {0x62D2,0x09, BYTE_LEN},//
+    {0x62D4,0x0C, BYTE_LEN},//
+    {0x62D5,0x02, BYTE_LEN},//
+
+    //0415 AE weight 수정
+    {0x6000,0x06, BYTE_LEN},// CENTER_FIXWEIGHT_00_TYPE1
+    {0x6001,0x08, BYTE_LEN},// CENTER_FIXWEIGHT_01_TYPE1
+    {0x6002,0x0A, BYTE_LEN},// CENTER_FIXWEIGHT_02_TYPE1
+    {0x6003,0x0B, BYTE_LEN},// CENTER_FIXWEIGHT_03_TYPE1
+    {0x6004,0x0C, BYTE_LEN},// CENTER_FIXWEIGHT_04_TYPE1
+    {0x6005,0x0B, BYTE_LEN},// CENTER_FIXWEIGHT_05_TYPE1
+    {0x6006,0x0A, BYTE_LEN},// CENTER_FIXWEIGHT_06_TYPE1
+    {0x6007,0x08, BYTE_LEN},// CENTER_FIXWEIGHT_07_TYPE1
+    {0x6008,0x06, BYTE_LEN},// CENTER_FIXWEIGHT_08_TYPE1
+    {0x6009,0x08, BYTE_LEN},// CENTER_FIXWEIGHT_09_TYPE1
+    {0x600A,0x0C, BYTE_LEN},// CENTER_FIXWEIGHT_10_TYPE1
+    {0x600B,0x1B, BYTE_LEN},// CENTER_FIXWEIGHT_11_TYPE1
+    {0x600C,0x24, BYTE_LEN},// CENTER_FIXWEIGHT_12_TYPE1
+    {0x600D,0x25, BYTE_LEN},// CENTER_FIXWEIGHT_13_TYPE1
+    {0x600E,0x24, BYTE_LEN},// CENTER_FIXWEIGHT_14_TYPE1
+    {0x600F,0x1B, BYTE_LEN},// CENTER_FIXWEIGHT_15_TYPE1
+    {0x6010,0x0C, BYTE_LEN},// CENTER_FIXWEIGHT_16_TYPE1
+    {0x6011,0x08, BYTE_LEN},// CENTER_FIXWEIGHT_17_TYPE1
+    {0x6012,0x0C, BYTE_LEN},// CENTER_FIXWEIGHT_18_TYPE1
+    {0x6013,0x15, BYTE_LEN},// CENTER_FIXWEIGHT_19_TYPE1
+    {0x6014,0x21, BYTE_LEN},// CENTER_FIXWEIGHT_20_TYPE1
+    {0x6015,0x3E, BYTE_LEN},// CENTER_FIXWEIGHT_21_TYPE1
+    {0x6016,0x4B, BYTE_LEN},// CENTER_FIXWEIGHT_22_TYPE1
+    {0x6017,0x3E, BYTE_LEN},// CENTER_FIXWEIGHT_23_TYPE1
+    {0x6018,0x21, BYTE_LEN},// CENTER_FIXWEIGHT_24_TYPE1
+    {0x6019,0x15, BYTE_LEN},// CENTER_FIXWEIGHT_25_TYPE1
+    {0x601A,0x0C, BYTE_LEN},// CENTER_FIXWEIGHT_26_TYPE1
+    {0x601B,0x10, BYTE_LEN},// CENTER_FIXWEIGHT_27_TYPE1
+    {0x601C,0x1C, BYTE_LEN},// CENTER_FIXWEIGHT_28_TYPE1
+    {0x601D,0x28, BYTE_LEN},// CENTER_FIXWEIGHT_29_TYPE1
+    {0x601E,0x55, BYTE_LEN},// CENTER_FIXWEIGHT_30_TYPE1
+    {0x601F,0x64, BYTE_LEN},// CENTER_FIXWEIGHT_31_TYPE1
+    {0x6020,0x55, BYTE_LEN},// CENTER_FIXWEIGHT_32_TYPE1
+    {0x6021,0x28, BYTE_LEN},// CENTER_FIXWEIGHT_33_TYPE1
+    {0x6022,0x1C, BYTE_LEN},// CENTER_FIXWEIGHT_34_TYPE1
+    {0x6023,0x10, BYTE_LEN},// CENTER_FIXWEIGHT_35_TYPE1
+    {0x6024,0x0C, BYTE_LEN},// CENTER_FIXWEIGHT_36_TYPE1
+    {0x6025,0x15, BYTE_LEN},// CENTER_FIXWEIGHT_37_TYPE1
+    {0x6026,0x20, BYTE_LEN},// CENTER_FIXWEIGHT_38_TYPE1
+    {0x6027,0x3E, BYTE_LEN},// CENTER_FIXWEIGHT_39_TYPE1
+    {0x6028,0x4B, BYTE_LEN},// CENTER_FIXWEIGHT_40_TYPE1
+    {0x6029,0x3E, BYTE_LEN},// CENTER_FIXWEIGHT_41_TYPE1
+    {0x602A,0x20, BYTE_LEN},// CENTER_FIXWEIGHT_42_TYPE1
+    {0x602B,0x15, BYTE_LEN},// CENTER_FIXWEIGHT_43_TYPE1
+    {0x602C,0x0C, BYTE_LEN},// CENTER_FIXWEIGHT_44_TYPE1
+    {0x602D,0x08, BYTE_LEN},// CENTER_FIXWEIGHT_45_TYPE1
+    {0x602E,0x0C, BYTE_LEN},// CENTER_FIXWEIGHT_46_TYPE1
+    {0x602F,0x1C, BYTE_LEN},// CENTER_FIXWEIGHT_47_TYPE1
+    {0x6030,0x26, BYTE_LEN},// CENTER_FIXWEIGHT_48_TYPE1
+    {0x6031,0x27, BYTE_LEN},// CENTER_FIXWEIGHT_49_TYPE1
+    {0x6032,0x26, BYTE_LEN},// CENTER_FIXWEIGHT_50_TYPE1
+    {0x6033,0x1C, BYTE_LEN},// CENTER_FIXWEIGHT_51_TYPE1
+    {0x6034,0x0C, BYTE_LEN},// CENTER_FIXWEIGHT_52_TYPE1
+    {0x6035,0x08, BYTE_LEN},// CENTER_FIXWEIGHT_53_TYPE1
+    {0x6036,0x06, BYTE_LEN},// CENTER_FIXWEIGHT_54_TYPE1
+    {0x6037,0x08, BYTE_LEN},// CENTER_FIXWEIGHT_55_TYPE1
+    {0x6038,0x0A, BYTE_LEN},// CENTER_FIXWEIGHT_56_TYPE1
+    {0x6039,0x0B, BYTE_LEN},// CENTER_FIXWEIGHT_57_TYPE1
+    {0x603A,0x0C, BYTE_LEN},// CENTER_FIXWEIGHT_58_TYPE1
+    {0x603B,0x0B, BYTE_LEN},// CENTER_FIXWEIGHT_59_TYPE1
+    {0x603C,0x0A, BYTE_LEN},// CENTER_FIXWEIGHT_60_TYPE1
+    {0x603D,0x08, BYTE_LEN},// CENTER_FIXWEIGHT_61_TYPE1
+    {0x603E,0x06, BYTE_LEN},// CENTER_FIXWEIGHT_62_TYPE1
+
+    {0x66EE,0x01F4, WORD_LEN},// AF_LVD_HBPF_VAL1_1STOPD
+    {0x66F0,0x2710, WORD_LEN},// AF_LVD_HBPF_VAL2_1ST
+    {0x66F2,0x004C, WORD_LEN},// AF_LVD_HBPF_RATE1_1ST
+    {0x6D14,0x0001, WORD_LEN},// HPF_HBPF_CORSL_Y1 :
+    {0x6D16,0x0001, WORD_LEN},// HPF_HBPF_CORSL_Y2 :
+    {0x6D18,0x0002, WORD_LEN},// HPF_HBPF_CORSL_Y3 :
+    {0x6D1A,0x0005, WORD_LEN},// HPF_HBPF_CORSL_Y4 :
+    {0x6D20,0x0004, WORD_LEN},// HPF_HBPF_CORL_Y1 :
+    {0x6D22,0x0004, WORD_LEN},// HPF_HBPF_CORL_Y2 :
+    {0x6D24,0x000F, WORD_LEN},// HPF_HBPF_CORL_Y3 :
+    {0x6D26,0x001E, WORD_LEN},// HPF_HBPF_CORL_Y4 :
+    {0x6D2C,0x000E, WORD_LEN},// HPF_HBPF_CORH_Y1 :
+    {0x6D2E,0x000F, WORD_LEN},// HPF_HBPF_CORH_Y2 :
+    {0x6D30,0x0022, WORD_LEN},// HPF_HBPF_CORH_Y3 :
+    {0x6D32,0x004D, WORD_LEN},// HPF_HBPF_CORH_Y4 :
+    {0x6D44,0x0001, WORD_LEN},// HPF_LBPF_CORSL_Y1 :
+    {0x6D46,0x0001, WORD_LEN},// HPF_LBPF_CORSL_Y2 :
+    {0x6D48,0x0002, WORD_LEN},// HPF_LBPF_CORSL_Y3 :
+    {0x6D4A,0x0004, WORD_LEN},// HPF_LBPF_CORSL_Y4 :
+    {0x6D50,0x03FF, WORD_LEN},// HPF_LBPF_CORL_Y1 :
+    {0x6D52,0x03FF, WORD_LEN},// HPF_LBPF_CORL_Y2 :
+    {0x6D54,0x03FF, WORD_LEN},// HPF_LBPF_CORL_Y3 :
+    {0x6D56,0x03FF, WORD_LEN},// HPF_LBPF_CORL_Y4 :
+    {0x6D5C,0x03FF, WORD_LEN},// HPF_LBPF_CORH_Y1 :
+    {0x6D5E,0x03FF, WORD_LEN},// HPF_LBPF_CORH_Y2 :
+    {0x6D60,0x03FF, WORD_LEN},// HPF_LBPF_CORH_Y3 :
+    {0x6D62,0x03FF, WORD_LEN},// HPF_LBPF_CORH_Y4 :
+    {0x6D74,0x0001, WORD_LEN},// HPF_VHBPF_CORSL_Y1 :
+    {0x6D76,0x0001, WORD_LEN},// HPF_VHBPF_CORSL_Y2 :
+    {0x6D78,0x0002, WORD_LEN},// HPF_VHBPF_CORSL_Y3 :
+    {0x6D7A,0x0005, WORD_LEN},// HPF_VHBPF_CORSL_Y4 :
+    {0x6D80,0x0004, WORD_LEN},// HPF_VHBPF_CORL_Y1 :
+    {0x6D82,0x0005, WORD_LEN},// HPF_VHBPF_CORL_Y2 :
+    {0x6D84,0x000C, WORD_LEN},// HPF_VHBPF_CORL_Y3 :
+    {0x6D86,0x001C, WORD_LEN},// HPF_VHBPF_CORL_Y4 :
+    {0x6D8C,0x000D, WORD_LEN},// HPF_VHBPF_CORH_Y1 :
+    {0x6D8E,0x0010, WORD_LEN},// HPF_VHBPF_CORH_Y2 :
+    {0x6D90,0x0026, WORD_LEN},// HPF_VHBPF_CORH_Y3 :
+    {0x6D92,0x004D, WORD_LEN},// HPF_VHBPF_CORH_Y4 :
+
+    {0x6A80,0x01, BYTE_LEN},    // AF_OPD1A_WEIGHT :
+    {0x6A81,0x02, BYTE_LEN},    // AF_OPD1B_WEIGHT :
+    {0x6A82,0x00, BYTE_LEN},    // AF_OPD2A_WEIGHT :
+    {0x6A83,0x00, BYTE_LEN},    // AF_OPD2B_WEIGHT :
+    {0x6A84,0x08, BYTE_LEN},    // AF_OPD3A_WEIGHT :
+    {0x6A85,0x07, BYTE_LEN},    // AF_OPD3B_WEIGHT :
+    {0x6A86,0x00, BYTE_LEN},    // AF_OPD4A_WEIGHT :
+    {0x6A87,0x00, BYTE_LEN},    // AF_OPD4B_WEIGHT :
+    {0x6A88,0x01, BYTE_LEN},    // AF_OPD5A_WEIGHT :
+    {0x6A89,0x02, BYTE_LEN},    // AF_OPD5B_WEIGHT :
+
+    {0x5003,0x04, BYTE_LEN},// Z1_HOLD = 1
+    {0x028E,0x00, BYTE_LEN},// AF_SN1_2 :
+    {0x028F,0x00, BYTE_LEN},// AF_SN3_4 :
+    {0x0290,0x00, BYTE_LEN},// AF_SN5_6 :
+    {0x0291,0x00, BYTE_LEN},// AF_SN7_8 :
+    {0x0292,0x00, BYTE_LEN},// AF_SN9_10 :
+    {0x0293,0x00, BYTE_LEN},// AF_SN11_12 :
+    {0x6604,0x00, BYTE_LEN},// AF_SEARCH_DIR :
+    {0x6616,0x01, BYTE_LEN},// AF_DIRECTBACK_F : //20120131_Cowell Yoo (00->01)
+    {0x661B,0x03, BYTE_LEN},// AF_OPDDATA_SAVE :
+    {0x661C,0x01, BYTE_LEN},// AF_MONOTONY_POS :
+    {0x663E,0x01, BYTE_LEN},// AF_SEARCH_SECOND_DIR :
+    {0x663F,0x01, BYTE_LEN},// AF_DIRECTBACK_SECOND_F :
+    {0x6674,0x01, BYTE_LEN},// AF_MONICHG_MOVE_F :
+    {0x6675,0x00, BYTE_LEN},// CAP_AF_CANCEL_F :
+    {0x6676,0x02, BYTE_LEN},// AF_SAF_MODE :
+    {0x669E,0x02, BYTE_LEN},// AF_SECOND_WND_CHK :
+    {0x6600,0x00C8, WORD_LEN},// AF_SEARCH_AREA_LOW ://110420 선명도 선별용 // 0066->0000 20111227 //20120131_Cowell Yoo (0000->0064) //20140116_Cowell Yoo (0064->00C8)
+    {0x6602,0x0258, WORD_LEN},// AF_SEARCH_AREA_HIGH ://110420 선명도 선별용 // 02BC->03ff 20111227 //20120326_Cowell Yoo (03FF->0280->1F4) //20140116_Cowell Yoo (01F4->0258)
+    {0x6640,0x02, BYTE_LEN},// AF_DROPN_ON_PEAK_DETECT_SECOND :
+    {0x6641,0x02, BYTE_LEN},// AF_UPN_ON_PEAK_DETECT_SECOND :
+    {0x6644,0x14, BYTE_LEN},// AF_UPRATE_ON_PEAK_DETECT_HBPF_SECOND :
+    {0x6646,0x08, BYTE_LEN},// AF_OPD_WEIGHT_TH :
+    {0x664A,0x02, BYTE_LEN},// AF_DROPN_ON_PEAK_DETECT :
+    {0x664B,0x02, BYTE_LEN},// AF_UPN_ON_PEAK_DETECT :
+    {0x664C,0xFF, BYTE_LEN},// AF_UPRATE_ON_PEAK_DETECT_HBPF :
+    {0x665A,0x00C8, WORD_LEN},// AF_LENSPOS_ON_AFNG : //20120131_Cowell Yoo (0190->0064) //20140116_Cowell Yoo (0064->00C8)
+    {0x665C,0x0028, WORD_LEN},// AF_DRV_AMOUNT_TONEAR_F : //20120323_Cowell Yoo (14->1C->28)
+    {0x665E,0x0008, WORD_LEN},// AF_DRV_AMOUNT_TONEAR_S : //20120323_Cowell Yoo (0C->08)
+    {0x6660,0x0028, WORD_LEN},// AF_DRV_AMOUNT_TOFAR_F : //20120323_Cowell Yoo (14->1C->28)
+    {0x6662,0x0008, WORD_LEN},// AF_DRV_AMOUNT_TOFAR_S : //20120323_Cowell Yoo (0C->08)
+    {0x6666,0x00C8, WORD_LEN},// AF_AREA_LOW_TYPE1 ://110420 선명도 선별용  // 0064->0000 20111227 //20120131_Cowell Yoo (0000->0064) //20140116_Cowell Yoo (0064->00C8)
+    {0x6668,0x0258, WORD_LEN},// AF_AREA_HIGH_TYPE1 ://110420 선명도 선별용 // 02BC->03ff 20111227 //20120326_Cowell Yoo (03FF->0280->1F4) //20140116_Cowell Yoo (01F4->0258)
+    {0x669A,0x01F4, WORD_LEN},// AF_OPD_MONOTONYUP_HBPF_TH :
+    {0x66E4,0x50, BYTE_LEN},// AF_TH_1STDEPEND_HBPF_RATE :
+    {0x66EE,0x01F4, WORD_LEN},// AF_LVD_HBPF_VAL1_1ST :
+    {0x66F0,0x2710, WORD_LEN},// AF_LVD_HBPF_VAL2_1ST :
+    {0x66F2,0x004C, WORD_LEN},// AF_LVD_HBPF_RATE1_1ST :
+    {0x66F4,0x0019, WORD_LEN},// AF_LVD_HBPF_RATE2_1ST :
+    {0x66F6,0x00, BYTE_LEN},// AF_LVD_HBPF_SHIFT_1ST :
+    {0x6702,0x03E8, WORD_LEN},// AF_LVD_HBPF_VAL1_2ND :
+    {0x6704,0x4E20, WORD_LEN},// AF_LVD_HBPF_VAL2_2ND :
+    {0x6706,0x0003, WORD_LEN},// AF_LVD_HBPF_RATE1_2ND :
+    {0x6708,0x0003, WORD_LEN},// AF_LVD_HBPF_RATE2_2ND :
+    {0x670A,0x00, BYTE_LEN},// AF_LVD_HBPF_SHIFT_2ND :
+    {0x6742,0x0028, WORD_LEN},// AF_SEARCH_OFFSET_FAR : //20120323_Cowell Yoo (80->40->28)
+    {0x6744,0x0018, WORD_LEN},// AF_SEARCH_OFFSET_NEAR : //20120323_Cowell Yoo (80->40->18)
+    {0x660E,0x0040, WORD_LEN},// 저조도 AF 120322
+    {0x6610,0x0040, WORD_LEN},//  저조도 AF 120322
+
+    {0x9211,0x58, BYTE_LEN},// GAIN_TH_A_TYPE3 :
+    {0x9212,0x63, BYTE_LEN},// GAIN_TH_B_TYPE3 :
+    {0x9213,0x9F, BYTE_LEN},// GAIN_TH_C_TYPE3 :
+    {0x984E,0x0A, BYTE_LEN},// GAMMA0_0CLIP_A :
+    {0x984F,0x0A, BYTE_LEN},// GAMMA0_0CLIP_B :
+    {0x9850,0x0F, BYTE_LEN},// GAMMA0_0CLIP_C :
+    {0x9851,0x1E, BYTE_LEN},// GAMMA0_SLOPE_A :
+    {0x9852,0x1E, BYTE_LEN},// GAMMA0_SLOPE_B :
+    {0x9853,0x1E, BYTE_LEN},// GAMMA0_SLOPE_C :
+    {0x7000,0x0000, WORD_LEN},// G0_KNOT_G0 :
+    {0x7002,0x0015, WORD_LEN},// G0_KNOT_G1 :
+    {0x7004,0x002C, WORD_LEN},// G0_KNOT_G2 :
+    {0x7006,0x0041, WORD_LEN},// G0_KNOT_G3 :
+    {0x7008,0x004D, WORD_LEN},// G0_KNOT_G4 :
+    {0x700A,0x005B, WORD_LEN},// G0_KNOT_G5 :
+    {0x700C,0x0060, WORD_LEN},// G0_KNOT_G6 :
+    {0x700E,0x0068, WORD_LEN},// G0_KNOT_G7 :
+    {0x7010,0x006F, WORD_LEN},// G0_KNOT_G8 :
+    {0x7012,0x0078, WORD_LEN},// G0_KNOT_G9 :
+    {0x7014,0x0057, WORD_LEN},// G0_KNOT_G10 :
+    {0x7016,0x0090, WORD_LEN},// G0_KNOT_G11 :
+    {0x7018,0x00BB, WORD_LEN},// G0_KNOT_G12 :
+    {0x701A,0x00D6, WORD_LEN},// G0_KNOT_G13 :
+    {0x701C,0x00E5, WORD_LEN},// G0_KNOT_G14 :
+    {0x701E,0x00F0, WORD_LEN},// G0_KNOT_G15 :
+    {0x7020,0x00F9, WORD_LEN},// G0_KNOT_G16 :
+    {0x7022,0x0103, WORD_LEN},// G0_KNOT_G17 :
+    {0x7024,0x010C, WORD_LEN},// G0_KNOT_G18 :
+    {0x7046,0x94, BYTE_LEN},// G0_KNOT_GAINCTRL_TH_L :
+    {0x7047,0xA5, BYTE_LEN},// G0_KNOT_GAINCTRL_TH_H :
+    {0x7048,0x0000, WORD_LEN},// G0_KNOT_L_G0 :
+    {0x704A,0x0007, WORD_LEN},// G0_KNOT_L_G1 :
+    {0x704C,0x001D, WORD_LEN},// G0_KNOT_L_G2 :
+    {0x704E,0x002F, WORD_LEN},// G0_KNOT_L_G3 :
+    {0x7050,0x003D, WORD_LEN},// G0_KNOT_L_G4 :
+    {0x7052,0x004A, WORD_LEN},// G0_KNOT_L_G5 :
+    {0x7054,0x0051, WORD_LEN},// G0_KNOT_L_G6 :
+    {0x7056,0x005A, WORD_LEN},// G0_KNOT_L_G7 :
+    {0x7058,0x0061, WORD_LEN},// G0_KNOT_L_G8 :
+    {0x705A,0x006A, WORD_LEN},// G0_KNOT_L_G9 :
+    {0x705C,0x0049, WORD_LEN},// G0_KNOT_L_G10 :
+    {0x705E,0x0082, WORD_LEN},// G0_KNOT_L_G11 :
+    {0x7060,0x00AD, WORD_LEN},// G0_KNOT_L_G12 :
+    {0x7062,0x00CC, WORD_LEN},// G0_KNOT_L_G13 :
+    {0x7064,0x00E1, WORD_LEN},// G0_KNOT_L_G14 :
+    {0x7066,0x00ED, WORD_LEN},// G0_KNOT_L_G15 :
+    {0x7068,0x00F6, WORD_LEN},// G0_KNOT_L_G16 :
+    {0x706A,0x0106, WORD_LEN},// G0_KNOT_L_G17 :
+    {0x706C,0x010C, WORD_LEN},// G0_KNOT_L_G18 :
+    {0x6400,0xAA, BYTE_LEN},   // INFRM_LEFT00 :
+    {0x6401,0xAA, BYTE_LEN},   // INFRM_LEFT01 :
+    {0x6402,0xAA, BYTE_LEN},   // INFRM_LEFT02 :
+    {0x6403,0xAA, BYTE_LEN},   // INFRM_LEFT03 :
+    {0x6404,0xAA, BYTE_LEN},   // INFRM_LEFT04 :
+    {0x6405,0xAA, BYTE_LEN},   // INFRM_LEFT05 :
+    {0x6406,0xAA, BYTE_LEN},   // INFRM_LEFT06 :
+    {0x6407,0xAA, BYTE_LEN},   // INFRM_LEFT07 :
+    {0x6408,0xAA, BYTE_LEN},   // INFRM_LEFT08 :
+    {0x6409,0xAE, BYTE_LEN},   // INFRM_LEFT09 :
+    {0x640A,0xA0, BYTE_LEN},   // INFRM_LEFT10 :
+    {0x640B,0x8C, BYTE_LEN},   // INFRM_LEFT11 :
+    {0x640C,0x72, BYTE_LEN},   // INFRM_LEFT12 :
+    {0x640D,0x64, BYTE_LEN},   // INFRM_LEFT13 :
+    {0x640E,0x57, BYTE_LEN},   // INFRM_LEFT14 :
+    {0x640F,0x4D, BYTE_LEN},   // INFRM_LEFT15 :
+    {0x6410,0x42, BYTE_LEN},   // INFRM_LEFT16 :
+    {0x6411,0x38, BYTE_LEN},   // INFRM_LEFT17 :
+    {0x6412,0x2E, BYTE_LEN},   // INFRM_LEFT18 :
+    {0x6413,0x27, BYTE_LEN},   // INFRM_LEFT19 :
+    {0x6414,0x23, BYTE_LEN},   // INFRM_LEFT20 :
+    {0x6415,0x1F, BYTE_LEN},   // INFRM_LEFT21 :
+    {0x6416,0x1F, BYTE_LEN},   // INFRM_LEFT22 :
+    {0x6417,0x1E, BYTE_LEN},   // INFRM_LEFT23 :
+    {0x6418,0x20, BYTE_LEN},   // INFRM_LEFT24 :
+    {0x6419,0x21, BYTE_LEN},   // INFRM_LEFT25 :
+    {0x641A,0x23, BYTE_LEN},   // INFRM_LEFT26 :
+    {0x641B,0x23, BYTE_LEN},   // INFRM_LEFT27 :
+    {0x641C,0x22, BYTE_LEN},   // INFRM_LEFT28 :
+    {0x641D,0x22, BYTE_LEN},   // INFRM_LEFT29 :
+    {0x641E,0x21, BYTE_LEN},   // INFRM_LEFT30 :
+    {0x641F,0x20, BYTE_LEN},   // INFRM_LEFT31 :
+    {0x6420,0x1D, BYTE_LEN},   // INFRM_LEFT32 :
+    {0x6421,0x1A, BYTE_LEN},   // INFRM_LEFT33 :
+    {0x6422,0x18, BYTE_LEN},   // INFRM_LEFT34 :
+    {0x6423,0x17, BYTE_LEN},   // INFRM_LEFT35 :
+    {0x6424,0x16, BYTE_LEN},   // INFRM_LEFT36 :
+    {0x6425,0x17, BYTE_LEN},   // INFRM_LEFT37 :
+    {0x6426,0xAF, BYTE_LEN},   // INFRM_RIGHT00 :
+    {0x6427,0xAF, BYTE_LEN},   // INFRM_RIGHT01 :
+    {0x6428,0xAF, BYTE_LEN},   // INFRM_RIGHT02 :
+    {0x6429,0xAF, BYTE_LEN},   // INFRM_RIGHT03 :
+    {0x642A,0xAF, BYTE_LEN},   // INFRM_RIGHT04 :
+    {0x642B,0xAF, BYTE_LEN},   // INFRM_RIGHT05 :
+    {0x642C,0xAF, BYTE_LEN},   // INFRM_RIGHT06 :
+    {0x642D,0xAF, BYTE_LEN},   // INFRM_RIGHT07 :
+    {0x642E,0xAF, BYTE_LEN},   // INFRM_RIGHT08 :
+    {0x642F,0xAA, BYTE_LEN},   // INFRM_RIGHT09 :
+    {0x6430,0xB2, BYTE_LEN},   // INFRM_RIGHT10 :
+    {0x6431,0xB4, BYTE_LEN},   // INFRM_RIGHT11 :
+    {0x6432,0xB6, BYTE_LEN},   // INFRM_RIGHT12 :
+    {0x6433,0xB4, BYTE_LEN},   // INFRM_RIGHT13 :
+    {0x6434,0x9B, BYTE_LEN},   // INFRM_RIGHT14 :
+    {0x6435,0x82, BYTE_LEN},   // INFRM_RIGHT15 :
+    {0x6436,0x78, BYTE_LEN},   // INFRM_RIGHT16 :
+    {0x6437,0x72, BYTE_LEN},   // INFRM_RIGHT17 :
+    {0x6438,0x6C, BYTE_LEN},   // INFRM_RIGHT18 :
+    {0x6439,0x67, BYTE_LEN},   // INFRM_RIGHT19 :
+    {0x643A,0x63, BYTE_LEN},   // INFRM_RIGHT20 :
+    {0x643B,0x5E, BYTE_LEN},   // INFRM_RIGHT21 :
+    {0x643C,0x58, BYTE_LEN},   // INFRM_RIGHT22 :
+    {0x643D,0x53, BYTE_LEN},   // INFRM_RIGHT23 :
+    {0x643E,0x4E, BYTE_LEN},   // INFRM_RIGHT24 :
+    {0x643F,0x4A, BYTE_LEN},   // INFRM_RIGHT25 :
+    {0x6440,0x46, BYTE_LEN},   // INFRM_RIGHT26 :
+    {0x6441,0x42, BYTE_LEN},   // INFRM_RIGHT27 :
+    {0x6442,0x3F, BYTE_LEN},   // INFRM_RIGHT28 :
+    {0x6443,0x3C, BYTE_LEN},   // INFRM_RIGHT29 :
+    {0x6444,0x3A, BYTE_LEN},   // INFRM_RIGHT30 :
+    {0x6445,0x38, BYTE_LEN},   // INFRM_RIGHT31 :
+    {0x6446,0x37, BYTE_LEN},   // INFRM_RIGHT32 :
+    {0x6447,0x2E, BYTE_LEN},   // INFRM_RIGHT33 :
+    {0x6448,0x2D, BYTE_LEN},   // INFRM_RIGHT34 :
+    {0x6449,0x2C, BYTE_LEN},   // INFRM_RIGHT35 :
+    {0x644A,0x2C, BYTE_LEN},   // INFRM_RIGHT36 :
+    {0x644B,0x36, BYTE_LEN},   // INFRM_RIGHT37 :
+    {0x644C,0x232F, WORD_LEN},   // INFRM_TOP :
+    {0x644E,0x0940, WORD_LEN},   // INFRM_BOTM :
+    {0x6450,0x19, BYTE_LEN},   // INFRM_FLTOP :
+    {0x6451,0x10, BYTE_LEN},   // INFRM_FLBOTM :
+    {0x6452,0x91, BYTE_LEN},   // INAIM_LEFT00 :
+    {0x6453,0x91, BYTE_LEN},   // INAIM_LEFT01 :
+    {0x6454,0x91, BYTE_LEN},   // INAIM_LEFT02 :
+    {0x6455,0x91, BYTE_LEN},   // INAIM_LEFT03 :
+    {0x6456,0x91, BYTE_LEN},   // INAIM_LEFT04 :
+    {0x6457,0x91, BYTE_LEN},   // INAIM_LEFT05 :
+    {0x6458,0x91, BYTE_LEN},   // INAIM_LEFT06 :
+    {0x6459,0x91, BYTE_LEN},   // INAIM_LEFT07 :
+    {0x645A,0x91, BYTE_LEN},   // INAIM_LEFT08 :
+    {0x645B,0x91, BYTE_LEN},   // INAIM_LEFT09 :
+    {0x645C,0x91, BYTE_LEN},   // INAIM_LEFT10 :
+    {0x645D,0x91, BYTE_LEN},   // INAIM_LEFT11 :
+    {0x645E,0x91, BYTE_LEN},   // INAIM_LEFT12 :
+    {0x645F,0x66, BYTE_LEN},   // INAIM_LEFT13 :
+    {0x6460,0x5D, BYTE_LEN},   // INAIM_LEFT14 :
+    {0x6461,0x55, BYTE_LEN},   // INAIM_LEFT15 :
+    {0x6462,0x4C, BYTE_LEN},   // INAIM_LEFT16 :
+    {0x6463,0x44, BYTE_LEN},   // INAIM_LEFT17 :
+    {0x6464,0x3E, BYTE_LEN},   // INAIM_LEFT18 :
+    {0x6465,0x39, BYTE_LEN},   // INAIM_LEFT19 :
+    {0x6466,0x35, BYTE_LEN},   // INAIM_LEFT20 :
+    {0x6467,0x31, BYTE_LEN},   // INAIM_LEFT21 :
+    {0x6468,0x2E, BYTE_LEN},   // INAIM_LEFT22 :
+    {0x6469,0x2D, BYTE_LEN},   // INAIM_LEFT23 :
+    {0x646A,0x2C, BYTE_LEN},   // INAIM_LEFT24 :
+    {0x646B,0x2B, BYTE_LEN},   // INAIM_LEFT25 :
+    {0x646C,0x29, BYTE_LEN},   // INAIM_LEFT26 :
+    {0x646D,0x27, BYTE_LEN},   // INAIM_LEFT27 :
+    {0x646E,0x26, BYTE_LEN},   // INAIM_LEFT28 :
+    {0x646F,0x28, BYTE_LEN},   // INAIM_LEFT29 :
+    {0x6470,0x2A, BYTE_LEN},   // INAIM_LEFT30 :
+    {0x6471,0x28, BYTE_LEN},   // INAIM_LEFT31 :
+    {0x6472,0x26, BYTE_LEN},   // INAIM_LEFT32 :
+    {0x6473,0x24, BYTE_LEN},   // INAIM_LEFT33 :
+    {0x6474,0x29, BYTE_LEN},   // INAIM_LEFT34 :
+    {0x6475,0x28, BYTE_LEN},   // INAIM_LEFT35 :
+    {0x6476,0x29, BYTE_LEN},   // INAIM_LEFT36 :
+    {0x6477,0x26, BYTE_LEN},   // INAIM_LEFT37 :
+    {0x6478,0xFF, BYTE_LEN},   // INAIM_RIGHT00 :
+    {0x6479,0xFF, BYTE_LEN},   // INAIM_RIGHT01 :
+    {0x647A,0xFF, BYTE_LEN},   // INAIM_RIGHT02 :
+    {0x647B,0xFF, BYTE_LEN},   // INAIM_RIGHT03 :
+    {0x647C,0xFF, BYTE_LEN},   // INAIM_RIGHT04 :
+    {0x647D,0xFF, BYTE_LEN},   // INAIM_RIGHT05 :
+    {0x647E,0xFF, BYTE_LEN},   // INAIM_RIGHT06 :
+    {0x647F,0xFF, BYTE_LEN},   // INAIM_RIGHT07 :
+    {0x6480,0xFF, BYTE_LEN},   // INAIM_RIGHT08 :
+    {0x6481,0xFF, BYTE_LEN},   // INAIM_RIGHT09 :
+    {0x6482,0xD9, BYTE_LEN},   // INAIM_RIGHT10 :
+    {0x6483,0xB7, BYTE_LEN},   // INAIM_RIGHT11 :
+    {0x6484,0x96, BYTE_LEN},   // INAIM_RIGHT12 :
+    {0x6485,0x68, BYTE_LEN},   // INAIM_RIGHT13 :
+    {0x6486,0x70, BYTE_LEN},   // INAIM_RIGHT14 :
+    {0x6487,0x72, BYTE_LEN},   // INAIM_RIGHT15 :
+    {0x6488,0x71, BYTE_LEN},   // INAIM_RIGHT16 :
+    {0x6489,0x6B, BYTE_LEN},   // INAIM_RIGHT17 :
+    {0x648A,0x65, BYTE_LEN},   // INAIM_RIGHT18 :
+    {0x648B,0x60, BYTE_LEN},   // INAIM_RIGHT19 :
+    {0x648C,0x5B, BYTE_LEN},   // INAIM_RIGHT20 :
+    {0x648D,0x56, BYTE_LEN},   // INAIM_RIGHT21 :
+    {0x648E,0x51, BYTE_LEN},   // INAIM_RIGHT22 :
+    {0x648F,0x4C, BYTE_LEN},   // INAIM_RIGHT23 :
+    {0x6490,0x47, BYTE_LEN},   // INAIM_RIGHT24 :
+    {0x6491,0x44, BYTE_LEN},   // INAIM_RIGHT25 :
+    {0x6492,0x41, BYTE_LEN},   // INAIM_RIGHT26 :
+    {0x6493,0x3E, BYTE_LEN},   // INAIM_RIGHT27 :
+    {0x6494,0x3B, BYTE_LEN},   // INAIM_RIGHT28 :
+    {0x6495,0x39, BYTE_LEN},   // INAIM_RIGHT29 :
+    {0x6496,0x37, BYTE_LEN},   // INAIM_RIGHT30 :
+    {0x6497,0x34, BYTE_LEN},   // INAIM_RIGHT31 :
+    {0x6498,0x33, BYTE_LEN},   // INAIM_RIGHT32 :
+    {0x6499,0x32, BYTE_LEN},   // INAIM_RIGHT33 :
+    {0x649A,0x31, BYTE_LEN},   // INAIM_RIGHT34 :
+    {0x649B,0x30, BYTE_LEN},   // INAIM_RIGHT35 :
+    {0x649C,0x2F, BYTE_LEN},   // INAIM_RIGHT36 :
+    {0x649D,0x2E, BYTE_LEN},   // INAIM_RIGHT37 :
+    {0x649E,0x1E00, WORD_LEN},   // INAIM_TOP :
+    {0x64A0,0x0D90, WORD_LEN},   // INAIM_BOTM :
+    {0x64A2,0x18, BYTE_LEN},   // INAIM_FLTOP :
+    {0x64A3,0x10, BYTE_LEN},   // INAIM_FLBOTM :
+    {0x64A4,0xFF, BYTE_LEN},// OUTFRM_LEFT00 :
+    {0x64A5,0xFF, BYTE_LEN},// OUTFRM_LEFT01 :
+    {0x64A6,0xFF, BYTE_LEN},// OUTFRM_LEFT02 :
+    {0x64A7,0xFF, BYTE_LEN},// OUTFRM_LEFT03 :
+    {0x64A8,0xFF, BYTE_LEN},// OUTFRM_LEFT04 :
+    {0x64A9,0xFF, BYTE_LEN},// OUTFRM_LEFT05 :
+    {0x64AA,0xFF, BYTE_LEN},// OUTFRM_LEFT06 :
+    {0x64AB,0xFF, BYTE_LEN},// OUTFRM_LEFT07 :
+    {0x64AC,0xFF, BYTE_LEN},// OUTFRM_LEFT08 :
+    {0x64AD,0xFD, BYTE_LEN},// OUTFRM_LEFT09 :
+    {0x64AE,0xCB, BYTE_LEN},// OUTFRM_LEFT10 :
+    {0x64AF,0xA9, BYTE_LEN},// OUTFRM_LEFT11 :
+    {0x64B0,0x90, BYTE_LEN},// OUTFRM_LEFT12 :
+    {0x64B1,0x7D, BYTE_LEN},// OUTFRM_LEFT13 :
+    {0x64B2,0x70, BYTE_LEN},// OUTFRM_LEFT14 :
+    {0x64B3,0x65, BYTE_LEN},// OUTFRM_LEFT15 :
+    {0x64B4,0x5C, BYTE_LEN},// OUTFRM_LEFT16 :
+    {0x64B5,0x55, BYTE_LEN},// OUTFRM_LEFT17 :
+    {0x64B6,0x52, BYTE_LEN},// OUTFRM_LEFT18 :
+    {0x64B7,0x42, BYTE_LEN},// OUTFRM_LEFT19 :
+    {0x64B8,0x41, BYTE_LEN},// OUTFRM_LEFT20 :
+    {0x64B9,0x37, BYTE_LEN},// OUTFRM_LEFT21 :
+    {0x64BA,0x32, BYTE_LEN},// OUTFRM_LEFT22 :
+    {0x64BB,0x2B, BYTE_LEN},// OUTFRM_LEFT23 :
+    {0x64BC,0x29, BYTE_LEN},// OUTFRM_LEFT24 :
+    {0x64BD,0x27, BYTE_LEN},// OUTFRM_LEFT25 :
+    {0x64BE,0x25, BYTE_LEN},// OUTFRM_LEFT26 :
+    {0x64BF,0x23, BYTE_LEN},// OUTFRM_LEFT27 :
+    {0x64C0,0x21, BYTE_LEN},// OUTFRM_LEFT28 :
+    {0x64C1,0x1F, BYTE_LEN},// OUTFRM_LEFT29 :
+    {0x64C2,0x1D, BYTE_LEN},// OUTFRM_LEFT30 :
+    {0x64C3,0x1B, BYTE_LEN},// OUTFRM_LEFT31 :
+    {0x64C4,0x1A, BYTE_LEN},// OUTFRM_LEFT32 :
+    {0x64C5,0x1A, BYTE_LEN},// OUTFRM_LEFT33 :
+    {0x64C6,0x1A, BYTE_LEN},// OUTFRM_LEFT34 :
+    {0x64C7,0x28, BYTE_LEN},// OUTFRM_LEFT35 :
+    {0x64C8,0x27, BYTE_LEN},// OUTFRM_LEFT36 :
+    {0x64C9,0x26, BYTE_LEN},// OUTFRM_LEFT37 :
+    {0x64CA,0xFF, BYTE_LEN},// OUTFRM_RIGHT00 :
+    {0x64CB,0xFF, BYTE_LEN},// OUTFRM_RIGHT01 :
+    {0x64CC,0xFF, BYTE_LEN},// OUTFRM_RIGHT02 :
+    {0x64CD,0xFF, BYTE_LEN},// OUTFRM_RIGHT03 :
+    {0x64CE,0xFF, BYTE_LEN},// OUTFRM_RIGHT04 :
+    {0x64CF,0xFF, BYTE_LEN},// OUTFRM_RIGHT05 :
+    {0x64D0,0xFF, BYTE_LEN},// OUTFRM_RIGHT06 :
+    {0x64D1,0xFF, BYTE_LEN},// OUTFRM_RIGHT07 :
+    {0x64D2,0xFF, BYTE_LEN},// OUTFRM_RIGHT08 :
+    {0x64D3,0xFF, BYTE_LEN},// OUTFRM_RIGHT09 :
+    {0x64D4,0xD3, BYTE_LEN},// OUTFRM_RIGHT10 :
+    {0x64D5,0xB1, BYTE_LEN},// OUTFRM_RIGHT11 :
+    {0x64D6,0x98, BYTE_LEN},// OUTFRM_RIGHT12 :
+    {0x64D7,0x85, BYTE_LEN},// OUTFRM_RIGHT13 :
+    {0x64D8,0x78, BYTE_LEN},// OUTFRM_RIGHT14 :
+    {0x64D9,0x6D, BYTE_LEN},// OUTFRM_RIGHT15 :
+    {0x64DA,0x64, BYTE_LEN},// OUTFRM_RIGHT16 :
+    {0x64DB,0x5D, BYTE_LEN},// OUTFRM_RIGHT17 :
+    {0x64DC,0x57, BYTE_LEN},// OUTFRM_RIGHT18 :
+    {0x64DD,0x63, BYTE_LEN},// OUTFRM_RIGHT19 :
+    {0x64DE,0x5E, BYTE_LEN},// OUTFRM_RIGHT20 :
+    {0x64DF,0x5A, BYTE_LEN},// OUTFRM_RIGHT21 :
+    {0x64E0,0x56, BYTE_LEN},// OUTFRM_RIGHT22 :
+    {0x64E1,0x52, BYTE_LEN},// OUTFRM_RIGHT23 :
+    {0x64E2,0x50, BYTE_LEN},// OUTFRM_RIGHT24 :
+    {0x64E3,0x4E, BYTE_LEN},// OUTFRM_RIGHT25 :
+    {0x64E4,0x4C, BYTE_LEN},// OUTFRM_RIGHT26 :
+    {0x64E5,0x4A, BYTE_LEN},// OUTFRM_RIGHT27 :
+    {0x64E6,0x48, BYTE_LEN},// OUTFRM_RIGHT28 :
+    {0x64E7,0x46, BYTE_LEN},// OUTFRM_RIGHT29 :
+    {0x64E8,0x44, BYTE_LEN},// OUTFRM_RIGHT30 :
+    {0x64E9,0x43, BYTE_LEN},// OUTFRM_RIGHT31 :
+    {0x64EA,0x42, BYTE_LEN},// OUTFRM_RIGHT32 :
+    {0x64EB,0x42, BYTE_LEN},// OUTFRM_RIGHT33 :
+    {0x64EC,0x42, BYTE_LEN},// OUTFRM_RIGHT34 :
+    {0x64ED,0x30, BYTE_LEN},// OUTFRM_RIGHT35 :
+    {0x64EE,0x2F, BYTE_LEN},// OUTFRM_RIGHT36 :
+    {0x64EF,0x2E, BYTE_LEN},// OUTFRM_RIGHT37 :
+    {0x64F0,0x1D92, WORD_LEN},// OUTFRM_TOP :
+    {0x64F2,0x13D2, WORD_LEN},// OUTFRM_BOTM :
+    {0x64F4,0x19, BYTE_LEN},// OUTFRM_FLTOP :
+    {0x64F5,0x14, BYTE_LEN},// OUTFRM_FLBOTM :
+    {0x64F6,0xFF, BYTE_LEN},// OUTAIM_LEFT00 :
+    {0x64F7,0xFF, BYTE_LEN},// OUTAIM_LEFT01 :
+    {0x64F8,0xFF, BYTE_LEN},// OUTAIM_LEFT02 :
+    {0x64F9,0xFF, BYTE_LEN},// OUTAIM_LEFT03 :
+    {0x64FA,0xFF, BYTE_LEN},// OUTAIM_LEFT04 :
+    {0x64FB,0xFF, BYTE_LEN},// OUTAIM_LEFT05 :
+    {0x64FC,0xFF, BYTE_LEN},// OUTAIM_LEFT06 :
+    {0x64FD,0xFF, BYTE_LEN},// OUTAIM_LEFT07 :
+    {0x64FE,0xFF, BYTE_LEN},// OUTAIM_LEFT08 :
+    {0x64FF,0xFF, BYTE_LEN},// OUTAIM_LEFT09 :
+    {0x6500,0x91, BYTE_LEN},// OUTAIM_LEFT10 :
+    {0x6501,0x91, BYTE_LEN},// OUTAIM_LEFT11 :
+    {0x6502,0x91, BYTE_LEN},// OUTAIM_LEFT12 :
+    {0x6503,0x66, BYTE_LEN},// OUTAIM_LEFT13 :
+    {0x6504,0x5D, BYTE_LEN},// OUTAIM_LEFT14 :
+    {0x6505,0x3C, BYTE_LEN},// OUTAIM_LEFT15 :
+    {0x6506,0x3C, BYTE_LEN},// OUTAIM_LEFT16 :
+    {0x6507,0x3C, BYTE_LEN},// OUTAIM_LEFT17 :
+    {0x6508,0x3A, BYTE_LEN},// OUTAIM_LEFT18 :
+    {0x6509,0x39, BYTE_LEN},// OUTAIM_LEFT19 :
+    {0x650A,0x40, BYTE_LEN},// OUTAIM_LEFT20 :
+    {0x650B,0x46, BYTE_LEN},// OUTAIM_LEFT21 :
+    {0x650C,0x42, BYTE_LEN},// OUTAIM_LEFT22 :
+    {0x650D,0x40, BYTE_LEN},// OUTAIM_LEFT23 :
+    {0x650E,0x3C, BYTE_LEN},// OUTAIM_LEFT24 :
+    {0x650F,0x37, BYTE_LEN},// OUTAIM_LEFT25 :
+    {0x6510,0x34, BYTE_LEN},// OUTAIM_LEFT26 :
+    {0x6511,0x32, BYTE_LEN},// OUTAIM_LEFT27 :
+    {0x6512,0x2F, BYTE_LEN},// OUTAIM_LEFT28 :
+    {0x6513,0x2E, BYTE_LEN},// OUTAIM_LEFT29 :
+    {0x6514,0x2C, BYTE_LEN},// OUTAIM_LEFT30 :
+    {0x6515,0x2A, BYTE_LEN},// OUTAIM_LEFT31 :
+    {0x6516,0x2D, BYTE_LEN},// OUTAIM_LEFT32 :
+    {0x6517,0x2C, BYTE_LEN},// OUTAIM_LEFT33 :
+    {0x6518,0x2B, BYTE_LEN},// OUTAIM_LEFT34 :
+    {0x6519,0x2A, BYTE_LEN},// OUTAIM_LEFT35 :
+    {0x651A,0x29, BYTE_LEN},// OUTAIM_LEFT36 :
+    {0x651B,0x28, BYTE_LEN},// OUTAIM_LEFT37 :
+    {0x651C,0xFF, BYTE_LEN},// OUTAIM_RIGHT00 :
+    {0x651D,0xFF, BYTE_LEN},// OUTAIM_RIGHT01 :
+    {0x651E,0xFF, BYTE_LEN},// OUTAIM_RIGHT02 :
+    {0x651F,0xFF, BYTE_LEN},// OUTAIM_RIGHT03 :
+    {0x6520,0xFF, BYTE_LEN},// OUTAIM_RIGHT04 :
+    {0x6521,0xFF, BYTE_LEN},// OUTAIM_RIGHT05 :
+    {0x6522,0xFF, BYTE_LEN},// OUTAIM_RIGHT06 :
+    {0x6523,0xFF, BYTE_LEN},// OUTAIM_RIGHT07 :
+    {0x6524,0xFF, BYTE_LEN},// OUTAIM_RIGHT08 :
+    {0x6525,0xFF, BYTE_LEN},// OUTAIM_RIGHT09 :
+    {0x6526,0xD9, BYTE_LEN},// OUTAIM_RIGHT10 :
+    {0x6527,0xB7, BYTE_LEN},// OUTAIM_RIGHT11 :
+    {0x6528,0x96, BYTE_LEN},// OUTAIM_RIGHT12 :
+    {0x6529,0x6C, BYTE_LEN},// OUTAIM_RIGHT13 :
+    {0x652A,0x64, BYTE_LEN},// OUTAIM_RIGHT14 :
+    {0x652B,0x62, BYTE_LEN},// OUTAIM_RIGHT15 :
+    {0x652C,0x62, BYTE_LEN},// OUTAIM_RIGHT16 :
+    {0x652D,0x61, BYTE_LEN},// OUTAIM_RIGHT17 :
+    {0x652E,0x60, BYTE_LEN},// OUTAIM_RIGHT18 :
+    {0x652F,0x5E, BYTE_LEN},// OUTAIM_RIGHT19 :
+    {0x6530,0x5B, BYTE_LEN},// OUTAIM_RIGHT20 :
+    {0x6531,0x4F, BYTE_LEN},// OUTAIM_RIGHT21 :
+    {0x6532,0x4B, BYTE_LEN},// OUTAIM_RIGHT22 :
+    {0x6533,0x49, BYTE_LEN},// OUTAIM_RIGHT23 :
+    {0x6534,0x44, BYTE_LEN},// OUTAIM_RIGHT24 :
+    {0x6535,0x3F, BYTE_LEN},// OUTAIM_RIGHT25 :
+    {0x6536,0x3D, BYTE_LEN},// OUTAIM_RIGHT26 :
+    {0x6537,0x3B, BYTE_LEN},// OUTAIM_RIGHT27 :
+    {0x6538,0x3B, BYTE_LEN},// OUTAIM_RIGHT28 :
+    {0x6539,0x3A, BYTE_LEN},// OUTAIM_RIGHT29 :
+    {0x653A,0x38, BYTE_LEN},// OUTAIM_RIGHT30 :
+    {0x653B,0x38, BYTE_LEN},// OUTAIM_RIGHT31 :
+    {0x653C,0x33, BYTE_LEN},// OUTAIM_RIGHT32 :
+    {0x653D,0x32, BYTE_LEN},// OUTAIM_RIGHT33 :
+    {0x653E,0x31, BYTE_LEN},// OUTAIM_RIGHT34 :
+    {0x653F,0x30, BYTE_LEN},// OUTAIM_RIGHT35 :
+    {0x6540,0x2F, BYTE_LEN},// OUTAIM_RIGHT36 :
+    {0x6541,0x2E, BYTE_LEN},// OUTAIM_RIGHT37 :
+    {0x6542,0x1B3E, WORD_LEN},// OUTAIM_TOP :
+    {0x6544,0x1522, WORD_LEN},// OUTAIM_BOTM :
+    {0x6546,0x19, BYTE_LEN},// OUTAIM_FLTOP :
+    {0x6547,0x17, BYTE_LEN},// OUTAIM_FLBOTM :
+    {0x6548,0x1926, WORD_LEN},// OUTAIM_TOP_BLUESKY :
+    {0x654A,0x7A, BYTE_LEN},// LEDFRM_RIGHT16 :
+    {0x654B,0x75, BYTE_LEN},// LEDFRM_RIGHT17 :
+    {0x654C,0x72, BYTE_LEN},// LEDFRM_RIGHT18 :
+    {0x654D,0x6E, BYTE_LEN},// LEDFRM_RIGHT19 :
+    {0x654E,0x6B, BYTE_LEN},// LEDFRM_RIGHT20 :
+    {0x654F,0x67, BYTE_LEN},// LEDFRM_RIGHT21 :
+    {0x6550,0x63, BYTE_LEN},// LEDFRM_RIGHT22 :
+    {0x6551,0x5F, BYTE_LEN},// LEDFRM_RIGHT23 :
+    {0x6552,0x5B, BYTE_LEN},// LEDFRM_RIGHT24 :
+    {0x6553,0x57, BYTE_LEN},// LEDFRM_RIGHT25 :
+    {0x6554,0x54, BYTE_LEN},// LEDFRM_RIGHT26 :
+    {0x6555,0x51, BYTE_LEN},// LEDFRM_RIGHT27 :
+    {0x6556,0x4E, BYTE_LEN},// LEDFRM_RIGHT28 :
+    {0x6557,0x4B, BYTE_LEN},// LEDFRM_RIGHT29 :
+    {0x6558,0x49, BYTE_LEN},// LEDFRM_RIGHT30 :
+    {0x6559,0x48, BYTE_LEN},// LEDFRM_RIGHT31 :
+    {0x655A,0x47, BYTE_LEN},// LEDFRM_RIGHT32 :
+    {0x655B,0x46, BYTE_LEN},// LEDFRM_RIGHT33 :
+    {0x655C,0x45, BYTE_LEN},// LEDFRM_RIGHT34 :
+    {0x655D,0x44, BYTE_LEN},// LEDFRM_RIGHT35 :
+    {0x655E,0x43, BYTE_LEN},// LEDFRM_RIGHT36 :
+    {0x655F,0x42, BYTE_LEN},// LEDFRM_RIGHT37 :
+    {0x6560,0x2200, WORD_LEN},// LEDFRM_TOP :
+    {0x6562,0x71, BYTE_LEN},// LEDAIM_RIGHT16 :
+    {0x6563,0x6E, BYTE_LEN},// LEDAIM_RIGHT17 :
+    {0x6564,0x6B, BYTE_LEN},// LEDAIM_RIGHT18 :
+    {0x6565,0x68, BYTE_LEN},// LEDAIM_RIGHT19 :
+    {0x6566,0x64, BYTE_LEN},// LEDAIM_RIGHT20 :
+    {0x6567,0x60, BYTE_LEN},// LEDAIM_RIGHT21 :
+    {0x6568,0x5C, BYTE_LEN},// LEDAIM_RIGHT22 :
+    {0x6569,0x58, BYTE_LEN},// LEDAIM_RIGHT23 :
+    {0x656A,0x54, BYTE_LEN},// LEDAIM_RIGHT24 :
+    {0x656B,0x51, BYTE_LEN},// LEDAIM_RIGHT25 :
+    {0x656C,0x4E, BYTE_LEN},// LEDAIM_RIGHT26 :
+    {0x656D,0x4B, BYTE_LEN},// LEDAIM_RIGHT27 :
+    {0x656E,0x49, BYTE_LEN},// LEDAIM_RIGHT28 :
+    {0x656F,0x46, BYTE_LEN},// LEDAIM_RIGHT29 :
+    {0x6570,0x44, BYTE_LEN},// LEDAIM_RIGHT30 :
+    {0x6571,0x43, BYTE_LEN},// LEDAIM_RIGHT31 :
+    {0x6572,0x42, BYTE_LEN},// LEDAIM_RIGHT32 :
+    {0x6573,0x41, BYTE_LEN},// LEDAIM_RIGHT33 :
+    {0x6574,0x40, BYTE_LEN},// LEDAIM_RIGHT34 :
+    {0x6575,0x3F, BYTE_LEN},// LEDAIM_RIGHT35 :
+    {0x6576,0x3E, BYTE_LEN},// LEDAIM_RIGHT36 :
+    {0x6577,0x3D, BYTE_LEN},// LEDAIM_RIGHT37 :
+    {0x6578,0x2100, WORD_LEN},// LEDAIM_TOP :
+    {0x657A,0x82, BYTE_LEN},// IN_CTMP_FRM_BG0 :
+    {0x657B,0x78, BYTE_LEN},// IN_CTMP_FRM_BG1 :
+    {0x657C,0x65, BYTE_LEN},// IN_CTMP_FRM_BG2 :
+    {0x657D,0x5B, BYTE_LEN},// IN_CTMP_FRM_BG3 :
+    {0x657E,0x55, BYTE_LEN},// IN_CTMP_FRM_BG4 :
+    {0x657F,0x4F, BYTE_LEN},// IN_CTMP_FRM_BG5 :
+    {0x6580,0x49, BYTE_LEN},// IN_CTMP_FRM_BG6 :
+    {0x6581,0x43, BYTE_LEN},// IN_CTMP_FRM_BG7 :
+    {0x6582,0x3E, BYTE_LEN},// IN_CTMP_FRM_BG8 :
+    {0x6583,0x35, BYTE_LEN},// IN_CTMP_FRM_BG9 :
+    {0x6584,0x30, BYTE_LEN},// IN_CTMP_FRM_BG10 :
+    {0x6585,0x23, BYTE_LEN},// IN_CTMP_FRM_RG0 :
+    {0x6586,0x33, BYTE_LEN},// IN_CTMP_FRM_RG1 :
+    {0x6587,0x3F, BYTE_LEN},// IN_CTMP_FRM_RG2 :
+    {0x6588,0x53, BYTE_LEN},// IN_CTMP_FRM_RG3 :
+    {0x6589,0x63, BYTE_LEN},// IN_CTMP_FRM_RG4 :
+    {0x658A,0x76, BYTE_LEN},// IN_CTMP_FRM_RG5 :
+    {0x658B,0x9A, BYTE_LEN},// IN_CTMP_FRM_RG6 :
+    {0x658C,0x00, BYTE_LEN},// IN_CTMP_WEIGHT00_01 :
+    {0x658D,0x00, BYTE_LEN},// IN_CTMP_WEIGHT02_03 :
+    {0x658E,0x00, BYTE_LEN},// IN_CTMP_WEIGHT04_05 :
+    {0x658F,0x00, BYTE_LEN},// IN_CTMP_WEIGHT06_07 :
+    {0x6590,0x00, BYTE_LEN},// IN_CTMP_WEIGHT08_09 :
+    {0x6591,0x00, BYTE_LEN},// IN_CTMP_WEIGHT10_11 :
+    {0x6592,0x00, BYTE_LEN},// IN_CTMP_WEIGHT12_13 :
+    {0x6593,0x00, BYTE_LEN},// IN_CTMP_WEIGHT14_15 :
+    {0x6594,0x00, BYTE_LEN},// IN_CTMP_WEIGHT16_17 :
+    {0x6595,0x00, BYTE_LEN},// IN_CTMP_WEIGHT18_19 :
+    {0x6596,0x00, BYTE_LEN},// IN_CTMP_WEIGHT20_21 :
+    {0x6597,0x00, BYTE_LEN},// IN_CTMP_WEIGHT22_23 :
+    {0x6598,0x00, BYTE_LEN},// IN_CTMP_WEIGHT24_25 :
+    {0x6599,0x00, BYTE_LEN},// IN_CTMP_WEIGHT26_27 :
+    {0x659A,0x00, BYTE_LEN},// IN_CTMP_WEIGHT28_29 :
+    {0x659B,0x00, BYTE_LEN},// IN_CTMP_WEIGHT30_31 :
+    {0x659C,0x00, BYTE_LEN},// IN_CTMP_WEIGHT32_33 :
+    {0x659D,0x00, BYTE_LEN},// IN_CTMP_WEIGHT34_35 :
+    {0x659E,0x00, BYTE_LEN},// IN_CTMP_WEIGHT36_37 :
+    {0x659F,0x00, BYTE_LEN},// IN_CTMP_WEIGHT38_39 :
+    {0x65A0,0x00, BYTE_LEN},// IN_CTMP_WEIGHT40_41 :
+    {0x65A1,0x00, BYTE_LEN},// IN_CTMP_WEIGHT42_43 :
+    {0x65A2,0x00, BYTE_LEN},// IN_CTMP_WEIGHT44_45 :
+    {0x65A3,0x00, BYTE_LEN},// IN_CTMP_WEIGHT46_47 :
+    {0x65A4,0x00, BYTE_LEN},// IN_CTMP_WEIGHT48_49 :
+    {0x65A5,0x00, BYTE_LEN},// IN_CTMP_WEIGHT50_51 :
+    {0x65A6,0x00, BYTE_LEN},// IN_CTMP_WEIGHT52_53 :
+    {0x65A7,0x00, BYTE_LEN},// IN_CTMP_WEIGHT54_55 :
+    {0x65A8,0x00, BYTE_LEN},// IN_CTMP_WEIGHT56_57 :
+    {0x65A9,0x00, BYTE_LEN},// IN_CTMP_WEIGHT58_59 :
+    {0x65AA,0x78, BYTE_LEN},// OUT_CTMP_FRM_BG0 :
+    {0x65AB,0x74, BYTE_LEN},// OUT_CTMP_FRM_BG1 :
+    {0x65AC,0x70, BYTE_LEN},// OUT_CTMP_FRM_BG2 :
+    {0x65AD,0x6D, BYTE_LEN},// OUT_CTMP_FRM_BG3 :
+    {0x65AE,0x69, BYTE_LEN},// OUT_CTMP_FRM_BG4 :
+    {0x65AF,0x66, BYTE_LEN},// OUT_CTMP_FRM_BG5 :
+    {0x65B0,0x61, BYTE_LEN},// OUT_CTMP_FRM_BG6 :
+    {0x65B1,0x5D, BYTE_LEN},// OUT_CTMP_FRM_BG7 :
+    {0x65B2,0x52, BYTE_LEN},// OUT_CTMP_FRM_BG8 :
+    {0x65B3,0x4B, BYTE_LEN},// OUT_CTMP_FRM_BG9 :
+    {0x65B4,0x44, BYTE_LEN},// OUT_CTMP_FRM_BG10 :
+    {0x65B5,0x19, BYTE_LEN},// OUT_CTMP_FRM_RG0 :
+    {0x65B6,0x27, BYTE_LEN},// OUT_CTMP_FRM_RG1 :
+    {0x65B7,0x32, BYTE_LEN},// OUT_CTMP_FRM_RG2 :
+    {0x65B8,0x3A, BYTE_LEN},// OUT_CTMP_FRM_RG3 :
+    {0x65B9,0x43, BYTE_LEN},// OUT_CTMP_FRM_RG4 :
+    {0x65BA,0x4A, BYTE_LEN},// OUT_CTMP_FRM_RG5 :
+    {0x65BB,0x5E, BYTE_LEN},// OUT_CTMP_FRM_RG6 :
+    {0x65BC,0x00, BYTE_LEN},// OUT_CTMP_WEIGHT00_01 :
+    {0x65BD,0x00, BYTE_LEN},// OUT_CTMP_WEIGHT02_03 :
+    {0x65BE,0x00, BYTE_LEN},// OUT_CTMP_WEIGHT04_05 :
+    {0x65BF,0x00, BYTE_LEN},// OUT_CTMP_WEIGHT06_07 :
+    {0x65C0,0x33, BYTE_LEN},// OUT_CTMP_WEIGHT08_09 :
+    {0x65C1,0x00, BYTE_LEN},// OUT_CTMP_WEIGHT10_11 :
+    {0x65C2,0x30, BYTE_LEN},// OUT_CTMP_WEIGHT12_13 :
+    {0x65C3,0x33, BYTE_LEN},// OUT_CTMP_WEIGHT14_15 :
+    {0x65C4,0x00, BYTE_LEN},// OUT_CTMP_WEIGHT16_17 :
+    {0x65C5,0x30, BYTE_LEN},// OUT_CTMP_WEIGHT18_19 :
+    {0x65C6,0x33, BYTE_LEN},// OUT_CTMP_WEIGHT20_21 :
+    {0x65C7,0x00, BYTE_LEN},// OUT_CTMP_WEIGHT22_23 :
+    {0x65C8,0x30, BYTE_LEN},// OUT_CTMP_WEIGHT24_25 :
+    {0x65C9,0x33, BYTE_LEN},// OUT_CTMP_WEIGHT26_27 :
+    {0x65CA,0x00, BYTE_LEN},// OUT_CTMP_WEIGHT28_29 :
+    {0x65CB,0x30, BYTE_LEN},// OUT_CTMP_WEIGHT30_31 :
+    {0x65CC,0x44, BYTE_LEN},// OUT_CTMP_WEIGHT32_33 :
+    {0x65CD,0x00, BYTE_LEN},// OUT_CTMP_WEIGHT34_35 :
+    {0x65CE,0x40, BYTE_LEN},// OUT_CTMP_WEIGHT36_37 :
+    {0x65CF,0x55, BYTE_LEN},// OUT_CTMP_WEIGHT38_39 :
+    {0x65D0,0x05, BYTE_LEN},// OUT_CTMP_WEIGHT40_41 :
+    {0x65D1,0x20, BYTE_LEN},// OUT_CTMP_WEIGHT42_43 :
+    {0x65D2,0x72, BYTE_LEN},// OUT_CTMP_WEIGHT44_45 :
+    {0x65D3,0x07, BYTE_LEN},// OUT_CTMP_WEIGHT46_47 :
+    {0x65D4,0x00, BYTE_LEN},// OUT_CTMP_WEIGHT48_49 :
+    {0x65D5,0x00, BYTE_LEN},// OUT_CTMP_WEIGHT50_51 :
+    {0x65D6,0x00, BYTE_LEN},// OUT_CTMP_WEIGHT52_53 :
+    {0x65D7,0x00, BYTE_LEN},// OUT_CTMP_WEIGHT54_55 :
+    {0x65D8,0x00, BYTE_LEN},// OUT_CTMP_WEIGHT56_57 :
+    {0x65D9,0x00, BYTE_LEN},// OUT_CTMP_WEIGHT58_59 :
+    //{0x629B,0x40, BYTE_LEN},// CAT_AWB_3 :
+    {0x6548,0x1926, WORD_LEN},// OUTAIM_TOP_BLUESKY :
+
+     //AWB_setting
+    {0x629A,0x13, BYTE_LEN},   // CAT_AWB_2 : OPDG 기능 off
+    {0x629B,0x40, BYTE_LEN},    // CAT_AWB_3 : outdoor_가중치 on
+    {0x625F,0x15, BYTE_LEN},   // CAT_AWB_1 : MWB시 user좌표로 좌표 고정(AWB시에는 영향 무)
+    {0x629C,0x20, BYTE_LEN},   // A광원 REDDISH
+    {0x6284,0x01C0, WORD_LEN},   // 단색tracking
+    {0x6286,0x01C0, WORD_LEN},   //
+    {0x6288,0x01C0, WORD_LEN},   // 단색tracking
+
+    {0x6E00,0xFFCD, WORD_LEN},// LM_GRG_POS1 :
+    {0x6E02,0xFFEF, WORD_LEN},// LM_GRB_POS1 :
+    {0x6E04,0xFFEA, WORD_LEN},// LM_GGR_POS1 :
+    {0x6E06,0xFFE6, WORD_LEN},// LM_GGB_POS1 :
+    {0x6E08,0xFFFA, WORD_LEN},// LM_GBR_POS1 :
+    {0x6E0A,0xFFE6, WORD_LEN},// LM_GBG_POS1 :
+    {0x6E0C,0xFFCD, WORD_LEN},// LM_GRG_POS2 :
+    {0x6E0E,0xFFEF, WORD_LEN},// LM_GRB_POS2 :
+    {0x6E10,0xFFEA, WORD_LEN},// LM_GGR_POS2 :
+    {0x6E12,0xFFE6, WORD_LEN},// LM_GGB_POS2 :
+    {0x6E14,0xFFFA, WORD_LEN},// LM_GBR_POS2 :
+    {0x6E16,0xFFE6, WORD_LEN},// LM_GBG_POS2 :
+    {0x6E18,0xFFB3, WORD_LEN},// LM_GRG_POS3 :// TL84 SATURAION
+    {0x6E1A,0xFFE4, WORD_LEN},// LM_GRB_POS3 :
+    {0x6E1C,0xFFF1, WORD_LEN},// LM_GGR_POS3 :
+    {0x6E1E,0xFFE6, WORD_LEN},// LM_GGB_POS3 :
+    {0x6E20,0xFFF7, WORD_LEN},// LM_GBR_POS3 :
+    {0x6E22,0xFFE0, WORD_LEN},// LM_GBG_POS3 :// TL84 SATURAION
+    {0x6E24,0xFFCD, WORD_LEN},// LM_GRG_POS4 :
+    {0x6E26,0xFFEF, WORD_LEN},// LM_GRB_POS4 :
+    {0x6E28,0xFFEA, WORD_LEN},// LM_GGR_POS4 :
+    {0x6E2A,0xFFE6, WORD_LEN},// LM_GGB_POS4 :
+    {0x6E2C,0xFFFA, WORD_LEN},// LM_GBR_POS4 :
+    {0x6E2E,0xFFE6, WORD_LEN},// LM_GBG_POS4 :
+    {0x6E30,0xFFCD, WORD_LEN},// LM_GRG_POS5 :
+    {0x6E32,0xFFEF, WORD_LEN},// LM_GRB_POS5 :
+    {0x6E34,0xFFEA, WORD_LEN},// LM_GGR_POS5 :
+    {0x6E36,0xFFE6, WORD_LEN},// LM_GGB_POS5 :
+    {0x6E38,0xFFFA, WORD_LEN},// LM_GBR_POS5 :
+    {0x6E3A,0xFFE6, WORD_LEN},// LM_GBG_POS5 :
+    {0x6E3C,0xFFCD, WORD_LEN},// LM_GRG_POS6 :
+    {0x6E3E,0xFFEF, WORD_LEN},// LM_GRB_POS6 :
+    {0x6E40,0xFFEA, WORD_LEN},// LM_GGR_POS6 :
+    {0x6E42,0xFFE6, WORD_LEN},// LM_GGB_POS6 :
+    {0x6E44,0xFFFA, WORD_LEN},// LM_GBR_POS6 :
+    {0x6E46,0xFFE6, WORD_LEN},// LM_GBG_POS6 :
+    {0x6E48,0xFFCD, WORD_LEN},// LM_GRG_POS7 :
+    {0x6E4A,0xFFEF, WORD_LEN},// LM_GRB_POS7 :
+    {0x6E4C,0xFFEA, WORD_LEN},// LM_GGR_POS7 :
+    {0x6E4E,0xFFE6, WORD_LEN},// LM_GGB_POS7 :
+    {0x6E50,0xFFFA, WORD_LEN},// LM_GBR_POS7 :
+    {0x6E52,0xFFE6, WORD_LEN},// LM_GBG_POS7 :
+    {0x6E60,0xFFCD, WORD_LEN},// LM_GRG_R2_POS4 :
+    {0x6E62,0xFFEF, WORD_LEN},// LM_GRB_R2_POS4 :
+    {0x6E64,0xFFEA, WORD_LEN},// LM_GGR_R2_POS4 :
+    {0x6E66,0xFFE6, WORD_LEN},// LM_GGB_R2_POS4 :
+    {0x6E68,0xFFFA, WORD_LEN},// LM_GBR_R2_POS4 :
+    {0x6E6A,0xFFE6, WORD_LEN},// LM_GBG_R2_POS4 :
+    {0x6E6C,0xFFCD, WORD_LEN},// LM_GRG_R2_POS5 :
+    {0x6E6E,0xFFEF, WORD_LEN},// LM_GRB_R2_POS5 :
+    {0x6E70,0xFFEA, WORD_LEN},// LM_GGR_R2_POS5 :
+    {0x6E72,0xFFE6, WORD_LEN},// LM_GGB_R2_POS5 :
+    {0x6E74,0xFFFA, WORD_LEN},// LM_GBR_R2_POS5 :
+    {0x6E76,0xFFE6, WORD_LEN},// LM_GBG_R2_POS5 :
+
+    //Hue, Gain setting
+
+    {0x6E86,0x0000, WORD_LEN},    // IBYHUE1_POS1 :
+    {0x6E88,0xFFF5, WORD_LEN},    // IRYHUE1_POS1 :
+    {0x6E8A,0xFFF8, WORD_LEN},    // IBYHUE2_POS1 :
+    {0x6E8C,0xFFF5, WORD_LEN},    // IRYHUE2_POS1 :
+    {0x6E8E,0xFFF8, WORD_LEN},    // IBYHUE3_POS1 :
+    {0x6E90,0xFFEE, WORD_LEN},    // IRYHUE3_POS1 :
+    {0x6E92,0x0000, WORD_LEN},    // IBYHUE4_POS1 :
+    {0x6E94,0xFFEC, WORD_LEN},    // IRYHUE4_POS1 :
+    {0x6E96,0x0000, WORD_LEN},    // IBYHUE1_POS2 :
+    {0x6E98,0xFFF8, WORD_LEN},    // IRYHUE1_POS2 :
+    {0x6E9A,0xFFFD, WORD_LEN},    // IBYHUE2_POS2 :
+    {0x6E9C,0xFFF8, WORD_LEN},    // IRYHUE2_POS2 :
+    {0x6E9E,0xFFFD, WORD_LEN},    // IBYHUE3_POS2 :
+    {0x6EA0,0xFFEE, WORD_LEN},    // IRYHUE3_POS2 :
+    {0x6EA2,0x0000, WORD_LEN},    // IBYHUE4_POS2 :
+    {0x6EA4,0xFFEC, WORD_LEN},    // IRYHUE4_POS2 :
+    {0x6EA6,0x0000, WORD_LEN},    // IBYHUE1_POS3 :
+    {0x6EA8,0xFFF5, WORD_LEN},    // IRYHUE1_POS3 :
+    {0x6EAA,0xFFF8, WORD_LEN},    // IBYHUE2_POS3 :
+    {0x6EAC,0xFFF5, WORD_LEN},    // IRYHUE2_POS3 :
+    {0x6EAE,0xFFF8, WORD_LEN},    // IBYHUE3_POS3 :
+    {0x6EB0,0xFFEE, WORD_LEN},    // IRYHUE3_POS3 :
+    {0x6EB2,0x0000, WORD_LEN},    // IBYHUE4_POS3 :
+    {0x6EB4,0xFFEC, WORD_LEN},    // IRYHUE4_POS3 :
+    {0x6EB6,0x0000, WORD_LEN},    // IBYHUE1_POS4 :
+    {0x6EB8,0xFFF5, WORD_LEN},    // IRYHUE1_POS4 :
+    {0x6EBA,0xFFF8, WORD_LEN},    // IBYHUE2_POS4 :
+    {0x6EBC,0xFFF5, WORD_LEN},    // IRYHUE2_POS4 :
+    {0x6EBE,0xFFF8, WORD_LEN},    // IBYHUE3_POS4 :
+    {0x6EC0,0xFFEE, WORD_LEN},    // IRYHUE3_POS4 :
+    {0x6EC2,0x0000, WORD_LEN},    // IBYHUE4_POS4 :
+    {0x6EC4,0xFFEC, WORD_LEN},    // IRYHUE4_POS4 :
+    {0x6EC6,0x0000, WORD_LEN},    // IBYHUE1_POS5 :
+    {0x6EC8,0xFFF5, WORD_LEN},    // IRYHUE1_POS5 :
+    {0x6ECA,0xFFF8, WORD_LEN},    // IBYHUE2_POS5 :
+    {0x6ECC,0xFFF5, WORD_LEN},    // IRYHUE2_POS5 :
+    {0x6ECE,0xFFF8, WORD_LEN},    // IBYHUE3_POS5 :
+    {0x6ED0,0xFFEE, WORD_LEN},    // IRYHUE3_POS5 :
+    {0x6ED2,0x0000, WORD_LEN},    // IBYHUE4_POS5 :
+    {0x6ED4,0xFFEC, WORD_LEN},    // IRYHUE4_POS5 :
+    {0x6ED6,0x0000, WORD_LEN},    // IBYHUE1_POS6 :
+    {0x6ED8,0xFFF5, WORD_LEN},    // IRYHUE1_POS6 :
+    {0x6EDA,0xFFF8, WORD_LEN},    // IBYHUE2_POS6 :
+    {0x6EDC,0xFFF5, WORD_LEN},    // IRYHUE2_POS6 :
+    {0x6EDE,0xFFF8, WORD_LEN},    // IBYHUE3_POS6 :
+    {0x6EE0,0xFFEE, WORD_LEN},    // IRYHUE3_POS6 :
+    {0x6EE2,0x0000, WORD_LEN},    // IBYHUE4_POS6 :
+    {0x6EE4,0xFFEC, WORD_LEN},    // IRYHUE4_POS6 :
+    {0x6EE6,0x0000, WORD_LEN},    // IBYHUE1_POS7 :
+    {0x6EE8,0xFFF5, WORD_LEN},    // IRYHUE1_POS7 :
+    {0x6EEA,0xFFEA, WORD_LEN},    // IBYHUE2_POS7 :
+    {0x6EEC,0xFFF5, WORD_LEN},    // IRYHUE2_POS7 :
+    {0x6EEE,0xFFEA, WORD_LEN},    // IBYHUE3_POS7 :
+    {0x6EF0,0xFFEE, WORD_LEN},    // IRYHUE3_POS7 :
+    {0x6EF2,0x0000, WORD_LEN},    // IBYHUE4_POS7 :
+    {0x6EF4,0xFFEC, WORD_LEN},    // IRYHUE4_POS7 :
+    {0x6EF6,0xFFFB, WORD_LEN},    // IBYHUE1_OUT :
+    {0x6EF8,0x0000, WORD_LEN},    // IRYHUE1_OUT :
+    {0x6EFA,0xFFFA, WORD_LEN},    // IBYHUE2_OUT :
+    {0x6EFC,0x0000, WORD_LEN},    // IRYHUE2_OUT :
+    {0x6EFE,0xFFFA, WORD_LEN},    // IBYHUE3_OUT :
+    {0x6F00,0xFFE7, WORD_LEN},    // IRYHUE3_OUT :
+    {0x6F02,0xFFFB, WORD_LEN},    // IBYHUE4_OUT :
+    {0x6F04,0xFFE7, WORD_LEN},    // IRYHUE4_OUT :
+    {0x6F06,0x0000, WORD_LEN},    // IBYHUE1_R2_POS4 :
+    {0x6F08,0xFFF5, WORD_LEN},    // IRYHUE1_R2_POS4 :
+    {0x6F0A,0xFFF8, WORD_LEN},    // IBYHUE2_R2_POS4 :
+    {0x6F0C,0xFFF5, WORD_LEN},    // IRYHUE2_R2_POS4 :
+    {0x6F0E,0xFFF8, WORD_LEN},    // IBYHUE3_R2_POS4 :
+    {0x6F10,0xFFEE, WORD_LEN},    // IRYHUE3_R2_POS4 :
+    {0x6F12,0x0000, WORD_LEN},    // IBYHUE4_R2_POS4 :
+    {0x6F14,0xFFEC, WORD_LEN},    // IRYHUE4_R2_POS4 :
+    {0x6F16,0x0000, WORD_LEN},    // IBYHUE1_R2_POS5 :
+    {0x6F18,0xFFF5, WORD_LEN},    // IRYHUE1_R2_POS5 :
+    {0x6F1A,0xFFF8, WORD_LEN},    // IBYHUE2_R2_POS5 :
+    {0x6F1C,0xFFF5, WORD_LEN},    // IRYHUE2_R2_POS5 :
+    {0x6F1E,0xFFF8, WORD_LEN},    // IBYHUE3_R2_POS5 :
+    {0x6F20,0xFFEE, WORD_LEN},    // IRYHUE3_R2_POS5 :
+    {0x6F22,0x0000, WORD_LEN},    // IBYHUE4_R2_POS5 :
+    {0x6F24,0xFFEC, WORD_LEN},    // IRYHUE4_R2_POS5 :
+    {0x6F26,0x4E, BYTE_LEN},    // IRYGAIN1_POS1 :
+    {0x6F27,0x50, BYTE_LEN},    // IBYGAIN1_POS1 :
+    {0x6F28,0x4E, BYTE_LEN},    // IRYGAIN2_POS1 :
+    {0x6F29,0x5A, BYTE_LEN},    // IBYGAIN2_POS1 :
+    {0x6F2A,0x50, BYTE_LEN},    // IRYGAIN3_POS1 :
+    {0x6F2B,0x5A, BYTE_LEN},    // IBYGAIN3_POS1 :
+    {0x6F2C,0x50, BYTE_LEN},    // IRYGAIN4_POS1 :
+    {0x6F2D,0x50, BYTE_LEN},    // IBYGAIN4_POS1 :
+    {0x6F2E,0x4E, BYTE_LEN},    // IRYGAIN1_POS2 :
+    {0x6F2F,0x50, BYTE_LEN},    // IBYGAIN1_POS2 :
+    {0x6F30,0x4E, BYTE_LEN},    // IRYGAIN2_POS2 :
+    {0x6F31,0x5A, BYTE_LEN},    // IBYGAIN2_POS2 :
+    {0x6F32,0x4E, BYTE_LEN},    // IRYGAIN3_POS2 :
+    {0x6F33,0x5A, BYTE_LEN},    // IBYGAIN3_POS2 :
+    {0x6F34,0x4E, BYTE_LEN},    // IRYGAIN4_POS2 :
+    {0x6F35,0x50, BYTE_LEN},    // IBYGAIN4_POS2 :
+    {0x6F36,0x4E, BYTE_LEN},    // IRYGAIN1_POS3 :
+    {0x6F37,0x50, BYTE_LEN},    // IBYGAIN1_POS3 :
+    {0x6F38,0x4E, BYTE_LEN},    // IRYGAIN2_POS3 :
+    {0x6F39,0x5A, BYTE_LEN},    // IBYGAIN2_POS3 :
+    {0x6F3A,0x50, BYTE_LEN},    // IRYGAIN3_POS3 :
+    {0x6F3B,0x5A, BYTE_LEN},    // IBYGAIN3_POS3 :
+    {0x6F3C,0x50, BYTE_LEN},    // IRYGAIN4_POS3 :
+    {0x6F3D,0x50, BYTE_LEN},    // IBYGAIN4_POS3 :
+    {0x6F3E,0x4E, BYTE_LEN},    // IRYGAIN1_POS4 :
+    {0x6F3F,0x50, BYTE_LEN},    // IBYGAIN1_POS4 :
+    {0x6F40,0x4E, BYTE_LEN},    // IRYGAIN2_POS4 :
+    {0x6F41,0x5A, BYTE_LEN},    // IBYGAIN2_POS4 :
+    {0x6F42,0x50, BYTE_LEN},    // IRYGAIN3_POS4 :
+    {0x6F43,0x5A, BYTE_LEN},    // IBYGAIN3_POS4 :
+    {0x6F44,0x50, BYTE_LEN},    // IRYGAIN4_POS4 :
+    {0x6F45,0x50, BYTE_LEN},    // IBYGAIN4_POS4 :
+    {0x6F46,0x4E, BYTE_LEN},    // IRYGAIN1_POS5 :
+    {0x6F47,0x50, BYTE_LEN},    // IBYGAIN1_POS5 :
+    {0x6F48,0x4E, BYTE_LEN},    // IRYGAIN2_POS5 :
+    {0x6F49,0x5A, BYTE_LEN},    // IBYGAIN2_POS5 :
+    {0x6F4A,0x50, BYTE_LEN},    // IRYGAIN3_POS5 :
+    {0x6F4B,0x5A, BYTE_LEN},    // IBYGAIN3_POS5 :
+    {0x6F4C,0x50, BYTE_LEN},    // IRYGAIN4_POS5 :
+    {0x6F4D,0x50, BYTE_LEN},    // IBYGAIN4_POS5 :
+    {0x6F4E,0x4E, BYTE_LEN},    // IRYGAIN1_POS6 :
+    {0x6F4F,0x50, BYTE_LEN},    // IBYGAIN1_POS6 :
+    {0x6F50,0x4E, BYTE_LEN},    // IRYGAIN2_POS6 :
+    {0x6F51,0x5A, BYTE_LEN},    // IBYGAIN2_POS6 :
+    {0x6F52,0x50, BYTE_LEN},    // IRYGAIN3_POS6 :
+    {0x6F53,0x5A, BYTE_LEN},    // IBYGAIN3_POS6 :
+    {0x6F54,0x50, BYTE_LEN},    // IRYGAIN4_POS6 :
+    {0x6F55,0x50, BYTE_LEN},    // IBYGAIN4_POS6 :
+    {0x6F56,0x4E, BYTE_LEN},    // IRYGAIN1_POS7 :
+    {0x6F57,0x50, BYTE_LEN},    // IBYGAIN1_POS7 :
+    {0x6F58,0x4E, BYTE_LEN},    // IRYGAIN2_POS7 :
+    {0x6F59,0x5A, BYTE_LEN},    // IBYGAIN2_POS7 :
+    {0x6F5A,0x50, BYTE_LEN},    // IRYGAIN3_POS7 :
+    {0x6F5B,0x5A, BYTE_LEN},    // IBYGAIN3_POS7 :
+    {0x6F5C,0x50, BYTE_LEN},    // IRYGAIN4_POS7 :
+    {0x6F5D,0x50, BYTE_LEN},    // IBYGAIN4_POS7 :
+    {0x6F5E,0x4D, BYTE_LEN},    // IRYGAIN1_OUT :
+    {0x6F5F,0x48, BYTE_LEN},    // IBYGAIN1_OUT :
+    {0x6F60,0x4D, BYTE_LEN},    // IRYGAIN2_OUT :
+    {0x6F61,0x46, BYTE_LEN},    // IBYGAIN2_OUT ://COLOR HUG GAIN
+    {0x6F62,0x4C, BYTE_LEN},    // IRYGAIN3_OUT ://
+    {0x6F63,0x46, BYTE_LEN},    // IBYGAIN3_OUT ://
+    {0x6F64,0x4C, BYTE_LEN},    // IRYGAIN3_OUT ://COLOR HUG GAIN
+    {0x6F65,0x48, BYTE_LEN},    // IBYGAIN4_OUT :
+    {0x6F66,0x4E, BYTE_LEN},    // IRYGAIN1_R2_POS4 :
+    {0x6F67,0x50, BYTE_LEN},    // IBYGAIN1_R2_POS4 :
+    {0x6F68,0x4E, BYTE_LEN},    // IRYGAIN2_R2_POS4 :
+    {0x6F69,0x5A, BYTE_LEN},    // IBYGAIN2_R2_POS4 :
+    {0x6F6A,0x50, BYTE_LEN},    // IRYGAIN3_R2_POS4 :
+    {0x6F6B,0x5A, BYTE_LEN},    // IBYGAIN3_R2_POS4 :
+    {0x6F6C,0x50, BYTE_LEN},    // IRYGAIN4_R2_POS4 :
+    {0x6F6D,0x50, BYTE_LEN},    // IBYGAIN4_R2_POS4 :
+    {0x6F6E,0x4E, BYTE_LEN},    // IRYGAIN1_R2_POS5 :
+    {0x6F6F,0x50, BYTE_LEN},    // IBYGAIN1_R2_POS5 :
+    {0x6F70,0x4E, BYTE_LEN},    // IRYGAIN2_R2_POS5 :
+    {0x6F71,0x5A, BYTE_LEN},    // IBYGAIN2_R2_POS5 :
+    {0x6F72,0x50, BYTE_LEN},    // IRYGAIN3_R2_POS5 :
+    {0x6F73,0x5A, BYTE_LEN},    // IBYGAIN3_R2_POS5 :
+    {0x6F74,0x50, BYTE_LEN},    // IRYGAIN4_R2_POS5 :
+    {0x6F75,0x50, BYTE_LEN},    // IBYGAIN4_R2_POS5 :
+
+    //LMT outdoor setting
+    {0x6E54,0xFFB1, WORD_LEN},    // LM_GRG_OUT ://COLOR METRIX
+    {0x6E56,0x0015, WORD_LEN},    // LM_GRB_OUT :
+    {0x6E58,0xFFE5, WORD_LEN},    // LM_GGR_OUT :
+    {0x6E5A,0xFFFA, WORD_LEN},    // LM_GGB_OUT :
+    {0x6E5C,0xFFDA, WORD_LEN},    // LM_GBR_OUT :
+    {0x6E5E,0xFFE9, WORD_LEN},    // LM_GBG_OUT :// COLOR METRIX
+    {0x6C49,0xE5, BYTE_LEN},// MAIN_CONFIG4 :
+    {0x941F,0x00, BYTE_LEN},// AP_N_GC_POS_CORE_A : <<N대역 Coring 양수측 코어링 범위 A설정값
+    {0x9420,0x00, BYTE_LEN},// AP_N_GC_POS_CORE_B :
+    {0x9421,0x02, BYTE_LEN},// AP_N_GC_POS_CORE_C1 :
+    {0x9422,0x02, BYTE_LEN},// AP_N_GC_POS_CORE_C2 :
+    {0x9423,0x17, BYTE_LEN},// AP_N_GC_POS_SLOPE_A : <<N대역 Coring 양수측 고진폭쪽 기울기 A설정값
+    {0x9424,0x08, BYTE_LEN},// AP_N_GC_POS_SLOPE_B :
+    {0x9425,0x08, BYTE_LEN},// AP_N_GC_POS_SLOPE_C1 :
+    {0x9426,0x20, BYTE_LEN},// AP_N_GC_POS_SLOPE_C2 :
+    {0x9427,0x00, BYTE_LEN},// AP_N_GC_NEG_CORE_A : <<N대역 Coring 음수측코어링범위 A설정값
+    {0x9428,0x00, BYTE_LEN},// AP_N_GC_NEG_CORE_B :
+    {0x9429,0x02, BYTE_LEN},// AP_N_GC_NEG_CORE_C1 :
+    {0x942A,0x02, BYTE_LEN},// AP_N_GC_NEG_CORE_C2 :
+    {0x942B,0x15, BYTE_LEN},// AP_N_GC_NEG_SLOPE_A : <<N대역 Coring 음수측 고진폭쪽 기울기 A설정값
+    {0x942C,0x08, BYTE_LEN},// AP_N_GC_NEG_SLOPE_B :
+    {0x942D,0x08, BYTE_LEN},// AP_N_GC_NEG_SLOPE_C1 :
+    {0x942E,0x20, BYTE_LEN},// AP_N_GC_NEG_SLOPE_C2 :
+    {0x942F,0x0E, BYTE_LEN},// AP_N_GAIN_POS_A : <<N대역 POST Gain 양수측 A설정값
+    {0x9430,0x61, BYTE_LEN},// AP_N_GAIN_POS_B :    110426 수정
+    {0x9431,0x60, BYTE_LEN},// AP_N_GAIN_POS_C1 :   110426 수정
+    {0x9432,0x5B, BYTE_LEN},// AP_N_GAIN_POS_C2 :
+    {0x9433,0x0A, BYTE_LEN},// AP_N_GAIN_NEG_A : <<N대역 POST Gain 음수측 A설정값
+    {0x9434,0x61, BYTE_LEN},// AP_N_GAIN_NEG_B :    110426 수정
+    {0x9435,0x60, BYTE_LEN},// AP_N_GAIN_NEG_C1 :   110426 수정
+    {0x9436,0x50, BYTE_LEN},// AP_N_GAIN_NEG_C2 :
+    {0x9437,0x01, BYTE_LEN},// AP_H_GC_POS_CORE_A : <<H대역 Coring 양수측코어링범위 A설정값
+    {0x9438,0x01, BYTE_LEN},// AP_H_GC_POS_CORE_B :
+    {0x9439,0x00, BYTE_LEN},// AP_H_GC_POS_CORE_C1 :
+    {0x943A,0x00, BYTE_LEN},// AP_H_GC_POS_CORE_C2 :
+    {0x943B,0x29, BYTE_LEN},// AP_H_GC_POS_SLOPE_A : <<H대역 Coring 양수측 고진폭쪽 기울기 A설정값
+    {0x943C,0x0A, BYTE_LEN},// AP_H_GC_POS_SLOPE_B :
+    {0x943D,0x06, BYTE_LEN},// AP_H_GC_POS_SLOPE_C1 :
+    {0x943E,0x20, BYTE_LEN},// AP_H_GC_POS_SLOPE_C2 :
+    {0x943F,0x01, BYTE_LEN},// AP_H_GC_NEG_CORE_A : <<H대역 Coring 음수측코어링범위 A설정값
+    {0x9440,0x01, BYTE_LEN},// AP_H_GC_NEG_CORE_B :
+    {0x9441,0x00, BYTE_LEN},// AP_H_GC_NEG_CORE_C1 :
+    {0x9442,0x00, BYTE_LEN},// AP_H_GC_NEG_CORE_C2 :
+    {0x9443,0x28, BYTE_LEN},// AP_H_GC_NEG_SLOPE_A : <<H대역 Coring 음수측 고진폭쪽 기울기 A설정값
+    {0x9444,0x0C, BYTE_LEN},// AP_H_GC_NEG_SLOPE_B :
+    {0x9445,0x06, BYTE_LEN},// AP_H_GC_NEG_SLOPE_C1 :
+    {0x9446,0x20, BYTE_LEN},// AP_H_GC_NEG_SLOPE_C2 :
+    {0x9447,0x10, BYTE_LEN},// AP_H_GAIN_POS_A : <<H대역 POST Gain 양수측 A설정값
+    {0x9448,0x12, BYTE_LEN},// AP_H_GAIN_POS_B :
+    {0x9449,0x35, BYTE_LEN},// AP_H_GAIN_POS_C1 :
+    {0x944A,0x70, BYTE_LEN},// AP_H_GAIN_POS_C2 :
+    {0x944B,0x0C, BYTE_LEN},// AP_H_GAIN_NEG_A : <<H대역 POST Gain 음수측 A설정값
+    {0x944C,0x10, BYTE_LEN},// AP_H_GAIN_NEG_B :
+    {0x944D,0x35, BYTE_LEN},// AP_H_GAIN_NEG_C1 :
+    {0x944E,0x87, BYTE_LEN},// AP_H_GAIN_NEG_C2 :
+    {0x944F,0x01, BYTE_LEN},// AP_L_GC_POS_CORE_A : <<L대역 Coring 양수측코어링범위 A설정값
+    {0x9450,0x00, BYTE_LEN},// AP_L_GC_POS_CORE_B :
+    {0x9451,0x00, BYTE_LEN},// AP_L_GC_POS_CORE_C1 :
+    {0x9452,0x04, BYTE_LEN},// AP_L_GC_POS_CORE_C2
+    {0x9453,0x24, BYTE_LEN},// AP_L_GC_POS_SLOPE_A : <<L대역 Coring 양수측 고진폭쪽 기울기 A설정값
+    {0x9454,0x20, BYTE_LEN},// AP_L_GC_POS_SLOPE_B :
+    {0x9455,0x08, BYTE_LEN},// AP_L_GC_POS_SLOPE_C1 :
+    {0x9456,0x08, BYTE_LEN},// AP_L_GC_POS_SLOPE_C2 :
+    {0x9457,0x01, BYTE_LEN},// AP_L_GC_NEG_CORE_A : <L대역 Coring 음수측코어링범위 A설정값
+    {0x9458,0x00, BYTE_LEN},// AP_L_GC_NEG_CORE_B :
+    {0x9459,0x00, BYTE_LEN},// AP_L_GC_NEG_CORE_C1
+    {0x945A,0x04, BYTE_LEN},// AP_L_GC_NEG_CORE_C2
+    {0x945B,0x24, BYTE_LEN},// AP_L_GC_NEG_SLOPE_A : <<L대역 Coring 음수측 고진폭쪽 기울기 A설정값
+    {0x945C,0x20, BYTE_LEN},// AP_L_GC_NEG_SLOPE_B :
+    {0x945D,0x04, BYTE_LEN},// AP_L_GC_NEG_SLOPE_C1 :
+    {0x945E,0x04, BYTE_LEN},// AP_L_GC_NEG_SLOPE_C2 :
+    {0x945F,0x0A, BYTE_LEN},// AP_L_GAIN_POS_A : <<L대역 POST Gain 양수측 A설정값
+    {0x9460,0x10, BYTE_LEN},// AP_L_GAIN_POS_B :
+    {0x9461,0x1C, BYTE_LEN},// AP_L_GAIN_POS_C1 :
+    {0x9462,0x59, BYTE_LEN},// AP_L_GAIN_POS_C2 :
+    {0x9463,0x08, BYTE_LEN},// AP_L_GAIN_NEG_A : <<L대역 POST Gain 음수측 A설정값
+    {0x9464,0x08, BYTE_LEN},// AP_L_GAIN_NEG_B :
+    {0x9465,0x0A, BYTE_LEN},// AP_L_GAIN_NEG_C1 :
+    {0x9466,0x4F, BYTE_LEN},// AP_L_GAIN_NEG_C2 :
+    {0x9468,0x0200, WORD_LEN},// AP_N_GC_POS_TH_A : <<N대역 Coring 양수측 고진폭 임계치 A설정값
+    {0x946A,0x00C0, WORD_LEN},// AP_N_GC_POS_TH_B :
+    {0x946C,0x0168, WORD_LEN},// AP_N_GC_POS_TH_C1 :
+    {0x946E,0x0168, WORD_LEN},// AP_N_GC_POS_TH_C2 :
+    {0x9470,0x0200, WORD_LEN},// AP_N_GC_NEG_TH_A : <<N대역 Coring 음수측 고진폭 임계치 A설정값
+    {0x9472,0x00C0, WORD_LEN},// AP_N_GC_NEG_TH_B :
+    {0x9474,0x00B4, WORD_LEN},// AP_N_GC_NEG_TH_C1 :
+    {0x9476,0x00B4, WORD_LEN},// AP_N_GC_NEG_TH_C2 :
+    {0x9478,0x0000, WORD_LEN},// AP_N_LD_DARK_TH_A : <<Ｎ대역 LevelDepend 저휘도 임계치 A설정값
+    {0x947A,0x0000, WORD_LEN},// AP_N_LD_DARK_TH_B :
+    {0x947C,0x0000, WORD_LEN},// AP_N_LD_DARK_TH_C1 :
+    {0x947E,0x0000, WORD_LEN},// AP_N_LD_DARK_TH_C2 :
+    {0x9480,0x0096, WORD_LEN},// AP_N_LD_HIGH_TH0_X_A: <<Ｎ대역 LevelDepend 고휘도 임계치0 A설정값
+    {0x9482,0x0050, WORD_LEN},// AP_N_LD_HIGH_TH0_X_B :
+    {0x9484,0x0050, WORD_LEN},// AP_N_LD_HIGH_TH0_X_C1 :
+    {0x9486,0x0050, WORD_LEN},// AP_N_LD_HIGH_TH0_X_C2 :
+    {0x9488,0x0080, WORD_LEN},// AP_N_LD_HIGH_TH0_Y_A : <<Ｎ대역 LevelDepend 고휘도 임계치0에서의 출력 Gain A설정값
+    {0x948A,0x0080, WORD_LEN},// AP_N_LD_HIGH_TH0_Y_B :
+    {0x948C,0x0080, WORD_LEN},// AP_N_LD_HIGH_TH0_Y_C1 :
+    {0x948E,0x0080, WORD_LEN},// AP_N_LD_HIGH_TH0_Y_C2 :
+    {0x9490,0x00C8, WORD_LEN},// AP_N_LD_HIGH_TH1_X_A : <<N대역 LevelDepend 고휘도 임계치1 A설정값
+    {0x9492,0x012C, WORD_LEN},// AP_N_LD_HIGH_TH1_X_B :
+    {0x9494,0x00C8, WORD_LEN},// AP_N_LD_HIGH_TH1_X_C1 :
+    {0x9496,0x00A9, WORD_LEN},// AP_N_LD_HIGH_TH1_X_C2
+    {0x9498,0x01F4, WORD_LEN},// AP_N_LD_HIGH_TH2_X_A : <<N대역 LevelDepend 고휘도 임계치2 A설정값
+    {0x949A,0x0200, WORD_LEN},// AP_N_LD_HIGH_TH2_X_B :
+    {0x949C,0x0200, WORD_LEN},// AP_N_LD_HIGH_TH2_X_C1 :
+    {0x949E,0x0200, WORD_LEN},// AP_N_LD_HIGH_TH2_X_C2 :
+    {0x94A0,0x0001, WORD_LEN},// AP_H_GC_POS_TH_A : <<H대역 Coring 양수측 고진폭 임계치 A설정값
+    {0x94A2,0x00A0, WORD_LEN},// AP_H_GC_POS_TH_B :
+    {0x94A4,0x0033, WORD_LEN},// AP_H_GC_POS_TH_C1 :
+    {0x94A6,0x0033, WORD_LEN},// AP_H_GC_POS_TH_C2 :
+    {0x94A8,0x0001, WORD_LEN},// AP_H_GC_NEG_TH_A : <<H대역 Coring 음수측 고진폭 임계치 A설정값
+    {0x94AA,0x00A0, WORD_LEN},// AP_H_GC_NEG_TH_B :
+    {0x94AC,0x0033, WORD_LEN},// AP_H_GC_NEG_TH_C1 :
+    {0x94AE,0x0033, WORD_LEN},// AP_H_GC_NEG_TH_C2 :
+    {0x94B0,0x0021, WORD_LEN},// AP_H_LD_DARK_TH_A : <<H대역 LevelDepend 저휘도 임계치 A설정값
+    {0x94B2,0x0000, WORD_LEN},// AP_H_LD_DARK_TH_B :
+    {0x94B4,0x0000, WORD_LEN},// AP_H_LD_DARK_TH_C1 :
+    {0x94B6,0x0000, WORD_LEN},// AP_H_LD_DARK_TH_C2
+    {0x94B8,0x01F4, WORD_LEN},// AP_H_LD_HIGH_TH0_X_A : <<H대역 LevelDepend 고휘도 임계치0 A설정값
+    {0x94BA,0x0083, WORD_LEN},// AP_H_LD_HIGH_TH0_X_B :
+    {0x94BC,0x0064, WORD_LEN},// AP_H_LD_HIGH_TH0_X_C1 :
+    {0x94BE,0x0040, WORD_LEN},// AP_H_LD_HIGH_TH0_X_C2 :
+    {0x94C0,0x0080, WORD_LEN},// AP_H_LD_HIGH_TH0_Y_A : <<H대역 LevelDepend 고휘도 임계치0에서의 출력 Gain A설정값
+    {0x94C2,0x0080, WORD_LEN},// AP_H_LD_HIGH_TH0_Y_B :
+    {0x94C4,0x0080, WORD_LEN},// AP_H_LD_HIGH_TH0_Y_C1 :
+    {0x94C6,0x0080, WORD_LEN},// AP_H_LD_HIGH_TH0_Y_C2 :
+    {0x94C8,0x0244, WORD_LEN},// AP_H_LD_HIGH_TH1_X_A : <<H대역 LevelDepend 고휘도 임계치1 A설정
+    {0x94CA,0x01AA, WORD_LEN},// AP_H_LD_HIGH_TH1_X_B :
+    {0x94CC,0x00C8, WORD_LEN},// AP_H_LD_HIGH_TH1_X_C1 :
+    {0x94CE,0x0067, WORD_LEN},// AP_H_LD_HIGH_TH1_X_C2 :
+    {0x94D0,0x02EC, WORD_LEN},// AP_H_LD_HIGH_TH2_X_A : <<H대역 LevelDepend 고휘도 임계치2 A설정값
+    {0x94D2,0x01EF, WORD_LEN},// AP_H_LD_HIGH_TH2_X_B :
+    {0x94D4,0x01E0, WORD_LEN},// AP_H_LD_HIGH_TH2_X_C1 :
+    {0x94D6,0x0099, WORD_LEN},// AP_H_LD_HIGH_TH2_X_C2 :
+    {0x94D8,0x0001, WORD_LEN},// AP_L_GC_POS_TH_A : <<L대역 Coring 양수측 고진폭 임계치 A설정값
+    {0x94DA,0x0040, WORD_LEN},// AP_L_GC_POS_TH_B :
+    {0x94DC,0x0010, WORD_LEN},// AP_L_GC_POS_TH_C1 :
+    {0x94DE,0x0010, WORD_LEN},// AP_L_GC_POS_TH_C2 :
+    {0x94E0,0x0001, WORD_LEN},// AP_L_GC_NEG_TH_A : <<L대역 Coring 음수측 고진폭 임계치 A설정값
+    {0x94E2,0x0030, WORD_LEN},// AP_L_GC_NEG_TH_B :
+    {0x94E4,0x0020, WORD_LEN},// AP_L_GC_NEG_TH_C1 :
+    {0x94E6,0x0020, WORD_LEN},// AP_L_GC_NEG_TH_C2 :
+    {0x94E8,0x0000, WORD_LEN},// AP_L_LD_DARK_TH_A : <<L대역 LevelDepend 저휘도 임계치 A설정값
+    {0x94EA,0x0000, WORD_LEN},// AP_L_LD_DARK_TH_B :
+    {0x94EC,0x0000, WORD_LEN},// AP_L_LD_DARK_TH_C1 :
+    {0x94EE,0x0000, WORD_LEN},// AP_L_LD_DARK_TH_C2 :
+    {0x94F0,0x015E, WORD_LEN},// AP_L_LD_HIGH_TH0_X_A : <<L대역 LevelDepend 고휘도 임계치0 A설정값
+    {0x94F2,0x015E, WORD_LEN},// AP_L_LD_HIGH_TH0_X_B :
+    {0x94F4,0x0010, WORD_LEN},// AP_L_LD_HIGH_TH0_X_C1 :
+    {0x94F6,0x0010, WORD_LEN},// AP_L_LD_HIGH_TH0_X_C2 :
+    {0x94F8,0x0080, WORD_LEN},// AP_L_LD_HIGH_TH0_Y_A : <<L대역 LevelDepend 고휘도 임계치0에서의 출력 Gain A설정값
+    {0x94FA,0x0080, WORD_LEN},// AP_L_LD_HIGH_TH0_Y_B :
+    {0x94FC,0x0080, WORD_LEN},// AP_L_LD_HIGH_TH0_Y_C1 :
+    {0x94FE,0x0080, WORD_LEN},// AP_L_LD_HIGH_TH0_Y_C2 :
+    {0x9500,0x0226, WORD_LEN},// AP_L_LD_HIGH_TH1_X_A : <<L대역 LevelDepend 고휘도 임계치1 A설정값
+    {0x9502,0x0226, WORD_LEN},// AP_L_LD_HIGH_TH1_X_B :
+    {0x9504,0x0020, WORD_LEN},// AP_L_LD_HIGH_TH1_X_C1 :
+    {0x9506,0x0020, WORD_LEN},// AP_L_LD_HIGH_TH1_X_C2 :
+    {0x9508,0x02A2, WORD_LEN},// AP_L_LD_HIGH_TH2_X_A : <<L대역 LevelDepend 고휘도 임계치2 A설정값
+    {0x950A,0x028A, WORD_LEN},// AP_L_LD_HIGH_TH2_X_B :
+    {0x950C,0x0050, WORD_LEN},// AP_L_LD_HIGH_TH2_X_C1 :
+    {0x950E,0x0050, WORD_LEN},// AP_L_LD_HIGH_TH2_X_C2 :
+    {0x9510,0x0020, WORD_LEN},// AP_POST_LIM_POS_A : <<
+    {0x9512,0x0060, WORD_LEN},// AP_POST_LIM_POS_B :
+    {0x9514,0x0060, WORD_LEN},// AP_POST_LIM_POS_C1 :
+    {0x9516,0x0060, WORD_LEN},// AP_POST_LIM_POS_C2 :
+    {0x9518,0x0030, WORD_LEN},// AP_POST_LIM_NEG_A : <<
+    {0x951A,0x0060, WORD_LEN},// AP_POST_LIM_NEG_B :
+    {0x951C,0x0048, WORD_LEN},// AP_POST_LIM_NEG_C1 :
+    {0x951E,0x0048, WORD_LEN},// AP_POST_LIM_NEG_C2 :
+    {0x9520,0x0000, WORD_LEN},// AP_POST_CORE_POS_A : <<
+    {0x9522,0x0000, WORD_LEN},// AP_POST_CORE_POS_B :
+    {0x9524,0x0001, WORD_LEN},// AP_POST_CORE_POS_C1 :
+    {0x9526,0x0001, WORD_LEN},// AP_POST_CORE_POS_C2 :
+    {0x9528,0x0002, WORD_LEN},// AP_POST_CORE_NEG_A : <
+    {0x952A,0x0000, WORD_LEN},// AP_POST_CORE_NEG_B :
+    {0x952C,0x0000, WORD_LEN},// AP_POST_CORE_NEG_C1 :
+    {0x952E,0x0000, WORD_LEN},// AP_POST_CORE_NEG_C2 :
+
+    //level defender 설정
+
+    {0x9530,0x0000, WORD_LEN},// AP_N_LD_DARK_SLOPE_A : << N대역 LevelDepend 저휘도쪽 기울기 A설정값
+    {0x9532,0x0000, WORD_LEN},
+    {0x9534,0x0000, WORD_LEN},// AP_N_LD_DARK_SLOPE_B :
+    {0x9536,0x0000, WORD_LEN},
+    {0x9538,0x0000, WORD_LEN},// AP_N_LD_DARK_SLOPE_C1 :
+    {0x953A,0x0000, WORD_LEN},
+    {0x953C,0x0000, WORD_LEN},// AP_N_LD_DARK_SLOPE_C2 :
+    {0x953E,0x0000, WORD_LEN},
+    {0x9540,0x0061, WORD_LEN},// AP_N_LD_HIGH_SLOPE0_A : << N대역 LevelDepend 고휘도쪽 임계치0～임계치1에서의 기울기 A설정값
+    {0x9542,0x0000, WORD_LEN},
+    {0x9544,0x0031, WORD_LEN},// AP_N_LD_HIGH_SLOPE0_B :
+    {0x9546,0x0000, WORD_LEN},
+    {0x9548,0x0000, WORD_LEN},// AP_N_LD_HIGH_SLOPE0_C1 :
+    {0x954A,0x0000, WORD_LEN},
+    {0x954C,0x0000, WORD_LEN},// AP_N_LD_HIGH_SLOPE0_C2 :
+    {0x954E,0x0000, WORD_LEN},
+    {0x9550,0x001C, WORD_LEN},// AP_N_LD_HIGH_SLOPE1_A : <<N대역 LevelDepend 고휘도쪽 임계치1～임계치2에서의 기울기 A설정값
+    {0x9552,0x0000, WORD_LEN},
+    {0x9554,0x000C, WORD_LEN},// AP_N_LD_HIGH_SLOPE1_B :
+    {0x9556,0x0000, WORD_LEN},
+    {0x9558,0x001A, WORD_LEN},// AP_N_LD_HIGH_SLOPE1_C1 :
+    {0x955A,0x0000, WORD_LEN},
+    {0x955C,0x001A, WORD_LEN},// AP_N_LD_HIGH_SLOPE1_C2 :
+    {0x955E,0x0000, WORD_LEN},
+    {0x9560,0x0000, WORD_LEN},// AP_N_LD_HIGH_SLOPE2_A : <<N대역 LevelDepend 고휘도쪽 임계치2以降의 기울기 A설정값
+    {0x9562,0x0000, WORD_LEN},
+    {0x9564,0x0005, WORD_LEN},// AP_N_LD_HIGH_SLOPE2_B :
+    {0x9566,0x0000, WORD_LEN},
+    {0x9568,0x0014, WORD_LEN},// AP_N_LD_HIGH_SLOPE2_C1 :
+    {0x956A,0x0000, WORD_LEN},
+    {0x956C,0x0014, WORD_LEN},// AP_N_LD_HIGH_SLOPE2_C2 :
+    {0x956E,0x0000, WORD_LEN},
+    {0x9570,0x0000, WORD_LEN},// AP_H_LD_DARK_SLOPE_A : <<H대역 LevelDepend 저휘도쪽 기울기 A설정값
+    {0x9572,0x0000, WORD_LEN},
+    {0x9574,0x0000, WORD_LEN},// AP_H_LD_DARK_SLOPE_B :
+    {0x9576,0x0000, WORD_LEN},
+    {0x9578,0x0000, WORD_LEN},// AP_H_LD_DARK_SLOPE_C1 :
+    {0x957A,0x0000, WORD_LEN},
+    {0x957C,0x34FA, WORD_LEN},// AP_H_LD_DARK_SLOPE_C2 :
+    {0x957E,0x0000, WORD_LEN},
+    {0x9580,0x0025, WORD_LEN},// AP_H_LD_HIGH_SLOPE0_A : <<H대역 LevelDepend 고휘도쪽 임계치0～임계치1에서의 기울기 A설정값
+    {0x9582,0x0000, WORD_LEN},
+    {0x9584,0x0025, WORD_LEN},// AP_H_LD_HIGH_SLOPE0_B :
+    {0x9586,0x0000, WORD_LEN},
+    {0x9588,0x0064, WORD_LEN},// AP_H_LD_HIGH_SLOPE0_C1 :
+    {0x958A,0x0000, WORD_LEN},
+    {0x958C,0x0000, WORD_LEN},// AP_H_LD_HIGH_SLOPE0_C2 :
+    {0x958E,0x0000, WORD_LEN},
+    {0x9590,0x0050, WORD_LEN},// AP_H_LD_HIGH_SLOPE1_A : <<H대역 LevelDepend 고휘도쪽 임계치1～임계치2에서의 기울기 A설정값
+    {0x9592,0x0000, WORD_LEN},
+    {0x9594,0x0050, WORD_LEN},// AP_H_LD_HIGH_SLOPE1_B :
+    {0x9596,0x0000, WORD_LEN},
+    {0x9598,0x0004, WORD_LEN},// AP_H_LD_HIGH_SLOPE1_C1 :
+    {0x959A,0x0000, WORD_LEN},
+    {0x959C,0x0012, WORD_LEN},// AP_H_LD_HIGH_SLOPE1_C2 :
+    {0x959E,0x0000, WORD_LEN},
+    {0x95A0,0x0000, WORD_LEN},// AP_H_LD_HIGH_SLOPE2_A : <<H대역 LevelDepend 고휘도쪽 임계치2以降의 기울기 A설정값
+    {0x95A2,0x0000, WORD_LEN},
+    {0x95A4,0x0000, WORD_LEN},// AP_H_LD_HIGH_SLOPE2_B :
+    {0x95A6,0x0000, WORD_LEN},
+    {0x95A8,0x000D, WORD_LEN},// AP_H_LD_HIGH_SLOPE2_C1 :
+    {0x95AA,0x0000, WORD_LEN},
+    {0x95AC,0x0036, WORD_LEN},// AP_H_LD_HIGH_SLOPE2_C2 :
+    {0x95AE,0x0000, WORD_LEN},
+    {0x95B0,0x0000, WORD_LEN},// AP_L_LD_DARK_SLOPE_A : <<L대역 LevelDepend 저휘도쪽 기울기 A설정값
+    {0x95B2,0x0000, WORD_LEN},
+    {0x95B4,0x0000, WORD_LEN},// AP_L_LD_DARK_SLOPE_B :
+    {0x95B6,0x0000, WORD_LEN},
+    {0x95B8,0x0000, WORD_LEN},// AP_L_LD_DARK_SLOPE_C1 :
+    {0x95BA,0x0000, WORD_LEN},
+    {0x95BC,0x0000, WORD_LEN},// AP_L_LD_DARK_SLOPE_C2 :
+    {0x95BE,0x0000, WORD_LEN},
+    {0x95C0,0x0020, WORD_LEN},// AP_L_LD_HIGH_SLOPE0_A : <<L대역 LevelDepend 고휘도쪽 임계치0～임계치1에서의 기울기 A설정
+    {0x95C2,0x0000, WORD_LEN},
+    {0x95C4,0x0023, WORD_LEN},// AP_L_LD_HIGH_SLOPE0_B :
+    {0x95C6,0x0000, WORD_LEN},
+    {0x95C8,0x012C, WORD_LEN},// AP_L_LD_HIGH_SLOPE0_C1 :
+    {0x95CA,0x0000, WORD_LEN},
+    {0x95CC,0x012C, WORD_LEN},// AP_L_LD_HIGH_SLOPE0_C2 :
+    {0x95CE,0x0000, WORD_LEN},
+    {0x95D0,0x0051, WORD_LEN},// AP_L_LD_HIGH_SLOPE1_A : <<L대역 LevelDepend 고휘도쪽 임계치1～임계치2에서의 기울기 A설정값
+    {0x95D2,0x0000, WORD_LEN},
+    {0x95D4,0x0050, WORD_LEN},// AP_L_LD_HIGH_SLOPE1_B :
+    {0x95D6,0x0000, WORD_LEN},
+    {0x95D8,0x0058, WORD_LEN},// AP_L_LD_HIGH_SLOPE1_C1 :
+    {0x95DA,0x0000, WORD_LEN},
+    {0x95DC,0x0058, WORD_LEN},// AP_L_LD_HIGH_SLOPE1_C2 :
+    {0x95DE,0x0000, WORD_LEN},
+    {0x95E0,0x0000, WORD_LEN},// AP_L_LD_HIGH_SLOPE2_A : <<L대역 LevelDepend 고휘도쪽 임계치2以降의 기울기 A설정값
+    {0x95E2,0x0000, WORD_LEN},
+    {0x95E4,0x0050, WORD_LEN},// AP_L_LD_HIGH_SLOPE2_B :
+    {0x95E6,0x0000, WORD_LEN},
+    {0x95E8,0x002A, WORD_LEN},// AP_L_LD_HIGH_SLOPE2_C1 :
+    {0x95EA,0x0000, WORD_LEN},
+    {0x95EC,0x002A, WORD_LEN},// AP_L_LD_HIGH_SLOPE2_C2 :
+    {0x95EE,0x0000, WORD_LEN},
+
+    {0x6C47,0x0F, BYTE_LEN},// MAIN_CONFIG2 :
+    {0x6C48,0x03, BYTE_LEN},// MAIN_CONFIG3 :
+	{0x9800,0x78, BYTE_LEN},// LMT S6P << COLOR METRIX 비율 조정.
+    {0x9805,0x06, BYTE_LEN},// CS_SLP_C_A :
+    {0x9806,0x06, BYTE_LEN},// CS_SLP_C_B :
+    {0x9807,0x06, BYTE_LEN},// CS_SLP_C_C :
+    {0x9808,0x20, BYTE_LEN},// CS_SLP_YC_A :
+    {0x9809,0x20, BYTE_LEN},// CS_SLP_YC_B :
+    {0x980A,0x20, BYTE_LEN},// CS_SLP_YC_C :
+    {0x980B,0x20, BYTE_LEN},// CS_SLP_Y_A :
+    {0x980C,0x20, BYTE_LEN},// CS_SLP_Y_B :
+    {0x980D,0x20, BYTE_LEN},// CS_SLP_Y_C :
+    {0x980E,0x08, BYTE_LEN},// CS_CBHLEV_A ://0x14, BYTE_LEN},// CS_CBHLEV_A : << COLOR SURFRESS 100LUX 이하 조정.
+    {0x980F,0x14, BYTE_LEN},// CS_CBHLEV_B :
+    {0x9810,0x14, BYTE_LEN},// CS_CBHLEV_C :
+    {0x9811,0x08, BYTE_LEN},// CS_CRHLEV_A ://0x14, BYTE_LEN},// CS_CRHLEV_A : << COLOR SURFRESS 100LUX 이하 조정.
+    {0x9812,0x14, BYTE_LEN},// CS_CRHLEV_B :
+    {0x9813,0x14, BYTE_LEN},// CS_CRHLEV_C :
+    {0x9802,0x77, BYTE_LEN},// CS_YHCOEF_A :
+    {0x9803,0x77, BYTE_LEN},// CS_YHCOEF_B :
+    {0x9804,0x77, BYTE_LEN},// CS_YHCOEF_C :
+    {0x9808,0x20, BYTE_LEN},// CS_SLP_YC_A :
+    {0x9809,0x20, BYTE_LEN},// CS_SLP_YC_B :
+    {0x980A,0x20, BYTE_LEN},// CS_SLP_YC_C :
+    {0x980B,0x20, BYTE_LEN},// CS_SLP_Y_A :
+    {0x980C,0x20, BYTE_LEN},// CS_SLP_Y_B :
+    {0x980D,0x20, BYTE_LEN},// CS_SLP_Y_C :
+    {0x9814,0x14, BYTE_LEN},// CS_CBHLEV_Y_A :
+    {0x9815,0x14, BYTE_LEN},// CS_CBHLEV_Y_B :
+    {0x9816,0x14, BYTE_LEN},// CS_CBHLEV_Y_C :
+    {0x9817,0x00, BYTE_LEN},// CS_CRHLEV_Y_A :
+    {0x9818,0x00, BYTE_LEN},// CS_CRHLEV_Y_B :
+    {0x9819,0x00, BYTE_LEN},// CS_CRHLEV_Y_C :
+    {0x9836,0x0000, WORD_LEN},// CS_CBLLEV_Y_A :
+    {0x9838,0x0000, WORD_LEN},// CS_CBLLEV_Y_B :
+    {0x983A,0x0000, WORD_LEN},// CS_CBLLEV_Y_C :
+    {0x983C,0xFFEC, WORD_LEN},// CS_CRLLEV_Y_A :
+    {0x983E,0xFFEC, WORD_LEN},// CS_CRLLEV_Y_B :
+    {0x9840,0xFFEC, WORD_LEN},// CS_CRLLEV_Y_C :
+    {0x981A,0x03, BYTE_LEN},// CS_SLP_YC_L_A :
+    {0x981B,0x03, BYTE_LEN},// CS_SLP_YC_L_B :
+    {0x981C,0x03, BYTE_LEN},// CS_SLP_YC_L_C :
+    {0x981D,0x32, BYTE_LEN},// CS_SLP_Y_L_A :
+    {0x981E,0x20, BYTE_LEN},// CS_SLP_Y_L_B :
+    {0x981F,0x20, BYTE_LEN},// CS_SLP_Y_L_C :
+    {0x9820,0x1E, BYTE_LEN},// CS_YLCOEF_A :
+    {0x9821,0x1E, BYTE_LEN},// CS_YLCOEF_B :
+    {0x9822,0x1E, BYTE_LEN},// CS_YLCOEF_C :
+    {0x9823,0x32, BYTE_LEN},// CS_CBHLEV_Y_L_A :
+    {0x9824,0x32, BYTE_LEN},// CS_CBHLEV_Y_L_B :
+    {0x9825,0x32, BYTE_LEN},// CS_CBHLEV_Y_L_C :
+    {0x9826,0x32, BYTE_LEN},// CS_CRHLEV_Y_L_A :
+    {0x9827,0x32, BYTE_LEN},// CS_CRHLEV_Y_L_B :
+    {0x9828,0x32, BYTE_LEN},// CS_CRHLEV_Y_L_C :
+    {0x982A,0xFFEC, WORD_LEN},// CS_CBLLEV_A :
+    {0x982C,0xFFEC, WORD_LEN},// CS_CBLLEV_B :
+    {0x982E,0xFFEC, WORD_LEN},// CS_CBLLEV_C :
+    {0x9830,0xFFEC, WORD_LEN},// CS_CRLLEV_A :
+    {0x9832,0xFFEC, WORD_LEN},// CS_CRLLEV_B :
+    {0x9834,0xFFEC, WORD_LEN},// CS_CRLLEV_C :
+    {0x9836,0x0000, WORD_LEN},// CS_CBLLEV_Y_A :
+    {0x9838,0x0000, WORD_LEN},// CS_CBLLEV_Y_B :
+    {0x983A,0x0000, WORD_LEN},// CS_CBLLEV_Y_C :
+    {0x983C,0xFFEC, WORD_LEN},// CS_CRLLEV_Y_A :
+    {0x983E,0xFFEC, WORD_LEN},// CS_CRLLEV_Y_B :
+    {0x9840,0xFFEC, WORD_LEN},// CS_CRLLEV_Y_C :
+    {0x9842,0xFFCE, WORD_LEN},// CS_CBLLEV_Y_L_A :
+    {0x9844,0xFFCE, WORD_LEN},// CS_CBLLEV_Y_L_B :
+    {0x9846,0xFFCE, WORD_LEN},// CS_CBLLEV_Y_L_C :
+    {0x9848,0xFFCE, WORD_LEN},// CS_CRLLEV_Y_L_A :
+    {0x984A,0xFFCE, WORD_LEN},// CS_CRLLEV_Y_L_B :
+    {0x984C,0xFFCE, WORD_LEN},// CS_CRLLEV_Y_L_C :
+    {0x6C4A,0x07, BYTE_LEN},// MAIN_CONFIG5 :
+    {0x6C4C,0x190A, WORD_LEN},// CNR_CTRL_TH_H :
+    {0x6C4E,0x1000, WORD_LEN},// CNR_CTRL_TH_L :
+    {0x9866,0x40, BYTE_LEN},// CNR_PREHNR_GAIN_A :
+    {0x9867,0x00, BYTE_LEN},// CNR_PREHNR_GAIN_B :
+    {0x9868,0x00, BYTE_LEN},// CNR_PREHNR_GAIN_C :
+    {0x9869,0x32, BYTE_LEN},// CNR_NLM_TH_CR_H_A :
+    {0x986A,0x04, BYTE_LEN},// CNR_NLM_TH_CR_H_B :
+    {0x986B,0x04, BYTE_LEN},// CNR_NLM_TH_CR_H_C :
+    {0x986C,0x32, BYTE_LEN},// CNR_NLM_TH_CR_L_A :
+    {0x986D,0x04, BYTE_LEN},// CNR_NLM_TH_CR_L_B :
+    {0x986E,0x04, BYTE_LEN},// CNR_NLM_TH_CR_L_C :
+    {0x986F,0x32, BYTE_LEN},// CNR_NLM_TH_CR_M_H_A :
+    {0x9870,0x04, BYTE_LEN},// CNR_NLM_TH_CR_M_H_B :
+    {0x9871,0x04, BYTE_LEN},// CNR_NLM_TH_CR_M_H_C :
+    {0x9872,0x32, BYTE_LEN},// CNR_NLM_TH_CR_M_L_A :
+    {0x9873,0x04, BYTE_LEN},// CNR_NLM_TH_CR_M_L_B :
+    {0x9874,0x04, BYTE_LEN},// CNR_NLM_TH_CR_M_L_C :
+    {0x9875,0x32, BYTE_LEN},// CNR_NLM_TH_CB_H_A :
+    {0x9876,0x04, BYTE_LEN},// CNR_NLM_TH_CB_H_B :
+    {0x9877,0x04, BYTE_LEN},// CNR_NLM_TH_CB_H_C :
+    {0x9878,0x32, BYTE_LEN},// CNR_NLM_TH_CB_L_A :
+    {0x9879,0x04, BYTE_LEN},// CNR_NLM_TH_CB_L_B :
+    {0x987A,0x04, BYTE_LEN},// CNR_NLM_TH_CB_L_C :
+    {0x987B,0x32, BYTE_LEN},// CNR_NLM_TH_CB_M_H_A :
+    {0x987C,0x04, BYTE_LEN},// CNR_NLM_TH_CB_M_H_B :
+    {0x987D,0x04, BYTE_LEN},// CNR_NLM_TH_CB_M_H_C :
+    {0x987E,0x32, BYTE_LEN},// CNR_NLM_TH_CB_M_L_A :
+    {0x987F,0x04, BYTE_LEN},// CNR_NLM_TH_CB_M_L_B :
+    {0x9880,0x04, BYTE_LEN},// CNR_NLM_TH_CB_M_L_C :
+    {0x9881,0x7F, BYTE_LEN},// CNR_VE_TH_CR_H_A :
+    {0x9882,0x01, BYTE_LEN},// CNR_VE_TH_CR_H_B :
+    {0x9883,0x01, BYTE_LEN},// CNR_VE_TH_CR_H_C :
+    {0x9884,0x7F, BYTE_LEN},// CNR_VE_TH_CR_L_A :
+    {0x9885,0x01, BYTE_LEN},// CNR_VE_TH_CR_L_B :
+    {0x9886,0x01, BYTE_LEN},// CNR_VE_TH_CR_L_C :
+    {0x9887,0x7F, BYTE_LEN},// CNR_VE_TH_CR_M_H_A :
+    {0x9888,0x01, BYTE_LEN},// CNR_VE_TH_CR_M_H_B :
+    {0x9889,0x01, BYTE_LEN},// CNR_VE_TH_CR_M_H_C :
+    {0x988A,0x7F, BYTE_LEN},// CNR_VE_TH_CR_M_L_A :
+    {0x988B,0x01, BYTE_LEN},// CNR_VE_TH_CR_M_L_B :
+    {0x988C,0x01, BYTE_LEN},// CNR_VE_TH_CR_M_L_C :
+    {0x988D,0x7F, BYTE_LEN},// CNR_VE_TH_CB_H_A :
+    {0x988E,0x01, BYTE_LEN},// CNR_VE_TH_CB_H_B :
+    {0x988F,0x01, BYTE_LEN},// CNR_VE_TH_CB_H_C :
+    {0x9890,0x7F, BYTE_LEN},// CNR_VE_TH_CB_L_A :
+    {0x9891,0x01, BYTE_LEN},// CNR_VE_TH_CB_L_B :
+    {0x9892,0x01, BYTE_LEN},// CNR_VE_TH_CB_L_C :
+    {0x9893,0x7F, BYTE_LEN},// CNR_VE_TH_CB_M_H_A :
+    {0x9894,0x01, BYTE_LEN},// CNR_VE_TH_CB_M_H_B :
+    {0x9895,0x01, BYTE_LEN},// CNR_VE_TH_CB_M_H_C :
+    {0x9896,0x7F, BYTE_LEN},// CNR_VE_TH_CB_M_L_A :
+    {0x9897,0x01, BYTE_LEN},// CNR_VE_TH_CB_M_L_B :
+    {0x9898,0x01, BYTE_LEN},// CNR_VE_TH_CB_M_L_C :
+    {0x9881,0x7F, BYTE_LEN},// CNR_VE_TH_CR_H_A :
+    {0x9882,0x01, BYTE_LEN},// CNR_VE_TH_CR_H_B :
+    {0x9883,0x01, BYTE_LEN},// CNR_VE_TH_CR_H_C :
+    {0x9884,0x7F, BYTE_LEN},// CNR_VE_TH_CR_L_A :
+    {0x9885,0x01, BYTE_LEN},// CNR_VE_TH_CR_L_B :
+    {0x9886,0x01, BYTE_LEN},// CNR_VE_TH_CR_L_C :
+    {0x9887,0x7F, BYTE_LEN},// CNR_VE_TH_CR_M_H_A :
+    {0x9888,0x01, BYTE_LEN},// CNR_VE_TH_CR_M_H_B :
+    {0x9889,0x01, BYTE_LEN},// CNR_VE_TH_CR_M_H_C :
+    {0x988A,0x7F, BYTE_LEN},// CNR_VE_TH_CR_M_L_A :
+    {0x988B,0x01, BYTE_LEN},// CNR_VE_TH_CR_M_L_B :
+    {0x988C,0x01, BYTE_LEN},// CNR_VE_TH_CR_M_L_C :
+    {0x988D,0x7F, BYTE_LEN},// CNR_VE_TH_CB_H_A :
+    {0x988E,0x01, BYTE_LEN},// CNR_VE_TH_CB_H_B :
+    {0x988F,0x01, BYTE_LEN},// CNR_VE_TH_CB_H_C :
+    {0x9890,0x7F, BYTE_LEN},// CNR_VE_TH_CB_L_A :
+    {0x9891,0x01, BYTE_LEN},// CNR_VE_TH_CB_L_B :
+    {0x9892,0x01, BYTE_LEN},// CNR_VE_TH_CB_L_C :
+    {0x9893,0x7F, BYTE_LEN},// CNR_VE_TH_CB_M_H_A :
+    {0x9894,0x01, BYTE_LEN},// CNR_VE_TH_CB_M_H_B :
+    {0x9895,0x01, BYTE_LEN},// CNR_VE_TH_CB_M_H_C :
+    {0x9896,0x7F, BYTE_LEN},// CNR_VE_TH_CB_M_L_A :
+    {0x9897,0x01, BYTE_LEN},// CNR_VE_TH_CB_M_L_B :
+    {0x9898,0x01, BYTE_LEN},// CNR_VE_TH_CB_M_L_C :
+    {0x989A,0x0066, WORD_LEN},// CNR_COEF_CR_H_A :
+    {0x989C,0x0100, WORD_LEN},// CNR_COEF_CR_H_B :
+    {0x989E,0x0100, WORD_LEN},// CNR_COEF_CR_H_C :
+    {0x98A0,0x0066, WORD_LEN},// CNR_COEF_CR_L_A :
+    {0x98A2,0x0100, WORD_LEN},// CNR_COEF_CR_L_B :
+    {0x98A4,0x0100, WORD_LEN},// CNR_COEF_CR_L_C :
+    {0x98A6,0x0066, WORD_LEN},// CNR_COEF_CR_M_H_A :
+    {0x98A8,0x0100, WORD_LEN},// CNR_COEF_CR_M_H_B :
+    {0x98AA,0x0100, WORD_LEN},// CNR_COEF_CR_M_H_C :
+    {0x98AC,0x0066, WORD_LEN},// CNR_COEF_CR_M_L_A :
+    {0x98AE,0x0100, WORD_LEN},// CNR_COEF_CR_M_L_B :
+    {0x98B0,0x0100, WORD_LEN},// CNR_COEF_CR_M_L_C :
+    {0x98B2,0x0066, WORD_LEN},// CNR_COEF_CB_H_A :
+    {0x98B4,0x0100, WORD_LEN},// CNR_COEF_CB_H_B :
+    {0x98B6,0x0100, WORD_LEN},// CNR_COEF_CB_H_C :
+    {0x98B8,0x0066, WORD_LEN},// CNR_COEF_CB_L_A :
+    {0x98BA,0x0100, WORD_LEN},// CNR_COEF_CB_L_B :
+    {0x98BC,0x0100, WORD_LEN},// CNR_COEF_CB_L_C :
+    {0x98BE,0x0066, WORD_LEN},// CNR_COEF_CB_M_H_A :
+    {0x98C0,0x0100, WORD_LEN},// CNR_COEF_CB_M_H_B :
+    {0x98C2,0x0100, WORD_LEN},// CNR_COEF_CB_M_H_C :
+    {0x98C4,0x0066, WORD_LEN},// CNR_COEF_CB_M_L_A :
+    {0x98C6,0x0100, WORD_LEN},// CNR_COEF_CB_M_L_B :
+    {0x98C8,0x0100, WORD_LEN},// CNR_COEF_CB_M_L_C :
+    {0x98CA,0x1770, WORD_LEN},// CNR_EDGE_GAIN_CR_H_A :
+    {0x98CC,0x07D0, WORD_LEN},// CNR_EDGE_GAIN_CR_H_B :
+    {0x98CE,0x07D0, WORD_LEN},// CNR_EDGE_GAIN_CR_H_C :
+    {0x98D0,0x1770, WORD_LEN},// CNR_EDGE_GAIN_CR_L_A :
+    {0x98D2,0x07D0, WORD_LEN},// CNR_EDGE_GAIN_CR_L_B :
+    {0x98D4,0x07D0, WORD_LEN},// CNR_EDGE_GAIN_CR_L_C :
+    {0x98D6,0x1770, WORD_LEN},// CNR_EDGE_GAIN_CR_M_H_A :
+    {0x98D8,0x07D0, WORD_LEN},// CNR_EDGE_GAIN_CR_M_H_B :
+    {0x98DA,0x07D0, WORD_LEN},// CNR_EDGE_GAIN_CR_M_H_C :
+    {0x98DC,0x1770, WORD_LEN},// CNR_EDGE_GAIN_CR_M_L_A :
+    {0x98DE,0x07D0, WORD_LEN},// CNR_EDGE_GAIN_CR_M_L_B :
+    {0x98E0,0x07D0, WORD_LEN},// CNR_EDGE_GAIN_CR_M_L_C :
+    {0x98E2,0x1770, WORD_LEN},// CNR_EDGE_GAIN_CB_H_A :
+    {0x98E4,0x07D0, WORD_LEN},// CNR_EDGE_GAIN_CB_H_B :
+    {0x98E6,0x07D0, WORD_LEN},// CNR_EDGE_GAIN_CB_H_C :
+    {0x98E8,0x1770, WORD_LEN},// CNR_EDGE_GAIN_CB_L_A :
+    {0x98EA,0x07D0, WORD_LEN},// CNR_EDGE_GAIN_CB_L_B :
+    {0x98EC,0x07D0, WORD_LEN},// CNR_EDGE_GAIN_CB_L_C :
+    {0x98EE,0x1770, WORD_LEN},// CNR_EDGE_GAIN_CB_M_H_A :
+    {0x98F0,0x07D0, WORD_LEN},// CNR_EDGE_GAIN_CB_M_H_B :
+    {0x98F2,0x07D0, WORD_LEN},// CNR_EDGE_GAIN_CB_M_H_C :
+    {0x98F4,0x1770, WORD_LEN},// CNR_EDGE_GAIN_CB_M_L_A :
+    {0x98F6,0x07D0, WORD_LEN},// CNR_EDGE_GAIN_CB_M_L_B :
+    {0x98F8,0x07D0, WORD_LEN},// CNR_EDGE_GAIN_CB_M_L_C :
+    {0x98FA,0x7530, WORD_LEN},// CNR_EDGE_TH_CR_H_A :
+    {0x98FC,0x0000, WORD_LEN},// CNR_EDGE_TH_CR_H_B :
+    {0x98FE,0x0000, WORD_LEN},// CNR_EDGE_TH_CR_H_C :
+    {0x9900,0x7530, WORD_LEN},// CNR_EDGE_TH_CR_L_A :
+    {0x9902,0x0000, WORD_LEN},// CNR_EDGE_TH_CR_L_B :
+    {0x9904,0x0000, WORD_LEN},// CNR_EDGE_TH_CR_L_C :
+    {0x9906,0x7530, WORD_LEN},// CNR_EDGE_TH_CR_M_H_A :
+    {0x9908,0x0000, WORD_LEN},// CNR_EDGE_TH_CR_M_H_B :
+    {0x990A,0x0000, WORD_LEN},// CNR_EDGE_TH_CR_M_H_C :
+    {0x990C,0x7530, WORD_LEN},// CNR_EDGE_TH_CR_M_L_A :
+    {0x990E,0x0000, WORD_LEN},// CNR_EDGE_TH_CR_M_L_B :
+    {0x9910,0x0000, WORD_LEN},// CNR_EDGE_TH_CR_M_L_C :
+    {0x9912,0x7530, WORD_LEN},// CNR_EDGE_TH_CB_H_A :
+    {0x9914,0x0000, WORD_LEN},// CNR_EDGE_TH_CB_H_B :
+    {0x9916,0x0000, WORD_LEN},// CNR_EDGE_TH_CB_H_C :
+    {0x9918,0x7530, WORD_LEN},// CNR_EDGE_TH_CB_L_A :
+    {0x991A,0x0000, WORD_LEN},// CNR_EDGE_TH_CB_L_B :
+    {0x991C,0x0000, WORD_LEN},// CNR_EDGE_TH_CB_L_C :
+    {0x991E,0x7530, WORD_LEN},// CNR_EDGE_TH_CB_M_H_A :
+    {0x9920,0x0000, WORD_LEN},// CNR_EDGE_TH_CB_M_H_B :
+    {0x9922,0x0000, WORD_LEN},// CNR_EDGE_TH_CB_M_H_C :
+    {0x9924,0x7530, WORD_LEN},// CNR_EDGE_TH_CB_M_L_A :
+    {0x9926,0x0000, WORD_LEN},// CNR_EDGE_TH_CB_M_L_B :
+    {0x9928,0x0000, WORD_LEN},// CNR_EDGE_TH_CB_M_L_C :
+    {0x9208,0x37, BYTE_LEN},// GAIN_TH_A_TYPE0 :
+    {0x9209,0x22, BYTE_LEN},// GAIN_TH_B_TYPE0 :
+    {0x920A,0x05, BYTE_LEN},// GAIN_TH_C_TYPE0 :
+    {0x5005,0xBB, BYTE_LEN},// DM_SW1 :
+    {0x5006,0x03, BYTE_LEN},// DM_SW2 :
+    {0x9608,0x0005, WORD_LEN},// DS_GRADCORE_A :
+    {0x960A,0x0004, WORD_LEN},// DS_GRADCORE_B :
+    {0x960C,0x0000, WORD_LEN},// DS_GRADCORE_C1 :
+    {0x960E,0x0000, WORD_LEN},// DS_GRADCORE_C2 :
+    {0x9610,0x000A, WORD_LEN},// DS_GRADLIM_A :
+    {0x9612,0x0010, WORD_LEN},// DS_GRADLIM_B :
+    {0x9614,0x0020, WORD_LEN},// DS_GRADLIM_C1 :
+    {0x9616,0x0020, WORD_LEN},// DS_GRADLIM_C2 :
+    {0x9600,0x0080, WORD_LEN},// DS_NOISELVL_A :
+    {0x9602,0x0050, WORD_LEN},// DS_NOISELVL_B :
+    {0x9604,0x0030, WORD_LEN},// DS_NOISELVL_C1 :
+    {0x9606,0x0030, WORD_LEN},// DS_NOISELVL_C2
+    {0x9670,0x14, BYTE_LEN},// YN_SLOPELIMIT_A :
+    {0x9671,0x20, BYTE_LEN},// YN_SLOPELIMIT_B :
+    {0x9672,0x20, BYTE_LEN},// YN_SLOPELIMIT_C1 :
+    {0x9673,0x20, BYTE_LEN},// YN_SLOPELIMIT_C2 :
+    {0x9674,0x0035, WORD_LEN},// YN_LNRTH_CORE_A :
+    {0x9676,0x0006, WORD_LEN},// YN_LNRTH_CORE_B :
+    {0x9678,0x0003, WORD_LEN},// YN_LNRTH_CORE_C1 :
+    {0x967A,0x0003, WORD_LEN},// YN_LNRTH_CORE_C2 :
+    {0x967C,0x002B, WORD_LEN},// YN_LNRTH_LIM_A :
+    {0x967E,0x0058, WORD_LEN},// YN_LNRTH_LIM_B :
+    {0x9680,0x00A0, WORD_LEN},// YN_LNRTH_LIM_C1 :
+    {0x9682,0x00A0, WORD_LEN},// YN_LNRTH_LIM_C2 :
+    {0x9684,0x000F, WORD_LEN},// LN_CNRTH_A :
+    {0x9686,0x0014, WORD_LEN},// LN_CNRTH_B :
+    {0x9688,0x0014, WORD_LEN},// LN_CNRTH_C1 :
+    {0x968A,0x0014, WORD_LEN},// LN_CNRTH_C2 :
+    {0x968C,0x0100, WORD_LEN},// CS_BLEND_LL_A :
+    {0x968E,0x0000, WORD_LEN},// CS_BLEND_LL_B :
+    {0x9690,0x03FF, WORD_LEN},// CS_BLEND_LL_C1 :
+    {0x9692,0x03FF, WORD_LEN},// CS_BLEND_LL_C2 :
+    {0x9628,0x0008, WORD_LEN},// DS_HLNLBLENDCORE_A :
+    {0x962A,0x0004, WORD_LEN},// DS_HLNLBLENDCORE_B :
+    {0x962C,0x0000, WORD_LEN},// DS_HLNLBLENDCORE_C1 :
+    {0x962E,0x0000, WORD_LEN},// DS_HLNLBLENDCORE_C2 :
+    {0x9630,0x0018, WORD_LEN},// DS_HLNLBLENDLIM_A :
+    {0x9632,0x0020, WORD_LEN},// DS_HLNLBLENDLIM_B :
+    {0x9634,0x0028, WORD_LEN},// DS_HLNLBLENDLIM_C1 :
+    {0x9636,0x0028, WORD_LEN},// DS_HLNLBLENDLIM_C2 :
+    {0x9638,0x000A, WORD_LEN},// DS_MNBLENDCORE_A :
+    {0x963A,0x0010, WORD_LEN},// DS_MNBLENDCORE_B :
+    {0x963C,0x0000, WORD_LEN},// DS_MNBLENDCORE_C1 :
+    {0x963E,0x0000, WORD_LEN},// DS_MNBLENDCORE_C2 :
+    {0x9640,0x0020, WORD_LEN},// DS_MNBLENDLIM_A :
+    {0x9642,0x0030, WORD_LEN},// DS_MNBLENDLIM_B :
+    {0x9644,0x0080, WORD_LEN},// DS_MNBLENDLIM_C1 :
+    {0x9646,0x0080, WORD_LEN},// DS_MNBLENDLIM_C2 :
+    {0x9648,0x000A, WORD_LEN},// DS_MHBLENDCORE_A :
+    {0x964A,0x0006, WORD_LEN},// DS_MHBLENDCORE_B :
+    {0x964C,0x0001, WORD_LEN},// DS_MHBLENDCORE_C1 :
+    {0x964E,0x0001, WORD_LEN},// DS_MHBLENDCORE_C2 :
+    {0x9650,0x0018, WORD_LEN},// DS_MHBLENDLIM_A :
+    {0x9652,0x0030, WORD_LEN},// DS_MHBLENDLIM_B :
+    {0x9654,0x0050, WORD_LEN},// DS_MHBLENDLIM_C1 :
+    {0x9656,0x0050, WORD_LEN},// DS_MHBLENDLIM_C2 :
+    {0x9668,0x0008, WORD_LEN},// DS_NAPMSKLIM_A :
+    {0x966A,0x0010, WORD_LEN},// DS_NAPMSKLIM_B :
+    {0x966C,0x0018, WORD_LEN},// DS_NAPMSKLIM_C1 :
+    {0x966E,0x0018, WORD_LEN},// DS_NAPMSKLIM_C2 :
+    {0x9618,0x0018, WORD_LEN},// DS_ZIPSUPCORE_A :
+    {0x961A,0x0018, WORD_LEN},// DS_ZIPSUPCORE_B :
+    {0x961C,0x0004, WORD_LEN},// DS_ZIPSUPCORE_C1 :
+    {0x961E,0x0004, WORD_LEN},// DS_ZIPSUPCORE_C2 :
+    {0x9620,0x0010, WORD_LEN},// DS_ZIPSUPLIM_A :
+    {0x9622,0x0010, WORD_LEN},// DS_ZIPSUPLIM_B :
+    {0x9624,0x0010, WORD_LEN},// DS_ZIPSUPLIM_C1 :
+    {0x9626,0x0010, WORD_LEN},// DS_ZIPSUPLIM_C2 :
+    {0x9658,0x0020, WORD_LEN},// DS_ICDCORE_A :
+    {0x965A,0x0010, WORD_LEN},// DS_ICDCORE_B :
+    {0x965C,0x0000, WORD_LEN},// DS_ICDCORE_C1 :
+    {0x965E,0x0000, WORD_LEN},// DS_ICDCORE_C2 :
+    {0x9660,0x0020, WORD_LEN},// DS_ICDLIM_A :
+    {0x9662,0x0040, WORD_LEN},// DS_ICDLIM_B :
+    {0x9664,0x0040, WORD_LEN},// DS_ICDLIM_C1 :
+    {0x9666,0x0040, WORD_LEN},// DS_ICDLIM_C2 :
+    {0x9694,0x000C, WORD_LEN},// CS_EDGE_CSUP_CORE_A :
+    {0x9696,0x000C, WORD_LEN},// CS_EDGE_CSUP_CORE_B :
+    {0x9698,0x000C, WORD_LEN},// CS_EDGE_CSUP_CORE_C1 :
+    {0x969A,0x0006, WORD_LEN},// CS_EDGE_CSUP_CORE_C2 :
+    {0x969C,0x000C, WORD_LEN},// CS_EDGE_CSUP_LIM_A :
+    {0x969E,0x000C, WORD_LEN},// CS_EDGE_CSUP_LIM_B :
+    {0x96A0,0x0010, WORD_LEN},// CS_EDGE_CSUP_LIM_C1 :
+    {0x96A2,0x0008, WORD_LEN},// CS_EDGE_CSUP_LIM_C2 :
+    {0x96A4,0x0180, WORD_LEN},// CS_SPOT_CSUP_CORE_A :
+    {0x96A6,0x0180, WORD_LEN},// CS_SPOT_CSUP_CORE_B :
+    {0x96A8,0x0100, WORD_LEN},// CS_SPOT_CSUP_CORE_C1 :
+    {0x96AA,0x0100, WORD_LEN},// CS_SPOT_CSUP_CORE_C2 :
+    {0x96AC,0x000A, WORD_LEN},// CS_SPOT_CSUP_LIM_A :
+    {0x96AE,0x000A, WORD_LEN},// CS_SPOT_CSUP_LIM_B :
+    {0x96B0,0x0018, WORD_LEN},// CS_SPOT_CSUP_LIM_C1 :
+    {0x96B2,0x0018, WORD_LEN},// CS_SPOT_CSUP_LIM_C2 :
+    {0x9800,0x67, BYTE_LEN},//
+    {0x9801,0x80, BYTE_LEN},//
+    {0x9217,0x3C, BYTE_LEN},// GAIN_TH_A_TYPE5 :
+    {0x9218,0x28, BYTE_LEN},// GAIN_TH_B_TYPE5 :
+    {0x9219,0x1E, BYTE_LEN},// GAIN_TH_C_TYPE5 :
+    {0x928F,0x05, BYTE_LEN},// CNR_PREHNR_GAIN_SEL :
+    {0x9290,0x05, BYTE_LEN},// CNR_NLM_TH_CR_H_SEL :
+    {0x9291,0x05, BYTE_LEN},// CNR_NLM_TH_CR_L_SEL :
+    {0x9292,0x05, BYTE_LEN},// CNR_NLM_TH_CR_M_H_SEL :
+    {0x9293,0x05, BYTE_LEN},// CNR_NLM_TH_CR_M_L_SEL :
+    {0x9294,0x05, BYTE_LEN},// CNR_NLM_TH_CB_H_SEL :
+    {0x9295,0x05, BYTE_LEN},// CNR_NLM_TH_CB_L_SEL :
+    {0x9296,0x05, BYTE_LEN},// CNR_NLM_TH_CB_M_H_SEL :
+    {0x9297,0x05, BYTE_LEN},// CNR_NLM_TH_CB_M_L_SEL :
+    {0x9298,0x05, BYTE_LEN},// CNR_VE_TH_CR_H_SEL :
+    {0x9299,0x05, BYTE_LEN},// CNR_VE_TH_CR_L_SEL :
+    {0x929A,0x05, BYTE_LEN},// CNR_VE_TH_CR_M_H_SEL :
+    {0x929B,0x05, BYTE_LEN},// CNR_VE_TH_CR_M_L_SEL :
+    {0x929C,0x05, BYTE_LEN},// CNR_VE_TH_CB_H_SEL :
+    {0x929D,0x05, BYTE_LEN},// CNR_VE_TH_CB_L_SEL :
+    {0x929E,0x05, BYTE_LEN},// CNR_VE_TH_CB_M_H_SEL :
+    {0x929F,0x05, BYTE_LEN},// CNR_VE_TH_CB_M_L_SEL :
+    {0x92A0,0x05, BYTE_LEN},// CNR_COEF_CR_H_SEL :
+    {0x92A1,0x05, BYTE_LEN},// CNR_COEF_CR_L_SEL :
+    {0x92A2,0x05, BYTE_LEN},// CNR_COEF_CR_M_H_SEL :
+    {0x92A3,0x05, BYTE_LEN},// CNR_COEF_CR_M_L_SEL :
+    {0x92A4,0x05, BYTE_LEN},// CNR_COEF_CB_H_SEL :
+    {0x92A5,0x05, BYTE_LEN},// CNR_COEF_CB_L_SEL :
+    {0x92A6,0x05, BYTE_LEN},// CNR_COEF_CB_M_H_SEL :
+    {0x92A7,0x05, BYTE_LEN},// CNR_COEF_CB_M_L_SEL :
+    {0x92A8,0x05, BYTE_LEN},// CNR_EDGE_GAIN_CR_H_SEL :
+    {0x92A9,0x05, BYTE_LEN},// CNR_EDGE_GAIN_CR_L_SEL :
+    {0x92AA,0x05, BYTE_LEN},// CNR_EDGE_GAIN_CR_M_H_SEL :
+    {0x92AB,0x05, BYTE_LEN},// CNR_EDGE_GAIN_CR_M_L_SEL :
+    {0x92AC,0x05, BYTE_LEN},// CNR_EDGE_GAIN_CB_H_SEL :
+    {0x92AD,0x05, BYTE_LEN},// CNR_EDGE_GAIN_CB_L_SEL :
+    {0x92AE,0x05, BYTE_LEN},// CNR_EDGE_GAIN_CB_M_H_SEL :
+    {0x92AF,0x05, BYTE_LEN},// CNR_EDGE_GAIN_CB_M_L_SEL :
+    {0x92B0,0x05, BYTE_LEN},// CNR_EDGE_TH_CR_H_SEL :
+    {0x92B1,0x05, BYTE_LEN},// CNR_EDGE_TH_CR_L_SEL :
+    {0x92B2,0x05, BYTE_LEN},// CNR_EDGE_TH_CR_M_H_SEL :
+    {0x92B3,0x05, BYTE_LEN},// CNR_EDGE_TH_CR_M_L_SEL :
+    {0x92B4,0x05, BYTE_LEN},// CNR_EDGE_TH_CB_H_SEL :
+    {0x92B5,0x05, BYTE_LEN},// CNR_EDGE_TH_CB_L_SEL :
+    {0x92B6,0x05, BYTE_LEN},// CNR_EDGE_TH_CB_M_H_SEL :
+    {0x92B7,0x05, BYTE_LEN},// CNR_EDGE_TH_CB_M_L_SEL :
+
+
+    {0x6DA8,0x01, BYTE_LEN},//SHD_CoEF (OTP shading ON flag)
+    {0x6DA9,0x09, BYTE_LEN},// WHITE_CTRL :
+    {0x6DAA,0x52, BYTE_LEN},// WHITE_ON_CNT :
+    {0x6DAB,0x20, BYTE_LEN},// WHITE_ON_DELAY :
+    {0x6DAC,0x08, BYTE_LEN},// WHITE_OFF_DELAY :
+    {0x6DAD,0x0C, BYTE_LEN},// WHITE_OFSET1_UP :
+    {0x6DAE,0x0C, BYTE_LEN},// WHITE_OFSET1_DOWN :
+    {0x6DAF,0x11, BYTE_LEN},// WHITE_OFSET1_RIGHT :
+    {0x6DB0,0x1B, BYTE_LEN},// WHITE_OFSET1_LEFT :
+    {0x6DB1,0x0D, BYTE_LEN},// WHITE_OFSET2_UP :
+    {0x6DB2,0x13, BYTE_LEN},// WHITE_OFSET2_DOWN :
+    {0x6DB3,0x11, BYTE_LEN},// WHITE_OFSET2_RIGHT :
+    {0x6DB4,0x17, BYTE_LEN},// WHITE_OFSET2_LEFT :
+    {0x6DB5,0x5D, BYTE_LEN},// WHITE_RATIO_R_TH1 :
+    {0x6DB6,0x13, BYTE_LEN},// WHITE_RATIO_R_TH2 :
+    {0x6DB7,0x18, BYTE_LEN},// WHITE_RATIO_B_TH1 :
+    {0x6DB8,0x0F, BYTE_LEN},// WHITE_RATIO_B_TH2 :
+    {0x6DB9,0x0F, BYTE_LEN},// WHITE_FRMIN_NUM1 :
+    {0x6DBA,0x30, BYTE_LEN},// WHITE_FRMIN_NUM2 :
+    {0x6DBB,0x0B, BYTE_LEN},// WHITE_YHIST_NUM :
+    {0x6DBC,0x03, BYTE_LEN},// WHITE_EDGE_MAX :
+
+    {0x6DF6,0xFF, BYTE_LEN},// WHITE_SHD_JUDGE_BODY_COLOR_RATIO :
+    {0x6DF7,0xF0, BYTE_LEN},// WHITE_SHD_JUDGE_RED_RATIO :
+
+
+    //추가 세팅 부분
+    {0x00F7,0x52, BYTE_LEN},// INIT_QLTY0 : Standard 82
+    {0x00F8,0x59, BYTE_LEN},// INIT_QLTY1 : Fine 89
+    {0x00F9,0x5F, BYTE_LEN},// INIT_QLTY2 : SuperFine 95
+
+    //minimum shutter speed
+    {0x6800,0x03, BYTE_LEN},//SHTMINLINE
+    {0x030E,0x00, BYTE_LEN},
+
+    //{0x030E,00, BYTE_LEN},//Half release scene 1
+    /////// Normal AE Line //////
+    // normal scene1 preview, capture AE line
+    {0x0326,0x21, BYTE_LEN},// SHTCTRLTIME1_TYPE1 : 35ms
+    {0x0327,0x19, BYTE_LEN},// AGCGAIN1_TYPE1 : 5.7dB
+    {0x0328,0x52, BYTE_LEN},// SHTCTRLTIME2_TYPE1 :  55ms
+    {0x0329,0x23, BYTE_LEN},// AGCGAIN2_TYPE1 : 12.6dB
+    {0x032A,0x3E, BYTE_LEN},// SHTCTRLTIME3_TYPE1 : 104ms
+    {0x032B,0x4C, BYTE_LEN},// AGCGAIN3_TYPE1 : 20.1dB        2014.03.28 20.1db(43)-->22.8db(4C) TL84 30lux 밝기 개선
+
+    // half release max 20 fps normal AE mode(not use)
+    {0x032C,0x23, BYTE_LEN},// SHTCTRLTIME1_TYPE2
+    {0x032D,0x13, BYTE_LEN},// AGCGAIN1_TYPE2
+    {0x032E,0x37, BYTE_LEN},// SHTCTRLTIME2_TYPE2
+    {0x032F,0x2A, BYTE_LEN},// AGCGAIN2_TYPE2
+    {0x0330,0x34, BYTE_LEN},// SHTCTRLTIME3_TYPE2
+    {0x0331,0x55, BYTE_LEN},// AGCGAIN3_TYPE2
+
+    // flash ae line
+    {0x0332,0x42, BYTE_LEN},// SHTCTRLTIME1_TYPE3 :
+    {0x0333,0x3C, BYTE_LEN},// AGCGAIN1_TYPE3 :
+    {0x0334,0x42, BYTE_LEN},// SHTCTRLTIME2_TYPE3 :
+    {0x0335,0x3C, BYTE_LEN},// AGCGAIN2_TYPE3 :
+    {0x0336,0x21, BYTE_LEN},// SHTCTRLTIME3_TYPE3 :
+    {0x0337,0x3C, BYTE_LEN},// AGCGAIN3_TYPE3 :
+
+    //night mode AF ae line
+    {0x033E,0x21, BYTE_LEN},// SHTCTRLTIME1_TYPE5 :
+    {0x033F,0x19, BYTE_LEN},// AGCGAIN1_TYPE5 :
+    {0x0340,0x52, BYTE_LEN},// SHTCTRLTIME2_TYPE5 :
+    {0x0341,0x23, BYTE_LEN},// AGCGAIN2_TYPE5 :
+    {0x0342,0xA6, BYTE_LEN},// SHTCTRLTIME3_TYPE5 :
+    {0x0343,0x49, BYTE_LEN},// AGCGAIN3_TYPE5 :
+
+    //night mode capture ae line
+    {0x0344,0x21, BYTE_LEN},// SHTCTRLTIME1_TYPE6 :
+    {0x0345,0x17, BYTE_LEN},// AGCGAIN1_TYPE6 :
+    {0x0346,0x52, BYTE_LEN},// SHTCTRLTIME2_TYPE6 :
+    {0x0347,0x21, BYTE_LEN},// AGCGAIN2_TYPE6 :
+    {0x0348,0xFA, BYTE_LEN},// SHTCTRLTIME3_TYPE6 :
+    {0x0349,0x3D, BYTE_LEN},// AGCGAIN3_TYPE6 :
+
+    // fire mode line
+    {0x0356,0x01, BYTE_LEN},// SHTCTRLTIME1_TYPE9 :
+    {0x0357,0x00, BYTE_LEN},// AGCGAIN1_TYPE9 :
+    {0x0358,0x01, BYTE_LEN},// SHTCTRLTIME2_TYPE9 :
+    {0x0359,0x00, BYTE_LEN},// AGCGAIN2_TYPE9 :
+    {0x035A,0xF8, BYTE_LEN},// SHTCTRLTIME3_TYPE9 :
+    {0x035B,0x00, BYTE_LEN},// AGCGAIN3_TYPE9 :
+
+    // fire mode AF line
+    {0x035C,0x01, BYTE_LEN},// SHTCTRLTIME1_TYPE10 :
+    {0x035D,0x00, BYTE_LEN},// AGCGAIN1_TYPE10 :
+    {0x035E,0x01, BYTE_LEN},// SHTCTRLTIME2_TYPE10 :
+    {0x035F,0x00, BYTE_LEN},// AGCGAIN2_TYPE10 :
+    {0x0360,0xFF, BYTE_LEN},// SHTCTRLTIME3_TYPE10 :
+    {0x0361,0x00, BYTE_LEN},// AGCGAIN3_TYPE10 :
+	{0x02FC,0x1CDE, WORD_LEN},// EVREF_TYPE1 : _20140305 TL84-100Lux(20DF) --> 20140328 야외 Target 낮춤(1CDE)
+	{0x02FE,0x1CDE, WORD_LEN},// EVREF_TYPE2 : _20140305 TL84-100Lux(20DF) --> 20140328 야외 Target 낮춤(1CDE)
+
+    //AE ref tunning
+    {0x5E8A,0x00, BYTE_LEN},// EVREF_GAIN_A :
+    {0x5E8B,0x02, BYTE_LEN},// EVREF_GAIN_B :
+    {0x5E8C,0x04, BYTE_LEN},// EVREF_GAIN_C :
+    {0x5E8D,0xFF, BYTE_LEN},// EVREF_GAIN_D :
+    {0x5E8E,0xFE, BYTE_LEN},// EVREF_GAIN_E :
+    {0x5E8F,0x90, BYTE_LEN},// EVREF_TH_A :
+    {0x5E90,0xA1, BYTE_LEN},// EVREF_TH_B :
+    {0x5E91,0xA9, BYTE_LEN},// EVREF_TH_C :
+    {0x5E92,0xB8, BYTE_LEN},// EVREF_TH_D :
+    {0x5E93,0xD5, BYTE_LEN},// EVREF_TH_E :
+    {0x5E49,0x25, BYTE_LEN},// AEin2out:
+    {0x5E4A,0x25, BYTE_LEN},// AEin2out :
+
+    ////////////////MWB & AWB 튜닝////////////
+    {0x6244,0x0B81, WORD_LEN},// USER0R :
+    {0x6246,0x1832, WORD_LEN},// USER0B :
+    {0x6248,0x0C65, WORD_LEN},// USER1R : Daylight 2014.03.28 Auto와 동일하게 수정
+    {0x624A,0x155D, WORD_LEN},// USER1B :
+    {0x624C,0x09C8, WORD_LEN},// USER2R : Cloudy
+    {0x624E,0x1A06, WORD_LEN},// USER2B :
+    {0x6250,0x1100, WORD_LEN},// USER3R : Fluorescent 2014.03.28 Auto와 동일하게 수정
+    {0x6252,0x117A, WORD_LEN},// USER3B :
+    {0x6254,0x11DB, WORD_LEN},// USER4R : A(Inca) 2014.03.28 색감 개선
+    {0x6256,0x0ED2, WORD_LEN},// USER4B :
+
+	//////////////////////////////////////////////////
+	{0x6258,0x98, BYTE_LEN},// in_judgpos : // 2014.03.28 야외 그늘 Shading 개선 (indoor로 인식되는 문제 수정) 2014.04.01 97 -> 98 D50 정물씬 Outdoor로 인식되는 문제 수정
+	{0x6259,0x9A, BYTE_LEN}// out_judgpos : // 2014.03.28 야외 그늘 Shading 개선 (indoor로 인식되는 문제 수정) 2014.04.01 92 -> 9A D50 정물씬 Outdoor로 인식되는 문제 수정
+
+/*
+//////////////////////////////////////////////////
+//// CAT. : USERCTRL (SYSTEM RELATED)////
+/////////////////////////////////////////////////
+    {0x00b5,0x01, BYTE_LEN},//CAP_CARRY_OVER_F
+    {0x00b6,0x00, BYTE_LEN},//CAPNUM
+    {0x008A,0x1B, BYTE_LEN},//OUTFMT_CAP     INTERLEAVE MODE SPOOF FREE-RUNNING MODE
+
+    {0x0092,0x0A20, WORD_LEN},//HSIZE_CAP  - 2592
+    {0x0098,0x0798, WORD_LEN},//VSIZE_CAP  - 1944
+
+    {0x00f6,0x02, BYTE_LEN},//JPG_QLTY
+    {0x00f7,0x3C, BYTE_LEN},//INIT_QLTY0
+    {0x00f8,0x46, BYTE_LEN},//INIT_QLTY1
+    {0x00f9,0x50, BYTE_LEN},//INIT_QLTY2
+
+    {0x00fc,0x0BB8, WORD_LEN},// UPPER_SIZE_LIMIT0 //m_20120223
+    {0x00fe,0x0BB8, WORD_LEN},// UPPER_SIZE_LIMIT1 //m_20120223
+    {0x0100,0x0BB8, WORD_LEN},// UPPER_SIZE_LIMIT2 //m_20120223
+
+    {0x0102,0x0000, WORD_LEN},//LOWER_SIZE_LIMIT0 //m_20120223
+    {0x0104,0x0000, WORD_LEN},//LOWER_SIZE_LIMIT1 //m_20120223
+    {0x0106,0x0000, WORD_LEN},//LOWER_SIZE_LIMIT2 //m_20120223
+
+    {0x00fA,0x02, BYTE_LEN},  //ERR_SUB_VAL
+    {0x00FB,0x88, BYTE_LEN},//RETRY_CTL
+    {0x009c,0x0140, WORD_LEN},//HSIZE_TN 320 QVGA
+    {0x009E,0x00F0, WORD_LEN},//VSIZE_TN 240
+    {0x00E5,0x01, BYTE_LEN},//SIZE_HOLD_EN
+    {0x00E8,0x06B8, WORD_LEN},//SIZE_HOLD_HOUT
+    {0x00E3,0x00, BYTE_LEN},//JPEGMAXMODE
+    {0x00EC,0x07A0, WORD_LEN},//SIZE_HOLD_VOUT  1944
+    {0x00F1,0x01, BYTE_LEN},//JPGBUF_LINEFIX_F
+    {0x0084,0x00, BYTE_LEN},//SENSMODE_CAP
+    {0x0087,0x03, BYTE_LEN},//FPSTYPE_CAP
+
+/////////////////////////////////////
+//// CAT. : JPEG ////
+/////////////////////////////////////
+    {0x7802,0x04, BYTE_LEN},//JPEG FILE FORMAT SETTING
+    {0x7803,0x00, BYTE_LEN},//COLOR DIFFERENCE FILTER REGISTER
+    {0x7804,0x00, BYTE_LEN},//JPEG FILE FORMAT SETTING & COLOR DIFFERENCE FILTER REGISTER
+    {0x0012,0x01, BYTE_LEN}, //OM CHANGE
+*/
+};
+
+//                                                                                                                                          
+isx012_short_t ISX012_AF_Window_Reset[] =
+{
+	//AF opd window setting
+	{0x6A30, 0x0484, 0x02},
+	{0x6A32, 0x0124, 0x02},
+	{0x6A34, 0x0118, 0x02},
+	{0x6A36, 0x0118, 0x02},
+	{0x6A38, 0x0439, 0x02},
+	{0x6A3A, 0x00D9, 0x02},
+	{0x6A3C, 0x01AE, 0x02},
+	{0x6A3E, 0x01AE, 0x02},
+	{0x6A40, 0x0268, 0x02},
+	{0x6A42, 0x0340, 0x02},
+	{0x6A44, 0x0118, 0x02},
+	{0x6A46, 0x0118, 0x02},
+	{0x6A48, 0x021D, 0x02},
+	{0x6A4A, 0x02F5, 0x02},
+	{0x6A4C, 0x01AE, 0x02},
+	{0x6A4E, 0x01AE, 0x02},
+	{0x6A50, 0x0484, 0x02},
+	{0x6A52, 0x0340, 0x02},
+	{0x6A54, 0x0118, 0x02},
+	{0x6A56, 0x0118, 0x02},
+	{0x6A58, 0x0439, 0x02},
+	{0x6A5A, 0x02F5, 0x02},
+	{0x6A5C, 0x01AE, 0x02},
+	{0x6A5E, 0x01AE, 0x02},
+	{0x6A60, 0x06A0, 0x02},
+	{0x6A62, 0x0340, 0x02},
+	{0x6A64, 0x0118, 0x02},
+	{0x6A66, 0x0118, 0x02},
+	{0x6A68, 0x0655, 0x02},
+	{0x6A6A, 0x02F5, 0x02},
+	{0x6A6C, 0x01AE, 0x02},
+	{0x6A6E, 0x01AE, 0x02},
+	{0x6A70, 0x0484, 0x02},
+	{0x6A72, 0x055C, 0x02},
+	{0x6A74, 0x0118, 0x02},
+	{0x6A76, 0x0118, 0x02},
+	{0x6A78, 0x0439, 0x02},
+	{0x6A7A, 0x0511, 0x02},
+	{0x6A7C, 0x01AE, 0x02},
+	{0x6A7E, 0x01AE, 0x02},
+	{0x6A80, 0x01, 0x01},
+	{0x6A81, 0x02, 0x01},
+	{0x6A82, 0x00, 0x01},
+	{0x6A83, 0x00, 0x01},
+	{0x6A84, 0x08, 0x01},
+	{0x6A85, 0x07, 0x01},
+	{0x6A86, 0x00, 0x01},
+	{0x6A87, 0x00, 0x01},
+	{0x6A88, 0x01, 0x01},
+	{0x6A89, 0x02, 0x01},
+	{0x6646, 0x08, 0x01},
+};
+//                                                                                                                                          
+
+//                                                                                           
+isx012_short_t ISX012_CAF_setting[] =
+{
+	{0x6622, 0x0004, 0x02},    // AF_CAF_PARAM_WOBBLE_STEP :
+	{0x6624, 0x0008, 0x02},    // AF_CAF_CLIMB_STEP :
+	{0x6687, 0x01, 0x01},      // AF_CAF_CLIMB_PEAK_BACK_STEP_ENABLE :
+	{0x6698, 0x00, 0x01},      // AF_CAF_WOBBLE_FILTER_ENABLE :
+	{0x66A4, 0x06, 0x01},      // AF_CAF_OPD_FLAT_MOVE_ENABLE :
+	{0x66B0, 0x0002, 0x02},    // AF_CAF_WAIT_FOR_AF_STABLE_TH :
+	{0x5003, 0x04, 0x01},      // Z1_HOLD = 1
+	{0x6696, 0x16, 0x01},	   // AF_CAF_WOBBLE_START_INTERVAL_COUNTER
+	{0x6716, 0x0000, 0x02},    // CAF_LVD_WOB_HBPF_VAL1 :
+	{0x6718, 0x0000, 0x02},    // CAF_LVD_WOB_HBPF_VAL2 :
+	{0x671A, 0x00C8, 0x02},    // CAF_LVD_WOB_HBPF_RATE1 :
+	{0x671C, 0x00C8, 0x02},    // CAF_LVD_WOB_HBPF_RATE2 :
+	{0x671E, 0x00, 0x01},      // CAF_LVD_WOB_HBPF_SHIFT :
+	{0x6720, 0x0000, 0x02},    // CAF_LVD_WOB_LBPF_VAL1 :
+	{0x6722, 0x0000, 0x02},    // CAF_LVD_WOB_LBPF_VAL2 :
+	{0x6724, 0x0014, 0x02},    // CAF_LVD_WOB_LBPF_RATE1 :
+	{0x6726, 0x0014, 0x02},    // CAF_LVD_WOB_LBPF_RATE2 :
+	{0x6728, 0x00, 0x01},      // CAF_LVD_WOB_LBPF_SHIFT :
+	{0x672A, 0x0000, 0x02},    // CAF_LVD_CLMP_HBPF_VAL1 :
+	{0x672C, 0x0000, 0x02},    // CAF_LVD_CLMP_HBPF_VAL2 :
+	{0x672E, 0x012C, 0x02},    // CAF_LVD_CLMP_HBPF_RATE1 :
+	{0x6730, 0x012C, 0x02},    // CAF_LVD_CLMP_HBPF_RATE2 :
+	{0x6732, 0x00, 0x01},      // CAF_LVD_CLMP_HBPF_SHIFT :
+	{0x6734, 0x0000, 0x02},    // CAF_LVD_CLMP_LBPF_VAL1 :
+	{0x6736, 0x0000, 0x02},    // CAF_LVD_CLMP_LBPF_VAL2 :
+	{0x6738, 0x0046, 0x02},    // CAF_LVD_CLMP_LBPF_RATE1 :
+	{0x673A, 0x0046, 0x02},    // CAF_LVD_CLMP_LBPF_RATE2 :
+	{0x673C, 0x00, 0x01},      // CAF_LVD_CLMP_LBPF_SHIFT :
+	{0x661E, 0x00C8, 0x02},    // AF_CAF_FAR_POSITION
+	{0x6620, 0x02BC, 0x02}     // AF_CAF_NEAR_POSITION
+};
+//                                                                                           
+
+//                                                                 
+isx012_short_t ISX012_Flash_AELINE[] =
+{
+	//Flash_AEline_SET
+	{0x0308,0x12,0x01},    // AELINE_MONI_SN1_2 :
+	{0x0309,0x23,0x01},    // AELINE_MONI_SN3_4 :
+	{0x030B,0x42,0x01},    // AELINE_MONI_SN7_8 :
+	{0x030D,0x12,0x01},    // AELINE_MONI_SN11_12 :
+	{0x030E,0x12,0x01},    // AELINE_HALF_SN1_2 :
+	{0x030F,0x23,0x01},    // AELINE_HALF_SN3_4 :
+	{0x0311,0x42,0x01},    // AELINE_HALF_SN7_8 :
+	{0x0313,0x12,0x01},    // AELINE_HALF_SN11_12 :
+	{0x0314,0x12,0x01},    // AELINE_HALF_AFEND_SN1_2 :
+	{0x0315,0x23,0x01},    // AELINE_HALF_AFEND_SN3_4 :
+	{0x0317,0x42,0x01},    // AELINE_HALF_AFEND_SN7_8 :
+	{0x0319,0x12,0x01},    // AELINE_HALF_AFEND_SN11_12 :
+	{0x031A,0x02,0x01},    // AELINE_CAP_SN1_2 :
+	{0x031B,0x23,0x01},    // AELINE_CAP_SN3_4 :
+	{0x031D,0x52,0x01},    // AELINE_CAP_SN7_8 :
+	{0x031F,0x02,0x01},    // AELINE_CAP_SN11_12 :
+};
+
+isx012_short_t ISX012_Flash_ON[] =
+{
+	//Flash_ON_SET
+	{0x00B7,0x15,0x01},    // LED_ON
+	{0x0016,0x10,0x01},    // GPIO_FUNCSEL
+	{0x0181,0x01,0x01},    // CAP_HALF_AE_CTRL  //
+	{0x01AE,0x01,0x01},    // HALF_AWB_CTRL
+	{0x6223,0x01,0x01},    // INIT_GAINS
+	{0x6226,0x01,0x01},    // ATW_GAINS_IN_NR
+	{0x6227,0x01,0x01},    // ATW_GAINS_IN
+	{0x6228,0x01,0x01},    // ATW_GAINS_OUT_NR
+	{0x6229,0x01,0x01},    // ATW_GAINS_OUT
+	{0x5E3D,0x0F,0x01},    // FASTMOVE_TIMEOUT
+	{0x5E32,0x0F,0x01},    // AESPEED_FAST
+	{0x5E2E,0x1A,0x01},    // AEIINDEADBAND
+	{0x500A,0x00,0x01},    // FAST_MODECHG_EN
+	{0x01AF,0x00,0x01},    // CAP_AWB_CTRL
+	{0x6224,0x01,0x01},    // ATW_DELAY
+	//AWB boundary set
+	{0x6400,0x00,0x01},    // INFRM_LEFT00 :
+	{0x6401,0x00,0x01},    // INFRM_LEFT01 :
+	{0x6402,0x00,0x01},    // INFRM_LEFT02 :
+	{0x6403,0x00,0x01},    // INFRM_LEFT03 :
+	{0x6404,0x00,0x01},    // INFRM_LEFT04 :
+	{0x6405,0x00,0x01},    // INFRM_LEFT05 :
+	{0x6406,0x00,0x01},    // INFRM_LEFT06 :
+	{0x6407,0x00,0x01},    // INFRM_LEFT07 :
+	{0x6408,0x00,0x01},    // INFRM_LEFT08 :
+	{0x6409,0x00,0x01},    // INFRM_LEFT09 :
+	{0x640A,0x00,0x01},    // INFRM_LEFT10 :
+	{0x640B,0x00,0x01},    // INFRM_LEFT11 :
+	{0x640C,0x00,0x01},    // INFRM_LEFT12 :
+	{0x640D,0x00,0x01},    // INFRM_LEFT13 :
+	{0x640E,0x00,0x01},    // INFRM_LEFT14 :
+	{0x640F,0x00,0x01},    // INFRM_LEFT15 :
+	{0x6410,0x00,0x01},    // INFRM_LEFT16 :
+	{0x6411,0x00,0x01},    // INFRM_LEFT17 :
+	{0x6412,0x00,0x01},    // INFRM_LEFT18 :
+	{0x6413,0x00,0x01},    // INFRM_LEFT19 :
+	{0x6414,0x00,0x01},    // INFRM_LEFT20 :
+	{0x6415,0x00,0x01},    // INFRM_LEFT21 :
+	{0x6416,0x00,0x01},    // INFRM_LEFT22 :
+	{0x6417,0x00,0x01},    // INFRM_LEFT23 :
+	{0x6418,0x00,0x01},    // INFRM_LEFT24 :
+	{0x6419,0x00,0x01},    // INFRM_LEFT25 :
+	{0x641A,0x00,0x01},    // INFRM_LEFT26 :
+	{0x641B,0x00,0x01},    // INFRM_LEFT27 :
+	{0x641C,0x00,0x01},    // INFRM_LEFT28 :
+	{0x641D,0x00,0x01},    // INFRM_LEFT29 :
+	{0x641E,0x00,0x01},    // INFRM_LEFT30 :
+	{0x641F,0x00,0x01},    // INFRM_LEFT31 :
+	{0x6420,0x00,0x01},    // INFRM_LEFT32 :
+	{0x6421,0x00,0x01},    // INFRM_LEFT33 :
+	{0x6422,0x00,0x01},    // INFRM_LEFT34 :
+	{0x6423,0x00,0x01},    // INFRM_LEFT35 :
+	{0x6424,0x00,0x01},    // INFRM_LEFT36 :
+	{0x6425,0x00,0x01},    // INFRM_LEFT37 :
+	{0x6426,0xFF,0x01},    // INFRM_RIGHT00 :
+	{0x6427,0xFF,0x01},    // INFRM_RIGHT01 :
+	{0x6428,0xFF,0x01},    // INFRM_RIGHT02 :
+	{0x6429,0xFF,0x01},    // INFRM_RIGHT03 :
+	{0x642A,0xFF,0x01},    // INFRM_RIGHT04 :
+	{0x642B,0xFF,0x01},    // INFRM_RIGHT05 :
+	{0x642C,0xFF,0x01},    // INFRM_RIGHT06 :
+	{0x642D,0xFF,0x01},    // INFRM_RIGHT07 :
+	{0x642E,0xFF,0x01},    // INFRM_RIGHT08 :
+	{0x642F,0xFF,0x01},    // INFRM_RIGHT09 :
+	{0x6430,0xFF,0x01},    // INFRM_RIGHT10 :
+	{0x6431,0xFF,0x01},    // INFRM_RIGHT11 :
+	{0x6432,0xFF,0x01},    // INFRM_RIGHT12 :
+	{0x6433,0xFF,0x01},    // INFRM_RIGHT13 :
+	{0x6434,0xFF,0x01},    // INFRM_RIGHT14 :
+	{0x6435,0xFF,0x01},    // INFRM_RIGHT15 :
+	{0x6436,0xFF,0x01},    // INFRM_RIGHT16 :
+	{0x6437,0xFF,0x01},    // INFRM_RIGHT17 :
+	{0x6438,0xFF,0x01},    // INFRM_RIGHT18 :
+	{0x6439,0xFF,0x01},    // INFRM_RIGHT19 :
+	{0x643A,0xFF,0x01},    // INFRM_RIGHT20 :
+	{0x643B,0xFF,0x01},    // INFRM_RIGHT21 :
+	{0x643C,0xFF,0x01},    // INFRM_RIGHT22 :
+	{0x643D,0xFF,0x01},    // INFRM_RIGHT23 :
+	{0x643E,0xFF,0x01},    // INFRM_RIGHT24 :
+	{0x643F,0xFF,0x01},    // INFRM_RIGHT25 :
+	{0x6440,0xFF,0x01},    // INFRM_RIGHT26 :
+	{0x6441,0xFF,0x01},    // INFRM_RIGHT27 :
+	{0x6442,0xFF,0x01},    // INFRM_RIGHT28 :
+	{0x6443,0xFF,0x01},    // INFRM_RIGHT29 :
+	{0x6444,0xFF,0x01},    // INFRM_RIGHT30 :
+	{0x6445,0xFF,0x01},    // INFRM_RIGHT31 :
+	{0x6446,0xFF,0x01},    // INFRM_RIGHT32 :
+	{0x6447,0xFF,0x01},    // INFRM_RIGHT33 :
+	{0x6448,0xFF,0x01},    // INFRM_RIGHT34 :
+	{0x6449,0xFF,0x01},    // INFRM_RIGHT35 :
+	{0x644A,0xFF,0x01},    // INFRM_RIGHT36 :
+	{0x644B,0xFF,0x01},    // INFRM_RIGHT37 :
+	{0x644C,0x25C2,0x02},    // INFRM_TOP :
+	{0x644E,0x0348,0x02},    // INFRM_BOTM :
+	{0x6450,0x1D,0x01},    // INFRM_FLTOP :
+	{0x6451,0x00,0x01},    // INFRM_FLBOTM :
+	//{0x0282,0x00,0x01},    // AWB_SN1 :    //140418
+};
+
+isx012_short_t ISX012_Flash_OFF[] =
+{
+	//Flash_OFF_RESET
+	{0x00B7,0x00,0x01},    // LED_ON
+	{0x0016,0x10,0x01},    // GPIO_FUNCSEL
+	{0x0181,0x00,0x01},    // CAP_HALF_AE_CTRL
+	{0x01AE,0x00,0x01},    // HALF_AWB_CTRL
+	{0x6223,0x04,0x01},    // INIT_GAINS
+	{0x6226,0x08,0x01},    // ATW_GAINS_IN_NR
+	{0x6227,0x04,0x01},    // ATW_GAINS_IN
+	{0x6228,0x08,0x01},    // ATW_GAINS_OUT_NR
+	{0x6229,0x04,0x01},    // ATW_GAINS_OUT
+	{0x5E3D,0x0A,0x01},    // FASTMOVE_TIMEOUT
+	{0x5E32,0x0F,0x01},    // AESPEED_FAST
+	{0x5E2E,0x1A,0x01},    // AEIINDEADBAND
+	{0x500A,0x00,0x01},    // FAST_MODECHG_EN
+	{0x01AF,0x00,0x01},    // CAP_AWB_CTRL
+	{0x6224,0x04,0x01},    // ATW_DELAY
+	//AWB boundary reset
+	{0x6400,0xAA,0x01},   // INFRM_LEFT00 :
+	{0x6401,0xAA,0x01},   // INFRM_LEFT01 :
+	{0x6402,0xAA,0x01},   // INFRM_LEFT02 :
+	{0x6403,0xAA,0x01},   // INFRM_LEFT03 :
+	{0x6404,0xAA,0x01},   // INFRM_LEFT04 :
+	{0x6405,0xAA,0x01},   // INFRM_LEFT05 :
+	{0x6406,0xAA,0x01},   // INFRM_LEFT06 :
+	{0x6407,0xAA,0x01},   // INFRM_LEFT07 :
+	{0x6408,0xAA,0x01},   // INFRM_LEFT08 :
+	{0x6409,0xAE,0x01},   // INFRM_LEFT09 :
+	{0x640A,0xA0,0x01},   // INFRM_LEFT10 :
+	{0x640B,0x8C,0x01},   // INFRM_LEFT11 :
+	{0x640C,0x72,0x01},   // INFRM_LEFT12 :
+	{0x640D,0x64,0x01},   // INFRM_LEFT13 :
+	{0x640E,0x57,0x01},   // INFRM_LEFT14 :
+	{0x640F,0x4D,0x01},   // INFRM_LEFT15 :
+	{0x6410,0x42,0x01},   // INFRM_LEFT16 :
+	{0x6411,0x38,0x01},   // INFRM_LEFT17 :
+	{0x6412,0x2E,0x01},   // INFRM_LEFT18 :
+	{0x6413,0x27,0x01},   // INFRM_LEFT19 :
+	{0x6414,0x23,0x01},   // INFRM_LEFT20 :
+	{0x6415,0x1F,0x01},   // INFRM_LEFT21 :
+	{0x6416,0x1F,0x01},   // INFRM_LEFT22 :
+	{0x6417,0x1E,0x01},   // INFRM_LEFT23 :
+	{0x6418,0x20,0x01},   // INFRM_LEFT24 :
+	{0x6419,0x21,0x01},   // INFRM_LEFT25 :
+	{0x641A,0x23,0x01},   // INFRM_LEFT26 :
+	{0x641B,0x23,0x01},   // INFRM_LEFT27 :
+	{0x641C,0x22,0x01},   // INFRM_LEFT28 :
+	{0x641D,0x22,0x01},   // INFRM_LEFT29 :
+	{0x641E,0x21,0x01},   // INFRM_LEFT30 :
+	{0x641F,0x20,0x01},   // INFRM_LEFT31 :
+	{0x6420,0x1D,0x01},   // INFRM_LEFT32 :
+	{0x6421,0x1A,0x01},   // INFRM_LEFT33 :
+	{0x6422,0x18,0x01},   // INFRM_LEFT34 :
+	{0x6423,0x17,0x01},   // INFRM_LEFT35 :
+	{0x6424,0x16,0x01},   // INFRM_LEFT36 :
+	{0x6425,0x17,0x01},   // INFRM_LEFT37 :
+	{0x6426,0xAF,0x01},   // INFRM_RIGHT00 :
+	{0x6427,0xAF,0x01},   // INFRM_RIGHT01 :
+	{0x6428,0xAF,0x01},   // INFRM_RIGHT02 :
+	{0x6429,0xAF,0x01},   // INFRM_RIGHT03 :
+	{0x642A,0xAF,0x01},   // INFRM_RIGHT04 :
+	{0x642B,0xAF,0x01},   // INFRM_RIGHT05 :
+	{0x642C,0xAF,0x01},   // INFRM_RIGHT06 :
+	{0x642D,0xAF,0x01},   // INFRM_RIGHT07 :
+	{0x642E,0xAF,0x01},   // INFRM_RIGHT08 :
+	{0x642F,0xAA,0x01},   // INFRM_RIGHT09 :
+	{0x6430,0xB2,0x01},   // INFRM_RIGHT10 :
+	{0x6431,0xB4,0x01},   // INFRM_RIGHT11 :
+	{0x6432,0xB6,0x01},   // INFRM_RIGHT12 :
+	{0x6433,0xB4,0x01},   // INFRM_RIGHT13 :
+	{0x6434,0x9B,0x01},   // INFRM_RIGHT14 :
+	{0x6435,0x82,0x01},   // INFRM_RIGHT15 :
+	{0x6436,0x78,0x01},   // INFRM_RIGHT16 :
+	{0x6437,0x72,0x01},   // INFRM_RIGHT17 :
+	{0x6438,0x6C,0x01},   // INFRM_RIGHT18 :
+	{0x6439,0x67,0x01},   // INFRM_RIGHT19 :
+	{0x643A,0x63,0x01},   // INFRM_RIGHT20 :
+	{0x643B,0x5E,0x01},   // INFRM_RIGHT21 :
+	{0x643C,0x58,0x01},   // INFRM_RIGHT22 :
+	{0x643D,0x53,0x01},   // INFRM_RIGHT23 :
+	{0x643E,0x4E,0x01},   // INFRM_RIGHT24 :
+	{0x643F,0x4A,0x01},   // INFRM_RIGHT25 :
+	{0x6440,0x46,0x01},   // INFRM_RIGHT26 :
+	{0x6441,0x42,0x01},   // INFRM_RIGHT27 :
+	{0x6442,0x3F,0x01},   // INFRM_RIGHT28 :
+	{0x6443,0x3C,0x01},   // INFRM_RIGHT29 :
+	{0x6444,0x3A,0x01},   // INFRM_RIGHT30 :
+	{0x6445,0x38,0x01},   // INFRM_RIGHT31 :
+	{0x6446,0x37,0x01},   // INFRM_RIGHT32 :
+	{0x6447,0x2E,0x01},   // INFRM_RIGHT33 :
+	{0x6448,0x2D,0x01},   // INFRM_RIGHT34 :
+	{0x6449,0x2C,0x01},   // INFRM_RIGHT35 :
+	{0x644A,0x2C,0x01},   // INFRM_RIGHT36 :
+	{0x644B,0x36,0x01},   // INFRM_RIGHT37 :
+	{0x644C,0x232F,0x02},   // INFRM_TOP :
+	{0x644E,0x0940,0x02},   // INFRM_BOTM :
+	{0x6450,0x19,0x01},   // INFRM_FLTOP :
+	{0x6451,0x10,0x01},   // INFRM_FLBOTM :
+	////Flash_ON_RESET
+	{0x0308,0x11,0x01},    // AELINE_MONI_SN1_2 :
+	{0x0309,0x13,0x01},    // AELINE_MONI_SN3_4 :
+	{0x030B,0x41,0x01},    // AELINE_MONI_SN7_8 :
+	{0x030D,0x11,0x01},    // AELINE_MONI_SN11_12 :
+	{0x030E,0x11,0x01},    // AELINE_HALF_SN1_2 :
+	{0x030F,0x13,0x01},    // AELINE_HALF_SN3_4 :
+	{0x0311,0x41,0x01},    // AELINE_HALF_SN7_8 :
+	{0x0313,0x11,0x01},    // AELINE_HALF_SN11_12 :
+	{0x0314,0x11,0x01},    // AELINE_HALF_AFEND_SN1_2 :
+	{0x0315,0x13,0x01},    // AELINE_HALF_AFEND_SN3_4 :
+	{0x0317,0x41,0x01},    // AELINE_HALF_AFEND_SN7_8 :
+	{0x0319,0x11,0x01},    // AELINE_HALF_AFEND_SN11_12 :
+	{0x031A,0x00,0x01},    // AELINE_CAP_SN1_2 :
+	{0x031B,0x03,0x01},    // AELINE_CAP_SN3_4 :
+	{0x031D,0x50,0x01},    // AELINE_CAP_SN7_8 :
+	{0x031F,0x00,0x01},    // AELINE_CAP_SN11_12 :
+	{0x0294,0x00,0x01},    // AE_SN1
+	{0x0297,0x00,0x01},    // AE_SN4
+	{0x029A,0x00,0x01},    // AE_SN7
+	{0x029E,0x00,0x01},    // AE_SN11
+	//{0x0282,0x20,0x01},    // AWB_SN1 :    //140418
+};
+//                                                                 
+
+//                                                                         
+isx012_short_t ISX012_Camcorder_Mode_ON[] =
+{
+#if 0 // fix 30 fps
+    // fire mode line
+    {0x0356,0x42, BYTE_LEN},// SHTCTRLTIME1_TYPE9 :
+    {0x0357,0x3C, BYTE_LEN},// AGCGAIN1_TYPE9 :
+    {0x0358,0x42, BYTE_LEN},// SHTCTRLTIME2_TYPE9 :
+    {0x0359,0x3C, BYTE_LEN},// AGCGAIN2_TYPE9 :
+    {0x035A,0x21, BYTE_LEN},// SHTCTRLTIME3_TYPE9 :
+    {0x035B,0x3C, BYTE_LEN},// AGCGAIN3_TYPE9 :
+#endif
+#if 1 // 24~30 fps
+    // fire mode line
+    {0x0356,0x42, BYTE_LEN},// SHTCTRLTIME1_TYPE9 :
+    {0x0357,0x3C, BYTE_LEN},// AGCGAIN1_TYPE9 :
+    {0x0358,0x42, BYTE_LEN},// SHTCTRLTIME2_TYPE9 :
+    {0x0359,0x3C, BYTE_LEN},// AGCGAIN2_TYPE9 :
+    {0x035A,0x29, BYTE_LEN},// SHTCTRLTIME3_TYPE9 :
+    {0x035B,0x3C, BYTE_LEN},// AGCGAIN3_TYPE9 :
+#endif
+#if 0 // 20~30fps
+    // fire mode line
+    {0x0356,0x42, BYTE_LEN},// SHTCTRLTIME1_TYPE9 :
+    {0x0357,0x3C, BYTE_LEN},// AGCGAIN1_TYPE9 :
+    {0x0358,0x42, BYTE_LEN},// SHTCTRLTIME2_TYPE9 :
+    {0x0359,0x3C, BYTE_LEN},// AGCGAIN2_TYPE9 :
+    {0x035A,0x32, BYTE_LEN},// SHTCTRLTIME3_TYPE9 :
+    {0x035B,0x3C, BYTE_LEN},// AGCGAIN3_TYPE9 :
+#endif
+
+	//SN setting
+	{0x0308,0x08, BYTE_LEN},    // AELINE_MONI_SN1_2 :
+	{0x0320,0x02, BYTE_LEN},    // AELINE_MONI_SN1_2 :
+	{0x00B2,0x01, BYTE_LEN},    /* AFMODE_MONI : manual mode (0x02) --> CAF (0x01) */
+
+	//BRIGHTNESS setting
+	{0x01C6,0x10, BYTE_LEN},    //UIBRIGHTNESS
+	{0x01C7,0x6D, BYTE_LEN},    //
+
+	//AE speed
+	{0x02AC,0x00, BYTE_LEN},    // AE_SUB_SN1 :
+	{0x5E2D,0x0C, BYTE_LEN},    // AEMOVECNT :
+	{0x5E2E,0x20, BYTE_LEN},    // AEINDEADBAND :
+	{0x5E2F,0x08, BYTE_LEN},    // AEOUTDEADBAND :
+	{0x5E30,0xA0, BYTE_LEN},    // AESPEED :
+
+	{0x5E31,0x0F, BYTE_LEN},    // AESPEED_INIT :
+	{0x5E32,0x0F, BYTE_LEN},    // AESPEED_FAST :
+
+	{0x621E,0x18, BYTE_LEN},    // AIM_NR_TH_UP :
+	{0x621F,0x18, BYTE_LEN},    // AIM_NR_TH_DOWN :
+	{0x6220,0x18, BYTE_LEN},    // AIM_NR_TH_RIGHT :
+	{0x6221,0x18, BYTE_LEN},    // AIM_NR_TH_LEFT :
+
+	//AWB speed
+	{0x6222,0x00, BYTE_LEN},    // INIT_AIMW :
+	{0x6223,0x04, BYTE_LEN},    // INIT_GAINS :
+	{0x6224,0x10, BYTE_LEN},    // ATW_DELAY :
+	{0x6225,0x00, BYTE_LEN},    // ATW_AIMW :
+
+	{0x6226,0x20, BYTE_LEN},    // ATW_GAINS_IN_NR :
+	{0x6227,0x30, BYTE_LEN},    // ATW_GAINS_IN :
+	{0x6228,0x20, BYTE_LEN},    // ATW_GAINS_OUT_NR :
+	{0x6229,0x30, BYTE_LEN},    // ATW_GAINS_OUT :
+	{0x622A,0x0D, BYTE_LEN},    // ALLWB_GAINS :
+
+	//Gammma Table 0
+	{0x7000,0x0000, WORD_LEN},    // G0_KNOT_G0 :
+	{0x7002,0x0000, WORD_LEN},    // G0_KNOT_G1 :
+	{0x7004,0x001E, WORD_LEN},    // G0_KNOT_G2 :
+	{0x7006,0x0038, WORD_LEN},    // G0_KNOT_G3 :
+	{0x7008,0x0046, WORD_LEN},    // G0_KNOT_G4 :
+	{0x700A,0x0053, WORD_LEN},    // G0_KNOT_G5 :
+	{0x700C,0x005A, WORD_LEN},    // G0_KNOT_G6 :
+	{0x700E,0x0063, WORD_LEN},    // G0_KNOT_G7 :
+	{0x7010,0x006D, WORD_LEN},    // G0_KNOT_G8 :
+	{0x7012,0x0076, WORD_LEN},    // G0_KNOT_G9 :
+	{0x7014,0x0055, WORD_LEN},    // G0_KNOT_G10 :
+	{0x7016,0x008E, WORD_LEN},    // G0_KNOT_G11 :
+	{0x7018,0x00B9, WORD_LEN},    // G0_KNOT_G12 :
+	{0x701A,0x00D5, WORD_LEN},    // G0_KNOT_G13 :
+	{0x701C,0x00E4, WORD_LEN},    // G0_KNOT_G14 :
+	{0x701E,0x00F0, WORD_LEN},    // G0_KNOT_G15 :
+	{0x7020,0x00F9, WORD_LEN},    // G0_KNOT_G16 :
+	{0x7022,0x0103, WORD_LEN},    // G0_KNOT_G17 :
+	{0x7024,0x010C, WORD_LEN},    // G0_KNOT_G18 :
+	{0x7026,0x00, BYTE_LEN},    // G0_KNOT_R0_OFFSET :
+	{0x7027,0x00, BYTE_LEN},    // G0_KNOT_R2_OFFSET :
+	{0x7028,0x00, BYTE_LEN},    // G0_KNOT_R4_OFFSET :
+	{0x7029,0x00, BYTE_LEN},    // G0_KNOT_R6_OFFSET :
+	{0x702A,0x00, BYTE_LEN},    // G0_KNOT_R8_OFFSET :
+	{0x702B,0x00, BYTE_LEN},    // G0_KNOT_R10_OFFSET :
+	{0x702C,0x00, BYTE_LEN},    // G0_KNOT_R12_OFFSET :
+	{0x702D,0x00, BYTE_LEN},    // G0_KNOT_R14_OFFSET :
+	{0x702E,0x00, BYTE_LEN},    // G0_KNOT_R16_OFFSET :
+	{0x702F,0x00, BYTE_LEN},    // G0_KNOT_R18_OFFSET :
+	{0x7030,0x00, BYTE_LEN},    // G0_KNOT_B0_OFFSET :
+	{0x7031,0x00, BYTE_LEN},    // G0_KNOT_B2_OFFSET :
+	{0x7032,0x00, BYTE_LEN},    // G0_KNOT_B4_OFFSET :
+	{0x7033,0x00, BYTE_LEN},    // G0_KNOT_B6_OFFSET :
+	{0x7034,0x00, BYTE_LEN},    // G0_KNOT_B8_OFFSET :
+	{0x7035,0x00, BYTE_LEN},    // G0_KNOT_B10_OFFSET :
+	{0x7036,0x00, BYTE_LEN},    // G0_KNOT_B12_OFFSET :
+	{0x7037,0x00, BYTE_LEN},    // G0_KNOT_B14_OFFSET :
+	{0x7038,0x00, BYTE_LEN},    // G0_KNOT_B16_OFFSET :
+	{0x7039,0x00, BYTE_LEN},    // G0_KNOT_B18_OFFSET :
+	{0x703A,0x0611, WORD_LEN},    // G0_LOWGM_ON_R :
+	{0x703C,0x1E0A, WORD_LEN},    // G0_0CLIP_R :
+	{0x703E,0x0611, WORD_LEN},    // G0_LOWGM_ON_G :
+	{0x7040,0x1E0A, WORD_LEN},    // G0_0CLIP_G :
+	{0x7042,0x0611, WORD_LEN},    // G0_LOWGM_ON_B :
+	{0x7044,0x1E0A, WORD_LEN},    // G0_0CLIP_B :
+	{0x7046,0x91, BYTE_LEN},    // G0_KNOT_GAINCTRL_TH_L :
+	{0x7047,0x96, BYTE_LEN},    // G0_KNOT_GAINCTRL_TH_H :
+	{0x7048,0x0000, WORD_LEN},    // G0_KNOT_L_G0 :
+	{0x704A,0x0000, WORD_LEN},    // G0_KNOT_L_G1 :
+	{0x704C,0x000E, WORD_LEN},    // G0_KNOT_L_G2 :
+	{0x704E,0x002F, WORD_LEN},    // G0_KNOT_L_G3 :
+	{0x7050,0x003D, WORD_LEN},    // G0_KNOT_L_G4 :
+	{0x7052,0x004A, WORD_LEN},    // G0_KNOT_L_G5 :
+	{0x7054,0x0051, WORD_LEN},    // G0_KNOT_L_G6 :
+	{0x7056,0x005A, WORD_LEN},    // G0_KNOT_L_G7 :
+	{0x7058,0x0061, WORD_LEN},    // G0_KNOT_L_G8 :
+	{0x705A,0x006A, WORD_LEN},    // G0_KNOT_L_G9 :
+	{0x705C,0x0049, WORD_LEN},    // G0_KNOT_L_G10 :
+	{0x705E,0x0082, WORD_LEN},    // G0_KNOT_L_G11 :
+	{0x7060,0x00AD, WORD_LEN},    // G0_KNOT_L_G12 :
+	{0x7062,0x00CC, WORD_LEN},    // G0_KNOT_L_G13 :
+	{0x7064,0x00E1, WORD_LEN},    // G0_KNOT_L_G14 :
+	{0x7066,0x00ED, WORD_LEN},    // G0_KNOT_L_G15 :
+	{0x7068,0x00F6, WORD_LEN},    // G0_KNOT_L_G16 :
+	{0x706A,0x0106, WORD_LEN},    // G0_KNOT_L_G17 :
+	{0x706C,0x010C, WORD_LEN},    // G0_KNOT_L_G18 :
+
+
+	//AWB
+	{0x6232,0x07, BYTE_LEN},//ATW_SFTLMT_OUT_NR
+	{0x6234,0x05, BYTE_LEN},//ATW_SFTLMT_OUT
+
+	/////MC3 Setting/////
+	{0x7600,0x07, BYTE_LEN},    // MC3_PXDEF0_SEL :
+	{0x7601,0x07, BYTE_LEN},    // MC3_PYDEF0_SEL :
+	{0x7602,0x07, BYTE_LEN},    // MC3_PXDEF1_SEL :
+	{0x7603,0x07, BYTE_LEN},    // MC3_PYDEF1_SEL :
+	{0x7604,0x07, BYTE_LEN},    // MC3_PXDEF2_SEL :
+	{0x7605,0x07, BYTE_LEN},    // MC3_PYDEF2_SEL :
+	{0x7606,0x07, BYTE_LEN},    // MC3_PXDEF3_SEL :
+	{0x7607,0x07, BYTE_LEN},    // MC3_PYDEF3_SEL :
+	{0x7608,0x40, BYTE_LEN},    // MC3_PXDEF0_A :
+	{0x7609,0x40, BYTE_LEN},    // MC3_PXDEF0_B :
+	{0x760A,0x40, BYTE_LEN},    // MC3_PXDEF0_C :
+	{0x760B,0x40, BYTE_LEN},    // MC3_PYDEF0_A :
+	{0x760C,0x40, BYTE_LEN},    // MC3_PYDEF0_B :
+	{0x760D,0x40, BYTE_LEN},    // MC3_PYDEF0_C :
+	{0x760E,0x40, BYTE_LEN},    // MC3_PXDEF1_A :
+	{0x760F,0x40, BYTE_LEN},    // MC3_PXDEF1_B :
+	{0x7610,0x40, BYTE_LEN},    // MC3_PXDEF1_C :
+	{0x7611,0x40, BYTE_LEN},    // MC3_PYDEF1_A :
+	{0x7612,0x40, BYTE_LEN},    // MC3_PYDEF1_B :
+	{0x7613,0x40, BYTE_LEN},    // MC3_PYDEF1_C :
+	{0x7614,0x40, BYTE_LEN},    // MC3_PXDEF2_A :
+	{0x7615,0x40, BYTE_LEN},    // MC3_PXDEF2_B :
+	{0x7616,0x40, BYTE_LEN},    // MC3_PXDEF2_C :
+	{0x7617,0x40, BYTE_LEN},    // MC3_PYDEF2_A :
+	{0x7618,0x40, BYTE_LEN},    // MC3_PYDEF2_B :
+	{0x7619,0x40, BYTE_LEN},    // MC3_PYDEF2_C :
+	{0x761A,0x40, BYTE_LEN},    // MC3_PXDEF3_A :
+	{0x761B,0x40, BYTE_LEN},    // MC3_PXDEF3_B :
+	{0x761C,0x40, BYTE_LEN},    // MC3_PXDEF3_C :
+	{0x761D,0x40, BYTE_LEN},    // MC3_PYDEF3_A :
+	{0x761E,0x40, BYTE_LEN},    // MC3_PYDEF3_B :
+	{0x761F,0x40, BYTE_LEN},    // MC3_PYDEF3_C :
+	{0x7620,0x00, BYTE_LEN},    // MC3_LUMSL0_IN :
+	{0x7621,0x06, BYTE_LEN},    // MC3_LUMSL1_IN :
+	{0x7622,0x03, BYTE_LEN},    // MC3_LUMSL2_IN :
+	{0x7623,0x06, BYTE_LEN},    // MC3_LUMSL3_IN :
+	{0x7624,0x00, BYTE_LEN},    // MC3_LUMSL0_OUT :
+	{0x7625,0x03, BYTE_LEN},    // MC3_LUMSL1_OUT :
+	{0x7626,0x00, BYTE_LEN},    // MC3_LUMSL2_OUT :
+	{0x7627,0x00, BYTE_LEN},    // MC3_LUMSL3_OUT :
+	{0x7628,0x0000, WORD_LEN},    // MC3_L0DEF0_IN :
+	{0x762A,0x008C, WORD_LEN},    // MC3_L0DEF1_IN :
+	{0x762C,0x0078, WORD_LEN},    // MC3_L0DEF2_IN :
+	{0x762E,0x00E6, WORD_LEN},    // MC3_L0DEF3_IN :
+	{0x7630,0x0000, WORD_LEN},    // MC3_L0DEF0_OUT :
+	{0x7632,0x0082, WORD_LEN},    // MC3_L0DEF1_OUT :
+	{0x7634,0x0000, WORD_LEN},    // MC3_L0DEF2_OUT :
+	{0x7636,0x0000, WORD_LEN},    // MC3_L0DEF3_OUT :
+	{0x7638,0x41, BYTE_LEN},    // MC3_RDEF0_POS1 :
+	{0x7639,0x10, BYTE_LEN},    // MC3_RDEF1_POS1 :
+	{0x763A,0x15, BYTE_LEN},    // MC3_RDEF2_POS1 :
+	{0x763B,0x71, BYTE_LEN},    // MC3_RDEF3_POS1 :
+	{0x763C,0x41, BYTE_LEN},    // MC3_RDEF0_POS2 :
+	{0x763D,0x10, BYTE_LEN},    // MC3_RDEF1_POS2 :
+	{0x763E,0x15, BYTE_LEN},    // MC3_RDEF2_POS2 :
+	{0x763F,0x71, BYTE_LEN},    // MC3_RDEF3_POS2 :
+	{0x7640,0x3C, BYTE_LEN},    // MC3_RDEF0_POS3 :
+	{0x7641,0x10, BYTE_LEN},    // MC3_RDEF1_POS3 :
+	{0x7642,0x15, BYTE_LEN},    // MC3_RDEF2_POS3 :
+	{0x7643,0x71, BYTE_LEN},    // MC3_RDEF3_POS3 :
+	{0x7644,0x46, BYTE_LEN},    // MC3_RDEF0_POS4 :
+	{0x7645,0x32, BYTE_LEN},    // MC3_RDEF1_POS4 :
+	{0x7646,0x15, BYTE_LEN},    // MC3_RDEF2_POS4 :
+	{0x7647,0x71, BYTE_LEN},    // MC3_RDEF3_POS4 :
+	{0x7648,0x46, BYTE_LEN},    // MC3_RDEF0_POS5 :
+	{0x7649,0x32, BYTE_LEN},    // MC3_RDEF1_POS5 :
+	{0x764A,0x15, BYTE_LEN},    // MC3_RDEF2_POS5 :
+	{0x764B,0x71, BYTE_LEN},    // MC3_RDEF3_POS5 :
+	{0x764C,0x46, BYTE_LEN},    // MC3_RDEF0_POS6 :
+	{0x764D,0x10, BYTE_LEN},    // MC3_RDEF1_POS6 :
+	{0x764E,0x15, BYTE_LEN},    // MC3_RDEF2_POS6 :
+	{0x764F,0x71, BYTE_LEN},    // MC3_RDEF3_POS6 :
+	{0x7650,0x46, BYTE_LEN},    // MC3_RDEF0_POS7 :
+	{0x7651,0x10, BYTE_LEN},    // MC3_RDEF1_POS7 :
+	{0x7652,0x15, BYTE_LEN},    // MC3_RDEF2_POS7 :
+	{0x7653,0x71, BYTE_LEN},    // MC3_RDEF3_POS7 :
+	{0x7654,0x2D, BYTE_LEN},    // MC3_RDEF0_OUT :
+	{0x7655,0x10, BYTE_LEN},    // MC3_RDEF1_OUT :
+	{0x7656,0x15, BYTE_LEN},    // MC3_RDEF2_OUT :
+	{0x7657,0x54, BYTE_LEN},    // MC3_RDEF3_OUT :
+	{0x7658,0x46, BYTE_LEN},    // MC3_RDEF0_R2_POS4 :
+	{0x7659,0x32, BYTE_LEN},    // MC3_RDEF1_R2_POS4 :
+	{0x765A,0x15, BYTE_LEN},    // MC3_RDEF2_R2_POS4 :
+	{0x765B,0x71, BYTE_LEN},    // MC3_RDEF3_R2_POS4 :
+	{0x765C,0x46, BYTE_LEN},    // MC3_RDEF0_R2_POS5 :
+	{0x765D,0x32, BYTE_LEN},    // MC3_RDEF1_R2_POS5 :
+	{0x765E,0x15, BYTE_LEN},    // MC3_RDEF2_R2_POS5 :
+	{0x765F,0x71, BYTE_LEN},    // MC3_RDEF3_R2_POS5 :
+	{0x7660,0xFFBA, WORD_LEN},    // MC3_X0DEF0_POS1 :
+	{0x7662,0xFFBA, WORD_LEN},    // MC3_Y0DEF0_POS1 :
+	{0x7664,0xFFFE, WORD_LEN},    // MC3_X0DEF1_POS1 :
+	{0x7666,0x000D, WORD_LEN},    // MC3_Y0DEF1_POS1 :
+	{0x7668,0x0002, WORD_LEN},    // MC3_X0DEF2_POS1 :
+	{0x766A,0xFFF6, WORD_LEN},    // MC3_Y0DEF2_POS1 :
+	{0x766C,0x003B, WORD_LEN},    // MC3_X0DEF3_POS1 :
+	{0x766E,0xFFBB, WORD_LEN},    // MC3_Y0DEF3_POS1 :
+	{0x7670,0xFFBA, WORD_LEN},    // MC3_X0DEF0_POS2 :
+	{0x7672,0xFFBA, WORD_LEN},    // MC3_Y0DEF0_POS2 :
+	{0x7674,0xFFFE, WORD_LEN},    // MC3_X0DEF1_POS2 :
+	{0x7676,0x000D, WORD_LEN},    // MC3_Y0DEF1_POS2 :
+	{0x7678,0x0002, WORD_LEN},    // MC3_X0DEF2_POS2 :
+	{0x767A,0xFFF6, WORD_LEN},    // MC3_Y0DEF2_POS2 :
+	{0x767C,0x003B, WORD_LEN},    // MC3_X0DEF3_POS2 :
+	{0x767E,0xFFBB, WORD_LEN},    // MC3_Y0DEF3_POS2 :
+	{0x7680,0xFFCE, WORD_LEN},    // MC3_X0DEF0_POS3 :
+	{0x7682,0xFFBA, WORD_LEN},    // MC3_Y0DEF0_POS3 :
+	{0x7684,0xFFFE, WORD_LEN},    // MC3_X0DEF1_POS3 :
+	{0x7686,0x000D, WORD_LEN},    // MC3_Y0DEF1_POS3 :
+	{0x7688,0x0002, WORD_LEN},    // MC3_X0DEF2_POS3 :
+	{0x768A,0xFFF6, WORD_LEN},    // MC3_Y0DEF2_POS3 :
+	{0x768C,0x003B, WORD_LEN},    // MC3_X0DEF3_POS3 :
+	{0x768E,0xFFBB, WORD_LEN},    // MC3_Y0DEF3_POS3 :
+	{0x7690,0xFFCE, WORD_LEN},    // MC3_X0DEF0_POS4 :
+	{0x7692,0xFFC9, WORD_LEN},    // MC3_Y0DEF0_POS4 :
+	{0x7694,0xFFD0, WORD_LEN},    // MC3_X0DEF1_POS4 :
+	{0x7696,0x0037, WORD_LEN},    // MC3_Y0DEF1_POS4 :
+	{0x7698,0x0002, WORD_LEN},    // MC3_X0DEF2_POS4 :
+	{0x769A,0xFFF6, WORD_LEN},    // MC3_Y0DEF2_POS4 :
+	{0x769C,0x003B, WORD_LEN},    // MC3_X0DEF3_POS4 :
+	{0x769E,0xFFBB, WORD_LEN},    // MC3_Y0DEF3_POS4 :
+	{0x76A0,0xFFCE, WORD_LEN},    // MC3_X0DEF0_POS5 :
+	{0x76A2,0xFFC9, WORD_LEN},    // MC3_Y0DEF0_POS5 :
+	{0x76A4,0xFFD0, WORD_LEN},    // MC3_X0DEF1_POS5 :
+	{0x76A6,0x0037, WORD_LEN},    // MC3_Y0DEF1_POS5 :
+	{0x76A8,0x0002, WORD_LEN},    // MC3_X0DEF2_POS5 :
+	{0x76AA,0xFFF6, WORD_LEN},    // MC3_Y0DEF2_POS5 :
+	{0x76AC,0x003B, WORD_LEN},    // MC3_X0DEF3_POS5 :
+	{0x76AE,0xFFBB, WORD_LEN},    // MC3_Y0DEF3_POS5 :
+	{0x76B0,0xFFCE, WORD_LEN},    // MC3_X0DEF0_POS6 :
+	{0x76B2,0xFFC9, WORD_LEN},    // MC3_Y0DEF0_POS6 :
+	{0x76B4,0xFFFE, WORD_LEN},    // MC3_X0DEF1_POS6 :
+	{0x76B6,0x000D, WORD_LEN},    // MC3_Y0DEF1_POS6 :
+	{0x76B8,0x0002, WORD_LEN},    // MC3_X0DEF2_POS6 :
+	{0x76BA,0xFFF6, WORD_LEN},    // MC3_Y0DEF2_POS6 :
+	{0x76BC,0x003B, WORD_LEN},    // MC3_X0DEF3_POS6 :
+	{0x76BE,0xFFBB, WORD_LEN},    // MC3_Y0DEF3_POS6 :
+	{0x76C0,0xFFCE, WORD_LEN},    // MC3_X0DEF0_POS7 :
+	{0x76C2,0xFFC9, WORD_LEN},    // MC3_Y0DEF0_POS7 :
+	{0x76C4,0xFFFE, WORD_LEN},    // MC3_X0DEF1_POS7 :
+	{0x76C6,0x000D, WORD_LEN},    // MC3_Y0DEF1_POS7 :
+	{0x76C8,0x0002, WORD_LEN},    // MC3_X0DEF2_POS7 :
+	{0x76CA,0xFFF6, WORD_LEN},    // MC3_Y0DEF2_POS7 :
+	{0x76CC,0x003B, WORD_LEN},    // MC3_X0DEF3_POS7 :
+	{0x76CE,0xFFBB, WORD_LEN},    // MC3_Y0DEF3_POS7 :
+	{0x76D0,0xFF7E, WORD_LEN},    // MC3_X0DEF0_OUT :
+	{0x76D2,0xFFE2, WORD_LEN},    // MC3_Y0DEF0_OUT :
+	{0x76D4,0xFFFE, WORD_LEN},    // MC3_X0DEF1_OUT :
+	{0x76D6,0x000D, WORD_LEN},    // MC3_Y0DEF1_OUT :
+	{0x76D8,0x0002, WORD_LEN},    // MC3_X0DEF2_OUT :
+	{0x76DA,0xFFF6, WORD_LEN},    // MC3_Y0DEF2_OUT :
+	{0x76DC,0xFFC4, WORD_LEN},    // MC3_X0DEF3_OUT :
+	{0x76DE,0xFFEC, WORD_LEN},    // MC3_Y0DEF3_OUT :
+	{0x76E0,0xFFCE, WORD_LEN},    // MC3_X0DEF0_R2_POS4 :
+	{0x76E2,0xFFC9, WORD_LEN},    // MC3_Y0DEF0_R2_POS4 :
+	{0x76E4,0xFFD0, WORD_LEN},    // MC3_X0DEF1_R2_POS4 :
+	{0x76E6,0x0037, WORD_LEN},    // MC3_Y0DEF1_R2_POS4 :
+	{0x76E8,0x0002, WORD_LEN},    // MC3_X0DEF2_R2_POS4 :
+	{0x76EA,0xFFF6, WORD_LEN},    // MC3_Y0DEF2_R2_POS4 :
+	{0x76EC,0x003B, WORD_LEN},    // MC3_X0DEF3_R2_POS4 :
+	{0x76EE,0xFFBB, WORD_LEN},    // MC3_Y0DEF3_R2_POS4 :
+	{0x76F0,0xFFCE, WORD_LEN},    // MC3_X0DEF0_R2_POS5 :
+	{0x76F2,0xFFC9, WORD_LEN},    // MC3_Y0DEF0_R2_POS5 :
+	{0x76F4,0xFFD0, WORD_LEN},    // MC3_X0DEF1_R2_POS5 :
+	{0x76F6,0x0037, WORD_LEN},    // MC3_Y0DEF1_R2_POS5 :
+	{0x76F8,0x0002, WORD_LEN},    // MC3_X0DEF2_R2_POS5 :
+	{0x76FA,0xFFF6, WORD_LEN},    // MC3_Y0DEF2_R2_POS5 :
+	{0x76FC,0x003B, WORD_LEN},    // MC3_X0DEF3_R2_POS5 :
+	{0x76FE,0xFFBB, WORD_LEN},    // MC3_Y0DEF3_R2_POS5 :
+	{0x7700,0x0019, WORD_LEN},    // MC3_PXDEF0_POS1 :
+	{0x7702,0xFF66, WORD_LEN},    // MC3_PYDEF0_POS1 :
+	{0x7704,0x0000, WORD_LEN},    // MC3_PXDEF1_POS1 :
+	{0x7706,0x0000, WORD_LEN},    // MC3_PYDEF1_POS1 :
+	{0x7708,0x0000, WORD_LEN},    // MC3_PXDEF2_POS1 :
+	{0x770A,0x0000, WORD_LEN},    // MC3_PYDEF2_POS1 :
+	{0x770C,0xFFD7, WORD_LEN},    // MC3_PXDEF3_POS1 :
+	{0x770E,0x0068, WORD_LEN},    // MC3_PYDEF3_POS1 :
+	{0x7710,0x0000, WORD_LEN},    // MC3_PXDEF0_POS2 :
+	{0x7712,0xFF66, WORD_LEN},    // MC3_PYDEF0_POS2 :
+	{0x7714,0x0033, WORD_LEN},    // MC3_PXDEF1_POS2 :
+	{0x7716,0xFF4C, WORD_LEN},    // MC3_PYDEF1_POS2 :
+	{0x7718,0x0000, WORD_LEN},    // MC3_PXDEF2_POS2 :
+	{0x771A,0x00B3, WORD_LEN},    // MC3_PYDEF2_POS2 :
+	{0x771C,0xFFD7, WORD_LEN},    // MC3_PXDEF3_POS2 :
+	{0x771E,0x0068, WORD_LEN},    // MC3_PYDEF3_POS2 :
+	{0x7720,0x0000, WORD_LEN},    // MC3_PXDEF0_POS3 :
+	{0x7722,0xFF80, WORD_LEN},    // MC3_PYDEF0_POS3 :
+	{0x7724,0x0000, WORD_LEN},    // MC3_PXDEF1_POS3 :
+	{0x7726,0x0000, WORD_LEN},    // MC3_PYDEF1_POS3 :
+	{0x7728,0x0000, WORD_LEN},    // MC3_PXDEF2_POS3 :
+	{0x772A,0x0000, WORD_LEN},    // MC3_PYDEF2_POS3 :
+	{0x772C,0xFFD7, WORD_LEN},    // MC3_PXDEF3_POS3 :
+	{0x772E,0x0068, WORD_LEN},    // MC3_PYDEF3_POS3 :
+	{0x7730,0x0000, WORD_LEN},    // MC3_PXDEF0_POS4 :
+	{0x7732,0xFFCC, WORD_LEN},    // MC3_PYDEF0_POS4 :
+	{0x7734,0x0000, WORD_LEN},    // MC3_PXDEF1_POS4 :
+	{0x7736,0x0000, WORD_LEN},    // MC3_PYDEF1_POS4 :
+	{0x7738,0x0000, WORD_LEN},    // MC3_PXDEF2_POS4 :
+	{0x773A,0x0000, WORD_LEN},    // MC3_PYDEF2_POS4 :
+	{0x773C,0xFFD7, WORD_LEN},    // MC3_PXDEF3_POS4 :
+	{0x773E,0x0068, WORD_LEN},    // MC3_PYDEF3_POS4 :
+	{0x7740,0x0000, WORD_LEN},    // MC3_PXDEF0_POS5 :
+	{0x7742,0xFFCC, WORD_LEN},    // MC3_PYDEF0_POS5 :
+	{0x7744,0x0000, WORD_LEN},    // MC3_PXDEF1_POS5 :
+	{0x7746,0x0000, WORD_LEN},    // MC3_PYDEF1_POS5 :
+	{0x7748,0x0000, WORD_LEN},    // MC3_PXDEF2_POS5 :
+	{0x774A,0x0000, WORD_LEN},    // MC3_PYDEF2_POS5 :
+	{0x774C,0xFFD7, WORD_LEN},    // MC3_PXDEF3_POS5 :
+	{0x774E,0x0068, WORD_LEN},    // MC3_PYDEF3_POS5 :
+	{0x7750,0xFFB3, WORD_LEN},    // MC3_PXDEF0_POS6 :
+	{0x7752,0x0000, WORD_LEN},    // MC3_PYDEF0_POS6 :
+	{0x7754,0x0033, WORD_LEN},    // MC3_PXDEF1_POS6 :
+	{0x7756,0xFF4C, WORD_LEN},    // MC3_PYDEF1_POS6 :
+	{0x7758,0x0000, WORD_LEN},    // MC3_PXDEF2_POS6 :
+	{0x775A,0x00B3, WORD_LEN},    // MC3_PYDEF2_POS6 :
+	{0x775C,0xFFD7, WORD_LEN},    // MC3_PXDEF3_POS6 :
+	{0x775E,0x0068, WORD_LEN},    // MC3_PYDEF3_POS6 :
+	{0x7760,0xFFB3, WORD_LEN},    // MC3_PXDEF0_POS7 :
+	{0x7762,0x0000, WORD_LEN},    // MC3_PYDEF0_POS7 :
+	{0x7764,0x0000, WORD_LEN},    // MC3_PXDEF1_POS7 :
+	{0x7766,0x0000, WORD_LEN},    // MC3_PYDEF1_POS7 :
+	{0x7768,0x0000, WORD_LEN},    // MC3_PXDEF2_POS7 :
+	{0x776A,0x0000, WORD_LEN},    // MC3_PYDEF2_POS7 :
+	{0x776C,0xFFD7, WORD_LEN},    // MC3_PXDEF3_POS7 :
+	{0x776E,0x0068, WORD_LEN},    // MC3_PYDEF3_POS7 :
+	{0x7770,0x0019, WORD_LEN},    // MC3_PXDEF0_OUT :
+	{0x7772,0xFFE6, WORD_LEN},    // MC3_PYDEF0_OUT :
+	{0x7774,0x0000, WORD_LEN},    // MC3_PXDEF1_OUT :
+	{0x7776,0x0000, WORD_LEN},    // MC3_PYDEF1_OUT :
+	{0x7778,0x0000, WORD_LEN},    // MC3_PXDEF2_OUT :
+	{0x777A,0x0000, WORD_LEN},    // MC3_PYDEF2_OUT :
+	{0x777C,0xFFE1, WORD_LEN},    // MC3_PXDEF3_OUT :
+	{0x777E,0xFFEB, WORD_LEN},    // MC3_PYDEF3_OUT :
+	{0x7780,0x0000, WORD_LEN},    // MC3_PXDEF0_R2_POS4 :
+	{0x7782,0xFFCC, WORD_LEN},    // MC3_PYDEF0_R2_POS4 :
+	{0x7784,0x0000, WORD_LEN},    // MC3_PXDEF1_R2_POS4 :
+	{0x7786,0x0000, WORD_LEN},    // MC3_PYDEF1_R2_POS4 :
+	{0x7788,0x0000, WORD_LEN},    // MC3_PXDEF2_R2_POS4 :
+	{0x778A,0x0000, WORD_LEN},    // MC3_PYDEF2_R2_POS4 :
+	{0x778C,0xFFD7, WORD_LEN},    // MC3_PXDEF3_R2_POS4 :
+	{0x778E,0x0068, WORD_LEN},    // MC3_PYDEF3_R2_POS4 :
+	{0x7790,0x0000, WORD_LEN},    // MC3_PXDEF0_R2_POS5 :
+	{0x7792,0xFFCC, WORD_LEN},    // MC3_PYDEF0_R2_POS5 :
+	{0x7794,0x0000, WORD_LEN},    // MC3_PXDEF1_R2_POS5 :
+	{0x7796,0x0000, WORD_LEN},    // MC3_PYDEF1_R2_POS5 :
+	{0x7798,0x0000, WORD_LEN},    // MC3_PXDEF2_R2_POS5 :
+	{0x779A,0x0000, WORD_LEN},    // MC3_PYDEF2_R2_POS5 :
+	{0x779C,0xFFD7, WORD_LEN},    // MC3_PXDEF3_R2_POS5 :
+	{0x779E,0x0068, WORD_LEN},    // MC3_PYDEF3_R2_POS5 :
+};
+
+
+isx012_short_t ISX012_Camcorder_Mode_OFF[] =
+{
+    // fire mode line
+    {0x0356,0x01, BYTE_LEN},// SHTCTRLTIME1_TYPE9 :
+    {0x0357,0x00, BYTE_LEN},// AGCGAIN1_TYPE9 :
+    {0x0358,0x01, BYTE_LEN},// SHTCTRLTIME2_TYPE9 :
+    {0x0359,0x00, BYTE_LEN},// AGCGAIN2_TYPE9 :
+    {0x035A,0xF8, BYTE_LEN},// SHTCTRLTIME3_TYPE9 :
+    {0x035B,0x00, BYTE_LEN},// AGCGAIN3_TYPE9 :
+
+	//SN setting
+	{0x0308,0x00, BYTE_LEN},    // AELINE_MONI_SN1_2 :
+	{0x0320,0x22, BYTE_LEN},    // AELINE_MONI_SN1_2 :
+	{0x00B2,0x02, BYTE_LEN},    // AFMODE_MONI :
+	//BRIGHTNESS setting
+	{0x01C6,0x00, BYTE_LEN},    // UIBRIGHTNESS
+	{0x01C7,0x80, BYTE_LEN},    //
+	//AE speed
+	{0x02AC,0x01, BYTE_LEN},    // AE_SUB_SN1 :
+	{0x5E2D,0x08, BYTE_LEN},    // AEMOVECNT :
+	{0x5E2E,0x1A, BYTE_LEN},    // AEINDEADBAND :
+	{0x5E2F,0x04, BYTE_LEN},    // AEOUTDEADBAND :
+	{0x5E30,0x20, BYTE_LEN},    // AESPEED :
+	{0x5E31,0x0F, BYTE_LEN},    // AESPEED_INIT :
+	{0x5E32,0x0F, BYTE_LEN},    // AESPEED_FAST :
+	{0x621E,0x20, BYTE_LEN},    // AIM_NR_TH_UP :
+	{0x621F,0x20, BYTE_LEN},    // AIM_NR_TH_DOWN :
+	{0x6220,0x20, BYTE_LEN},    // AIM_NR_TH_RIGHT :
+	{0x6221,0x20, BYTE_LEN},    // AIM_NR_TH_LEFT :
+	//AWB speed
+	{0x6222,0x00, BYTE_LEN},    // INIT_AIMW :
+	{0x6223,0x04, BYTE_LEN},    // INIT_GAINS :
+	{0x6224,0x04, BYTE_LEN},    // ATW_DELAY :
+	{0x6225,0x00, BYTE_LEN},    // ATW_AIMW :
+	{0x6226,0x08, BYTE_LEN},    // ATW_GAINS_IN_NR :
+	{0x6227,0x04, BYTE_LEN},    // ATW_GAINS_IN :
+	{0x6228,0x08, BYTE_LEN},    // ATW_GAINS_OUT_NR :
+	{0x6229,0x04, BYTE_LEN},    // ATW_GAINS_OUT :
+	{0x622A,0x02, BYTE_LEN},    // ALLWB_GAINS :
+	//Gammma Table 0
+	{0x7000,0x0000, WORD_LEN},	 // G0_KNOT_G0 :
+	{0x7002,0x0015, WORD_LEN},	 // G0_KNOT_G1 :
+	{0x7004,0x002C, WORD_LEN},	 // G0_KNOT_G2 :
+	{0x7006,0x0041, WORD_LEN},	 // G0_KNOT_G3 :
+	{0x7008,0x004D, WORD_LEN},	 // G0_KNOT_G4 :
+	{0x700A,0x005B, WORD_LEN},	 // G0_KNOT_G5 :
+	{0x700C,0x0060, WORD_LEN},	 // G0_KNOT_G6 :
+	{0x700E,0x0068, WORD_LEN},	 // G0_KNOT_G7 :
+	{0x7010,0x006F, WORD_LEN},	 // G0_KNOT_G8 :
+	{0x7012,0x0078, WORD_LEN},	 // G0_KNOT_G9 :
+	{0x7014,0x0057, WORD_LEN},	 // G0_KNOT_G10 :
+	{0x7016,0x0090, WORD_LEN},	 // G0_KNOT_G11 :
+	{0x7018,0x00BB, WORD_LEN},	 // G0_KNOT_G12 :
+	{0x701A,0x00D6, WORD_LEN},	 // G0_KNOT_G13 :
+	{0x701C,0x00E5, WORD_LEN},	 // G0_KNOT_G14 :
+	{0x701E,0x00F0, WORD_LEN},	 // G0_KNOT_G15 :
+	{0x7020,0x00F9, WORD_LEN},	 // G0_KNOT_G16 :
+	{0x7022,0x0103, WORD_LEN},	 // G0_KNOT_G17 :
+	{0x7024,0x010C, WORD_LEN},	 // G0_KNOT_G18 :
+	{0x7026,0x00, BYTE_LEN},    // G0_KNOT_R0_OFFSET :
+	{0x7027,0x00, BYTE_LEN},    // G0_KNOT_R2_OFFSET :
+	{0x7028,0x00, BYTE_LEN},    // G0_KNOT_R4_OFFSET :
+	{0x7029,0x00, BYTE_LEN},    // G0_KNOT_R6_OFFSET :
+	{0x702A,0x00, BYTE_LEN},    // G0_KNOT_R8_OFFSET :
+	{0x702B,0x00, BYTE_LEN},    // G0_KNOT_R10_OFFSET :
+	{0x702C,0x00, BYTE_LEN},    // G0_KNOT_R12_OFFSET :
+	{0x702D,0x00, BYTE_LEN},    // G0_KNOT_R14_OFFSET :
+	{0x702E,0x00, BYTE_LEN},    // G0_KNOT_R16_OFFSET :
+	{0x702F,0x00, BYTE_LEN},    // G0_KNOT_R18_OFFSET :
+	{0x7030,0x00, BYTE_LEN},    // G0_KNOT_B0_OFFSET :
+	{0x7031,0x00, BYTE_LEN},    // G0_KNOT_B2_OFFSET :
+	{0x7032,0x00, BYTE_LEN},    // G0_KNOT_B4_OFFSET :
+	{0x7033,0x00, BYTE_LEN},    // G0_KNOT_B6_OFFSET :
+	{0x7034,0x00, BYTE_LEN},    // G0_KNOT_B8_OFFSET :
+	{0x7035,0x00, BYTE_LEN},    // G0_KNOT_B10_OFFSET :
+	{0x7036,0x00, BYTE_LEN},    // G0_KNOT_B12_OFFSET :
+	{0x7037,0x00, BYTE_LEN},    // G0_KNOT_B14_OFFSET :
+	{0x7038,0x00, BYTE_LEN},    // G0_KNOT_B16_OFFSET :
+	{0x7039,0x00, BYTE_LEN},    // G0_KNOT_B18_OFFSET :
+	{0x703A,0x0611, WORD_LEN},	 // G0_LOWGM_ON_R :
+	{0x703C,0x1E0A, WORD_LEN},	 // G0_0CLIP_R :
+	{0x703E,0x0611, WORD_LEN},	 // G0_LOWGM_ON_G :
+	{0x7040,0x1E0A, WORD_LEN},	 // G0_0CLIP_G :
+	{0x7042,0x0611, WORD_LEN},	 // G0_LOWGM_ON_B :
+	{0x7044,0x1E0A, WORD_LEN},	 // G0_0CLIP_B :
+	{0x7046,0x9C, BYTE_LEN},    // G0_KNOT_GAINCTRL_TH_L :
+	{0x7047,0xA1, BYTE_LEN},    // G0_KNOT_GAINCTRL_TH_H :
+	{0x7048,0x0000, WORD_LEN},	 // G0_KNOT_L_G0 :
+	{0x704A,0x0007, WORD_LEN},	 // G0_KNOT_L_G1 :
+	{0x704C,0x0016, WORD_LEN},	 // G0_KNOT_L_G2 :
+	{0x704E,0x002A, WORD_LEN},	 // G0_KNOT_L_G3 :
+	{0x7050,0x0039, WORD_LEN},	 // G0_KNOT_L_G4 :
+	{0x7052,0x004A, WORD_LEN},	 // G0_KNOT_L_G5 :
+	{0x7054,0x0051, WORD_LEN},	 // G0_KNOT_L_G6 :
+	{0x7056,0x005D, WORD_LEN},	 // G0_KNOT_L_G7 :
+	{0x7058,0x0065, WORD_LEN},	 // G0_KNOT_L_G8 :
+	{0x705A,0x006C, WORD_LEN},	 // G0_KNOT_L_G9 :
+	{0x705C,0x004E, WORD_LEN},	 // G0_KNOT_L_G10 :
+	{0x705E,0x0083, WORD_LEN},	 // G0_KNOT_L_G11 :
+	{0x7060,0x00AA, WORD_LEN},	 // G0_KNOT_L_G12 :
+	{0x7062,0x00C8, WORD_LEN},	 // G0_KNOT_L_G13 :
+	{0x7064,0x00E1, WORD_LEN},	 // G0_KNOT_L_G14 :
+	{0x7066,0x00F5, WORD_LEN},	 // G0_KNOT_L_G15 :
+	{0x7068,0x0100, WORD_LEN},	 // G0_KNOT_L_G16 :
+	{0x706A,0x0106, WORD_LEN},	 // G0_KNOT_L_G17 :
+	{0x706C,0x010C, WORD_LEN},	 // G0_KNOT_L_G18 :
+
+	//AWB
+	{0x6232,0xFF, BYTE_LEN},    // ATW_SFTLMT_OUT_NR
+	{0x6234,0xFF, BYTE_LEN},    // ATW_SFTLMT_OUT
+	/////MC3 Setting/////
+	{0x7600,0x07, BYTE_LEN},    // MC3_PXDEF0_SEL :
+	{0x7601,0x07, BYTE_LEN},    // MC3_PYDEF0_SEL :
+	{0x7602,0x07, BYTE_LEN},    // MC3_PXDEF1_SEL :
+	{0x7603,0x07, BYTE_LEN},    // MC3_PYDEF1_SEL :
+	{0x7604,0x07, BYTE_LEN},    // MC3_PXDEF2_SEL :
+	{0x7605,0x07, BYTE_LEN},    // MC3_PYDEF2_SEL :
+	{0x7606,0x07, BYTE_LEN},    // MC3_PXDEF3_SEL :
+	{0x7607,0x07, BYTE_LEN},    // MC3_PYDEF3_SEL :
+	{0x7608,0x40, BYTE_LEN},    // MC3_PXDEF0_A :
+	{0x7609,0x40, BYTE_LEN},    // MC3_PXDEF0_B :
+	{0x760A,0x40, BYTE_LEN},    // MC3_PXDEF0_C :
+	{0x760B,0x40, BYTE_LEN},    // MC3_PYDEF0_A :
+	{0x760C,0x40, BYTE_LEN},    // MC3_PYDEF0_B :
+	{0x760D,0x40, BYTE_LEN},    // MC3_PYDEF0_C :
+	{0x760E,0x40, BYTE_LEN},    // MC3_PXDEF1_A :
+	{0x760F,0x40, BYTE_LEN},    // MC3_PXDEF1_B :
+	{0x7610,0x40, BYTE_LEN},    // MC3_PXDEF1_C :
+	{0x7611,0x40, BYTE_LEN},    // MC3_PYDEF1_A :
+	{0x7612,0x40, BYTE_LEN},    // MC3_PYDEF1_B :
+	{0x7613,0x40, BYTE_LEN},    // MC3_PYDEF1_C :
+	{0x7614,0x40, BYTE_LEN},    // MC3_PXDEF2_A :
+	{0x7615,0x40, BYTE_LEN},    // MC3_PXDEF2_B :
+	{0x7616,0x40, BYTE_LEN},    // MC3_PXDEF2_C :
+	{0x7617,0x40, BYTE_LEN},    // MC3_PYDEF2_A :
+	{0x7618,0x40, BYTE_LEN},    // MC3_PYDEF2_B :
+	{0x7619,0x40, BYTE_LEN},    // MC3_PYDEF2_C :
+	{0x761A,0x40, BYTE_LEN},    // MC3_PXDEF3_A :
+	{0x761B,0x40, BYTE_LEN},    // MC3_PXDEF3_B :
+	{0x761C,0x40, BYTE_LEN},    // MC3_PXDEF3_C :
+	{0x761D,0x40, BYTE_LEN},    // MC3_PYDEF3_A :
+	{0x761E,0x40, BYTE_LEN},    // MC3_PYDEF3_B :
+	{0x761F,0x40, BYTE_LEN},    // MC3_PYDEF3_C :
+	{0x7620,0x00, BYTE_LEN},    // MC3_LUMSL0_IN :
+	{0x7621,0x06, BYTE_LEN},    // MC3_LUMSL1_IN :
+	{0x7622,0x03, BYTE_LEN},    // MC3_LUMSL2_IN :
+	{0x7623,0x06, BYTE_LEN},    // MC3_LUMSL3_IN :
+	{0x7624,0x00, BYTE_LEN},    // MC3_LUMSL0_OUT :
+	{0x7625,0x03, BYTE_LEN},    // MC3_LUMSL1_OUT :
+	{0x7626,0x00, BYTE_LEN},    // MC3_LUMSL2_OUT :
+	{0x7627,0x00, BYTE_LEN},    // MC3_LUMSL3_OUT :
+	{0x7628,0x0000, WORD_LEN},	 // MC3_L0DEF0_IN :
+	{0x762A,0x008C, WORD_LEN},	 // MC3_L0DEF1_IN :
+	{0x762C,0x0078, WORD_LEN},	 // MC3_L0DEF2_IN :
+	{0x762E,0x00E6, WORD_LEN},	 // MC3_L0DEF3_IN :
+	{0x7630,0x0000, WORD_LEN},	 // MC3_L0DEF0_OUT :
+	{0x7632,0x0082, WORD_LEN},	 // MC3_L0DEF1_OUT :
+	{0x7634,0x0000, WORD_LEN},	 // MC3_L0DEF2_OUT :
+	{0x7636,0x0000, WORD_LEN},	 // MC3_L0DEF3_OUT :
+	{0x7638,0x41, BYTE_LEN},    // MC3_RDEF0_POS1 :
+	{0x7639,0x10, BYTE_LEN},    // MC3_RDEF1_POS1 :
+	{0x763A,0x15, BYTE_LEN},    // MC3_RDEF2_POS1 :
+	{0x763B,0x71, BYTE_LEN},    // MC3_RDEF3_POS1 :
+	{0x763C,0x41, BYTE_LEN},    // MC3_RDEF0_POS2 :
+	{0x763D,0x10, BYTE_LEN},    // MC3_RDEF1_POS2 :
+	{0x763E,0x15, BYTE_LEN},    // MC3_RDEF2_POS2 :
+	{0x763F,0x71, BYTE_LEN},    // MC3_RDEF3_POS2 :
+	{0x7640,0x3C, BYTE_LEN},    // MC3_RDEF0_POS3 :
+	{0x7641,0x10, BYTE_LEN},    // MC3_RDEF1_POS3 :
+	{0x7642,0x15, BYTE_LEN},    // MC3_RDEF2_POS3 :
+	{0x7643,0x71, BYTE_LEN},    // MC3_RDEF3_POS3 :
+	{0x7644,0x46, BYTE_LEN},    // MC3_RDEF0_POS4 :
+	{0x7645,0x32, BYTE_LEN},    // MC3_RDEF1_POS4 :
+	{0x7646,0x15, BYTE_LEN},    // MC3_RDEF2_POS4 :
+	{0x7647,0x71, BYTE_LEN},    // MC3_RDEF3_POS4 :
+	{0x7648,0x46, BYTE_LEN},    // MC3_RDEF0_POS5 :
+	{0x7649,0x32, BYTE_LEN},    // MC3_RDEF1_POS5 :
+	{0x764A,0x15, BYTE_LEN},    // MC3_RDEF2_POS5 :
+	{0x764B,0x71, BYTE_LEN},    // MC3_RDEF3_POS5 :
+	{0x764C,0x46, BYTE_LEN},    // MC3_RDEF0_POS6 :
+	{0x764D,0x10, BYTE_LEN},    // MC3_RDEF1_POS6 :
+	{0x764E,0x15, BYTE_LEN},    // MC3_RDEF2_POS6 :
+	{0x764F,0x71, BYTE_LEN},    // MC3_RDEF3_POS6 :
+	{0x7650,0x46, BYTE_LEN},    // MC3_RDEF0_POS7 :
+	{0x7651,0x10, BYTE_LEN},    // MC3_RDEF1_POS7 :
+	{0x7652,0x15, BYTE_LEN},    // MC3_RDEF2_POS7 :
+	{0x7653,0x71, BYTE_LEN},    // MC3_RDEF3_POS7 :
+	{0x7654,0x2D, BYTE_LEN},    // MC3_RDEF0_OUT :
+	{0x7655,0x10, BYTE_LEN},    // MC3_RDEF1_OUT :
+	{0x7656,0x15, BYTE_LEN},    // MC3_RDEF2_OUT :
+	{0x7657,0x54, BYTE_LEN},    // MC3_RDEF3_OUT :
+	{0x7658,0x46, BYTE_LEN},    // MC3_RDEF0_R2_POS4 :
+	{0x7659,0x32, BYTE_LEN},    // MC3_RDEF1_R2_POS4 :
+	{0x765A,0x15, BYTE_LEN},    // MC3_RDEF2_R2_POS4 :
+	{0x765B,0x71, BYTE_LEN},    // MC3_RDEF3_R2_POS4 :
+	{0x765C,0x46, BYTE_LEN},    // MC3_RDEF0_R2_POS5 :
+	{0x765D,0x32, BYTE_LEN},    // MC3_RDEF1_R2_POS5 :
+	{0x765E,0x15, BYTE_LEN},    // MC3_RDEF2_R2_POS5 :
+	{0x765F,0x71, BYTE_LEN},    // MC3_RDEF3_R2_POS5 :
+	{0x7660,0xFFBA, WORD_LEN},	 // MC3_X0DEF0_POS1 :
+	{0x7662,0xFFBA, WORD_LEN},	 // MC3_Y0DEF0_POS1 :
+	{0x7664,0xFFFE, WORD_LEN},	 // MC3_X0DEF1_POS1 :
+	{0x7666,0x000D, WORD_LEN},	 // MC3_Y0DEF1_POS1 :
+	{0x7668,0x0002, WORD_LEN},	 // MC3_X0DEF2_POS1 :
+	{0x766A,0xFFF6, WORD_LEN},	 // MC3_Y0DEF2_POS1 :
+	{0x766C,0x003B, WORD_LEN},	 // MC3_X0DEF3_POS1 :
+	{0x766E,0xFFBB, WORD_LEN},	 // MC3_Y0DEF3_POS1 :
+	{0x7670,0xFFBA, WORD_LEN},	 // MC3_X0DEF0_POS2 :
+	{0x7672,0xFFBA, WORD_LEN},	 // MC3_Y0DEF0_POS2 :
+	{0x7674,0xFFFE, WORD_LEN},	 // MC3_X0DEF1_POS2 :
+	{0x7676,0x000D, WORD_LEN},	 // MC3_Y0DEF1_POS2 :
+	{0x7678,0x0002, WORD_LEN},	 // MC3_X0DEF2_POS2 :
+	{0x767A,0xFFF6, WORD_LEN},	 // MC3_Y0DEF2_POS2 :
+	{0x767C,0x003B, WORD_LEN},	 // MC3_X0DEF3_POS2 :
+	{0x767E,0xFFBB, WORD_LEN},	 // MC3_Y0DEF3_POS2 :
+	{0x7680,0xFFCE, WORD_LEN},	 // MC3_X0DEF0_POS3 :
+	{0x7682,0xFFBA, WORD_LEN},	 // MC3_Y0DEF0_POS3 :
+	{0x7684,0xFFFE, WORD_LEN},	 // MC3_X0DEF1_POS3 :
+	{0x7686,0x000D, WORD_LEN},	 // MC3_Y0DEF1_POS3 :
+	{0x7688,0x0002, WORD_LEN},	 // MC3_X0DEF2_POS3 :
+	{0x768A,0xFFF6, WORD_LEN},	 // MC3_Y0DEF2_POS3 :
+	{0x768C,0x003B, WORD_LEN},	 // MC3_X0DEF3_POS3 :
+	{0x768E,0xFFBB, WORD_LEN},	 // MC3_Y0DEF3_POS3 :
+	{0x7690,0xFFCE, WORD_LEN},	 // MC3_X0DEF0_POS4 :
+	{0x7692,0xFFC9, WORD_LEN},	 // MC3_Y0DEF0_POS4 :
+	{0x7694,0xFFD0, WORD_LEN},	 // MC3_X0DEF1_POS4 :
+	{0x7696,0x0037, WORD_LEN},	 // MC3_Y0DEF1_POS4 :
+	{0x7698,0x0002, WORD_LEN},	 // MC3_X0DEF2_POS4 :
+	{0x769A,0xFFF6, WORD_LEN},	 // MC3_Y0DEF2_POS4 :
+	{0x769C,0x003B, WORD_LEN},	 // MC3_X0DEF3_POS4 :
+	{0x769E,0xFFBB, WORD_LEN},	 // MC3_Y0DEF3_POS4 :
+	{0x76A0,0xFFCE, WORD_LEN},	 // MC3_X0DEF0_POS5 :
+	{0x76A2,0xFFC9, WORD_LEN},	 // MC3_Y0DEF0_POS5 :
+	{0x76A4,0xFFD0, WORD_LEN},	 // MC3_X0DEF1_POS5 :
+	{0x76A6,0x0037, WORD_LEN},	 // MC3_Y0DEF1_POS5 :
+	{0x76A8,0x0002, WORD_LEN},	 // MC3_X0DEF2_POS5 :
+	{0x76AA,0xFFF6, WORD_LEN},	 // MC3_Y0DEF2_POS5 :
+	{0x76AC,0x003B, WORD_LEN},	 // MC3_X0DEF3_POS5 :
+	{0x76AE,0xFFBB, WORD_LEN},	 // MC3_Y0DEF3_POS5 :
+	{0x76B0,0xFFCE, WORD_LEN},	 // MC3_X0DEF0_POS6 :
+	{0x76B2,0xFFC9, WORD_LEN},	 // MC3_Y0DEF0_POS6 :
+	{0x76B4,0xFFFE, WORD_LEN},	 // MC3_X0DEF1_POS6 :
+	{0x76B6,0x000D, WORD_LEN},	 // MC3_Y0DEF1_POS6 :
+	{0x76B8,0x0002, WORD_LEN},	 // MC3_X0DEF2_POS6 :
+	{0x76BA,0xFFF6, WORD_LEN},	 // MC3_Y0DEF2_POS6 :
+	{0x76BC,0x003B, WORD_LEN},	 // MC3_X0DEF3_POS6 :
+	{0x76BE,0xFFBB, WORD_LEN},	 // MC3_Y0DEF3_POS6 :
+	{0x76C0,0xFFCE, WORD_LEN},	 // MC3_X0DEF0_POS7 :
+	{0x76C2,0xFFC9, WORD_LEN},	 // MC3_Y0DEF0_POS7 :
+	{0x76C4,0xFFFE, WORD_LEN},	 // MC3_X0DEF1_POS7 :
+	{0x76C6,0x000D, WORD_LEN},	 // MC3_Y0DEF1_POS7 :
+	{0x76C8,0x0002, WORD_LEN},	 // MC3_X0DEF2_POS7 :
+	{0x76CA,0xFFF6, WORD_LEN},	 // MC3_Y0DEF2_POS7 :
+	{0x76CC,0x003B, WORD_LEN},	 // MC3_X0DEF3_POS7 :
+	{0x76CE,0xFFBB, WORD_LEN},	 // MC3_Y0DEF3_POS7 :
+	{0x76D0,0xFF7E, WORD_LEN},	 // MC3_X0DEF0_OUT :
+	{0x76D2,0xFFE2, WORD_LEN},	 // MC3_Y0DEF0_OUT :
+	{0x76D4,0xFFFE, WORD_LEN},	 // MC3_X0DEF1_OUT :
+	{0x76D6,0x000D, WORD_LEN},	 // MC3_Y0DEF1_OUT :
+	{0x76D8,0x0002, WORD_LEN},	 // MC3_X0DEF2_OUT :
+	{0x76DA,0xFFF6, WORD_LEN},	 // MC3_Y0DEF2_OUT :
+	{0x76DC,0xFFC4, WORD_LEN},	 // MC3_X0DEF3_OUT :
+	{0x76DE,0xFFEC, WORD_LEN},	 // MC3_Y0DEF3_OUT :
+	{0x76E0,0xFFCE, WORD_LEN},	 // MC3_X0DEF0_R2_POS4 :
+	{0x76E2,0xFFC9, WORD_LEN},	 // MC3_Y0DEF0_R2_POS4 :
+	{0x76E4,0xFFD0, WORD_LEN},	 // MC3_X0DEF1_R2_POS4 :
+	{0x76E6,0x0037, WORD_LEN},	 // MC3_Y0DEF1_R2_POS4 :
+	{0x76E8,0x0002, WORD_LEN},	 // MC3_X0DEF2_R2_POS4 :
+	{0x76EA,0xFFF6, WORD_LEN},	 // MC3_Y0DEF2_R2_POS4 :
+	{0x76EC,0x003B, WORD_LEN},	 // MC3_X0DEF3_R2_POS4 :
+	{0x76EE,0xFFBB, WORD_LEN},	 // MC3_Y0DEF3_R2_POS4 :
+	{0x76F0,0xFFCE, WORD_LEN},	 // MC3_X0DEF0_R2_POS5 :
+	{0x76F2,0xFFC9, WORD_LEN},	 // MC3_Y0DEF0_R2_POS5 :
+	{0x76F4,0xFFD0, WORD_LEN},	 // MC3_X0DEF1_R2_POS5 :
+	{0x76F6,0x0037, WORD_LEN},	 // MC3_Y0DEF1_R2_POS5 :
+	{0x76F8,0x0002, WORD_LEN},	 // MC3_X0DEF2_R2_POS5 :
+	{0x76FA,0xFFF6, WORD_LEN},	 // MC3_Y0DEF2_R2_POS5 :
+	{0x76FC,0x003B, WORD_LEN},	 // MC3_X0DEF3_R2_POS5 :
+	{0x76FE,0xFFBB, WORD_LEN},	 // MC3_Y0DEF3_R2_POS5 :
+	{0x7700,0x0019, WORD_LEN},	 // MC3_PXDEF0_POS1 :
+	{0x7702,0xFF66, WORD_LEN},	 // MC3_PYDEF0_POS1 :
+	{0x7704,0x0000, WORD_LEN},	 // MC3_PXDEF1_POS1 :
+	{0x7706,0x0000, WORD_LEN},	 // MC3_PYDEF1_POS1 :
+	{0x7708,0x0000, WORD_LEN},	 // MC3_PXDEF2_POS1 :
+	{0x770A,0x0000, WORD_LEN},	 // MC3_PYDEF2_POS1 :
+	{0x770C,0xFFD7, WORD_LEN},	 // MC3_PXDEF3_POS1 :
+	{0x770E,0x0068, WORD_LEN},	 // MC3_PYDEF3_POS1 :
+	{0x7710,0x0000, WORD_LEN},	 // MC3_PXDEF0_POS2 :
+	{0x7712,0xFF66, WORD_LEN},	 // MC3_PYDEF0_POS2 :
+	{0x7714,0x0033, WORD_LEN},	 // MC3_PXDEF1_POS2 :
+	{0x7716,0xFF4C, WORD_LEN},	 // MC3_PYDEF1_POS2 :
+	{0x7718,0x0000, WORD_LEN},	 // MC3_PXDEF2_POS2 :
+	{0x771A,0x00B3, WORD_LEN},	 // MC3_PYDEF2_POS2 :
+	{0x771C,0xFFD7, WORD_LEN},	 // MC3_PXDEF3_POS2 :
+	{0x771E,0x0068, WORD_LEN},	 // MC3_PYDEF3_POS2 :
+	{0x7720,0x0000, WORD_LEN},	 // MC3_PXDEF0_POS3 :
+	{0x7722,0xFF80, WORD_LEN},	 // MC3_PYDEF0_POS3 :
+	{0x7724,0x0000, WORD_LEN},	 // MC3_PXDEF1_POS3 :
+	{0x7726,0x0000, WORD_LEN},	 // MC3_PYDEF1_POS3 :
+	{0x7728,0x0000, WORD_LEN},	 // MC3_PXDEF2_POS3 :
+	{0x772A,0x0000, WORD_LEN},	 // MC3_PYDEF2_POS3 :
+	{0x772C,0xFFD7, WORD_LEN},	 // MC3_PXDEF3_POS3 :
+	{0x772E,0x0068, WORD_LEN},	 // MC3_PYDEF3_POS3 :
+	{0x7730,0x0000, WORD_LEN},	 // MC3_PXDEF0_POS4 :
+	{0x7732,0xFFCC, WORD_LEN},	 // MC3_PYDEF0_POS4 :
+	{0x7734,0x0000, WORD_LEN},	 // MC3_PXDEF1_POS4 :
+	{0x7736,0x0000, WORD_LEN},	 // MC3_PYDEF1_POS4 :
+	{0x7738,0x0000, WORD_LEN},	 // MC3_PXDEF2_POS4 :
+	{0x773A,0x0000, WORD_LEN},	 // MC3_PYDEF2_POS4 :
+	{0x773C,0xFFD7, WORD_LEN},	 // MC3_PXDEF3_POS4 :
+	{0x773E,0x0068, WORD_LEN},	 // MC3_PYDEF3_POS4 :
+	{0x7740,0x0000, WORD_LEN},	 // MC3_PXDEF0_POS5 :
+	{0x7742,0xFFCC, WORD_LEN},	 // MC3_PYDEF0_POS5 :
+	{0x7744,0x0000, WORD_LEN},	 // MC3_PXDEF1_POS5 :
+	{0x7746,0x0000, WORD_LEN},	 // MC3_PYDEF1_POS5 :
+	{0x7748,0x0000, WORD_LEN},	 // MC3_PXDEF2_POS5 :
+	{0x774A,0x0000, WORD_LEN},	 // MC3_PYDEF2_POS5 :
+	{0x774C,0xFFD7, WORD_LEN},	 // MC3_PXDEF3_POS5 :
+	{0x774E,0x0068, WORD_LEN},	 // MC3_PYDEF3_POS5 :
+	{0x7750,0xFFB3, WORD_LEN},	 // MC3_PXDEF0_POS6 :
+	{0x7752,0x0000, WORD_LEN},	 // MC3_PYDEF0_POS6 :
+	{0x7754,0x0033, WORD_LEN},	 // MC3_PXDEF1_POS6 :
+	{0x7756,0xFF4C, WORD_LEN},	 // MC3_PYDEF1_POS6 :
+	{0x7758,0x0000, WORD_LEN},	 // MC3_PXDEF2_POS6 :
+	{0x775A,0x00B3, WORD_LEN},	 // MC3_PYDEF2_POS6 :
+	{0x775C,0xFFD7, WORD_LEN},	 // MC3_PXDEF3_POS6 :
+	{0x775E,0x0068, WORD_LEN},	 // MC3_PYDEF3_POS6 :
+	{0x7760,0xFFB3, WORD_LEN},	 // MC3_PXDEF0_POS7 :
+	{0x7762,0x0000, WORD_LEN},	 // MC3_PYDEF0_POS7 :
+	{0x7764,0x0000, WORD_LEN},	 // MC3_PXDEF1_POS7 :
+	{0x7766,0x0000, WORD_LEN},	 // MC3_PYDEF1_POS7 :
+	{0x7768,0x0000, WORD_LEN},	 // MC3_PXDEF2_POS7 :
+	{0x776A,0x0000, WORD_LEN},	 // MC3_PYDEF2_POS7 :
+	{0x776C,0xFFD7, WORD_LEN},	 // MC3_PXDEF3_POS7 :
+	{0x776E,0x0068, WORD_LEN},	 // MC3_PYDEF3_POS7 :
+	{0x7770,0x0019, WORD_LEN},	 // MC3_PXDEF0_OUT :
+	{0x7772,0xFFE6, WORD_LEN},	 // MC3_PYDEF0_OUT :
+	{0x7774,0x0000, WORD_LEN},	 // MC3_PXDEF1_OUT :
+	{0x7776,0x0000, WORD_LEN},	 // MC3_PYDEF1_OUT :
+	{0x7778,0x0000, WORD_LEN},	 // MC3_PXDEF2_OUT :
+	{0x777A,0x0000, WORD_LEN},	 // MC3_PYDEF2_OUT :
+	{0x777C,0xFFE1, WORD_LEN},	 // MC3_PXDEF3_OUT :
+	{0x777E,0xFFEB, WORD_LEN},	 // MC3_PYDEF3_OUT :
+	{0x7780,0x0000, WORD_LEN},	 // MC3_PXDEF0_R2_POS4 :
+	{0x7782,0xFFCC, WORD_LEN},	 // MC3_PYDEF0_R2_POS4 :
+	{0x7784,0x0000, WORD_LEN},	 // MC3_PXDEF1_R2_POS4 :
+	{0x7786,0x0000, WORD_LEN},	 // MC3_PYDEF1_R2_POS4 :
+	{0x7788,0x0000, WORD_LEN},	 // MC3_PXDEF2_R2_POS4 :
+	{0x778A,0x0000, WORD_LEN},	 // MC3_PYDEF2_R2_POS4 :
+	{0x778C,0xFFD7, WORD_LEN},	 // MC3_PXDEF3_R2_POS4 :
+	{0x778E,0x0068, WORD_LEN},	 // MC3_PYDEF3_R2_POS4 :
+	{0x7790,0x0000, WORD_LEN},	 // MC3_PXDEF0_R2_POS5 :
+	{0x7792,0xFFCC, WORD_LEN},	 // MC3_PYDEF0_R2_POS5 :
+	{0x7794,0x0000, WORD_LEN},	 // MC3_PXDEF1_R2_POS5 :
+	{0x7796,0x0000, WORD_LEN},	 // MC3_PYDEF1_R2_POS5 :
+	{0x7798,0x0000, WORD_LEN},	 // MC3_PXDEF2_R2_POS5 :
+	{0x779A,0x0000, WORD_LEN},	 // MC3_PYDEF2_R2_POS5 :
+	{0x779C,0xFFD7, WORD_LEN},	 // MC3_PXDEF3_R2_POS5 :
+	{0x779E,0x0068, WORD_LEN},	 // MC3_PYDEF3_R2_POS5 :
+};
+//                                                                         
+
+UINT32 ISX012MIPIopen(void);
+UINT32 ISX012MIPIGetResolution(MSDK_SENSOR_RESOLUTION_INFO_STRUCT *pSensorResolution);
+UINT32 ISX012MIPIGetInfo(MSDK_SCENARIO_ID_ENUM ScenarioId, MSDK_SENSOR_INFO_STRUCT *pSensorInfo, MSDK_SENSOR_CONFIG_STRUCT *pSensorConfigData);
+UINT32 ISX012MIPIControl(MSDK_SCENARIO_ID_ENUM ScenarioId, MSDK_SENSOR_EXPOSURE_WINDOW_STRUCT *pImageWindow, MSDK_SENSOR_CONFIG_STRUCT *pSensorConfigData);
+UINT32 ISX012MIPIFeatureControl(MSDK_SENSOR_FEATURE_ENUM FeatureId, UINT8 *pFeaturePara,UINT32 *pFeatureParaLen);
+UINT32 ISX012MIPIClose(void);
+UINT32 ISX012MIPI_YUV_SensorInit(PSENSOR_FUNCTION_STRUCT pfFunc);
+#endif /* __SENSOR_H */

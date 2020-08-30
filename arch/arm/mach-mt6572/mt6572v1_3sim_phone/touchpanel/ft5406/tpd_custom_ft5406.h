@@ -1,0 +1,1168 @@
+#ifndef TOUCHPANEL_H__
+#define TOUCHPANEL_H__
+
+/* Pre-defined definition */
+#define TPD_TYPE_CAPACITIVE
+#define TPD_TYPE_RESISTIVE
+#define TPD_POWER_SOURCE         
+#define TPD_I2C_NUMBER           0
+#define TPD_WAKEUP_TRIAL         60
+#define TPD_WAKEUP_DELAY         100
+
+#define TPD_DELAY                (2*HZ/100)
+
+#define TPD_CALIBRATION_MATRIX  {962,0,0,0,1600,0,0,0};
+
+//#define TPD_HAVE_CALIBRATION
+//#define TPD_HAVE_TREMBLE_ELIMINATION
+
+#define TPD_HAVE_BUTTON
+
+#if defined(AGOLD_CTP_BUTTON_CONFIG_FOR_JBAOL)	
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                { KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,850,160,TPD_BUTTON_HEIGH},{400,850,160,TPD_BUTTON_HEIGH}}
+#elif defined(AGOLD_CTP_FT5406_BUTTON_CONFIG_FOR_E1808_JBL)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                { KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{60,850,100,TPD_BUTTON_HEIGH},{420,850,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1809C_LY)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                { KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,850,100,TPD_BUTTON_HEIGH},{400,850,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1809C_JH1)	
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                { KEY_MENU,KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,850,100,TPD_BUTTON_HEIGH},{240,850,100,TPD_BUTTON_HEIGH},{400,850,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1809C_GDS1)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                { KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{10,850,20,TPD_BUTTON_HEIGH},{470,850,20,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1808_HJY_A7)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           4
+	#define TPD_KEYS                {KEY_HOME,KEY_MENU,KEY_BACK,KEY_SEARCH}
+	#define TPD_KEYS_DIM            {{30,850,60,TPD_BUTTON_HEIGH},{170,850,60,TPD_BUTTON_HEIGH},{320,850,60,TPD_BUTTON_HEIGH},{450,850,60,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1809C_HJY_A6)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{10,850,20,100},{60,850,20,100}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_GQ_YD)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{10,850,20,TPD_BUTTON_HEIGH},{60,850,20,TPD_BUTTON_HEIGH}}
+	#define TPD_KEY_COUNT           2
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_HLX)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           4
+	#define TPD_KEYS                {KEY_HOME,KEY_MENU,KEY_BACK,KEY_SEARCH}
+	#define TPD_KEYS_DIM            {{60,850,100,TPD_BUTTON_HEIGH},{180,850,100,TPD_BUTTON_HEIGH},{300,850,100,TPD_BUTTON_HEIGH},{420,850,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_NBX1)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,850,100,TPD_BUTTON_HEIGH},{400,850,100,TPD_BUTTON_HEIGH}}
+	#define TPD_KEY_COUNT           2
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_JDT)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEYS                {KEY_BACK,KEY_HOME,KEY_MENU}
+	#define TPD_KEYS_DIM            {{50,850,100,TPD_BUTTON_HEIGH},{250,850,100,TPD_BUTTON_HEIGH},{430,850,100,TPD_BUTTON_HEIGH}}
+	#define TPD_KEY_COUNT           3
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_JHGG)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK,KEY_SEARCH}
+	#define TPD_KEYS_DIM            {{60,850,120,TPD_BUTTON_HEIGH},{180,850,120,TPD_BUTTON_HEIGH},{310,850,120,TPD_BUTTON_HEIGH},{440,850,120,TPD_BUTTON_HEIGH}}
+	#define TPD_KEY_COUNT           4
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_JBS_YS)	
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{60,850,100,TPD_BUTTON_HEIGH},{420,850,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_ZY_YK)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,850,100,TPD_BUTTON_HEIGH},{400,850,100,TPD_BUTTON_HEIGH}}
+	#define TPD_KEY_COUNT           2
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_GXQ_G5)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEYS                {KEY_SEND,KEY_MENU,KEY_HOME,KEY_BACK,KEY_SEARCH}
+	#define TPD_KEYS_DIM            {{50,850,90,TPD_BUTTON_HEIGH},{135,850,90,TPD_BUTTON_HEIGH},{240,850,90,TPD_BUTTON_HEIGH},{335,850,90,TPD_BUTTON_HEIGH},{430,850,100,TPD_BUTTON_HEIGH}}
+	#define TPD_KEY_COUNT           5
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_ND1BAT)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK,KEY_SEARCH}
+	#define TPD_KEYS_DIM            {{60,850,60,TPD_BUTTON_HEIGH},{180,850,60,TPD_BUTTON_HEIGH},{310,850,60,TPD_BUTTON_HEIGH},{435,850,60,TPD_BUTTON_HEIGH}}
+	#define TPD_KEY_COUNT           4
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_ND_MJK)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{100,920,100,TPD_BUTTON_HEIGH},{230,920,100,TPD_BUTTON_HEIGH},{380,920,100,TPD_BUTTON_HEIGH}}
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_XGTX1)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                { KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,850,100,TPD_BUTTON_HEIGH},{400,850,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1809C_GWDZ_JL)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                { KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{340,859,1,TPD_BUTTON_HEIGH},{400,850,80,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1809C_ZXD_XJD)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           4
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK,KEY_SEARCH}
+	#define TPD_KEYS_DIM            {{80,850,60,TPD_BUTTON_HEIGH},{180,850,60,TPD_BUTTON_HEIGH},{280,850,60,TPD_BUTTON_HEIGH},{380,850,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1809C_ZXD_HGDZ)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            4
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK,KEY_SEARCH}
+	#define TPD_KEYS_DIM            {{120,850,40,80},{170,850,40,80},{220,850,40,80},{270,850,40,80}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1809C_ZLH)
+	#define TPD_RES_X                320
+	#define TPD_RES_Y                480
+	#define TPD_BUTTON_HEIGH        (60)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{50,530,80,TPD_BUTTON_HEIGH},{260,530,80,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1809C_JXLC_BT)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                {KEY_BACK,KEY_HOME,KEY_MENU}
+	#define TPD_KEYS_DIM            {{50,850,100,TPD_BUTTON_HEIGH},{250,850,100,TPD_BUTTON_HEIGH},{430,850,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1809C_YM_MD)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           4
+	#define TPD_KEYS                {KEY_HOME,KEY_MENU,KEY_BACK,KEY_SEARCH}
+	#define TPD_KEYS_DIM            {{60,850,120,TPD_BUTTON_HEIGH},{180,850,120,TPD_BUTTON_HEIGH},{300,850,120,TPD_BUTTON_HEIGH},{420,850,120,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1809C_YM_DM)
+	#define TPD_BUTTON_HEIGH        (60)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{60,830,80,TPD_BUTTON_HEIGH},{415,850,80,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1809C_DF_XJD)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           4
+	#define TPD_KEYS                {KEY_SEARCH,KEY_MENU,KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,850,100,TPD_BUTTON_HEIGH},{190,850,80,TPD_BUTTON_HEIGH},{280,850,100,TPD_BUTTON_HEIGH},{400,850,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1809C_YM_MD2)
+	#define TPD_BUTTON_HEIGH        (60)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{60,830,80,TPD_BUTTON_HEIGH},{420,850,80,TPD_BUTTON_HEIGH}}
+       
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1811_JBAOL_CM)
+	#define AGOLD_CONFIG_FOR_QHD 
+	#define TPD_BUTTON_HEIGH        (60)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                {KEY_BACK,KEY_HOME,KEY_MENU}
+	#define TPD_KEYS_DIM            {{81,999,80,TPD_BUTTON_HEIGH},{297,999,80,TPD_BUTTON_HEIGH},{459,999,80,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1811_ZLH_CM)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (60)
+	#define TPD_KEY_COUNT            3
+	#define TPD_KEYS                {KEY_BACK,KEY_HOME,KEY_MENU,}
+	#define TPD_KEYS_DIM            {{80,1030,80,TPD_BUTTON_HEIGH},{300,1030,80,TPD_BUTTON_HEIGH},{450,1030,80,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1809C_QXH_SD)
+	#define TPD_BUTTON_HEIGH        (60)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{100,850,100,TPD_BUTTON_HEIGH},{380,850,100,TPD_BUTTON_HEIGH}}
+       
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1811_JWT_XL)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            4
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK,KEY_SEARCH}
+	#define TPD_KEYS_DIM            {{80,850,80,TPD_BUTTON_HEIGH},{190,850,80,TPD_BUTTON_HEIGH},{280,850,80,TPD_BUTTON_HEIGH},{410,850,80,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1809C_ZL_DZT)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            4
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_SEARCH,KEY_BACK}
+	#define TPD_KEYS_DIM            {{60,850,100,TPD_BUTTON_HEIGH},{180,850,100,TPD_BUTTON_HEIGH},{300,850,100,TPD_BUTTON_HEIGH},{420,850,100,TPD_BUTTON_HEIGH}}       
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1809C_JBAIL_JMS)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,850,100,TPD_BUTTON_HEIGH},{400,850,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_FM_MD)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                { KEY_MENU, KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,1000,160,TPD_BUTTON_HEIGH},{240,1000,160,TPD_BUTTON_HEIGH},{400,1000,160,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_MG)
+	#define AGOLD_CONFIG_FOR_QHD	
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            4
+	#define TPD_KEYS                {KEY_HOME,KEY_MENU,KEY_BACK,KEY_SEARCH}
+	#define TPD_KEYS_DIM            {{70,1020,100,TPD_BUTTON_HEIGH},{225,1020,100,TPD_BUTTON_HEIGH},{360,1020,100,TPD_BUTTON_HEIGH},{480,1020,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1811_JBAOL_CM2)  
+	#define AGOLD_CONFIG_FOR_QHD 
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,1000,100,100},{460,1000,100,100}}  
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1811_ZGT_JF)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,938,100,100},{400,938,100,100}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1811_ME_DM)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,1050,80,100},{460,1050,80,100}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1811_FWVGA_LY_MD)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                { KEY_MENU, KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{100,900,20,TPD_BUTTON_HEIGH},{50,900,20,TPD_BUTTON_HEIGH},{10,900,20,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1811_XL_QC)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                { KEY_MENU, KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{450,1030,100,TPD_BUTTON_HEIGH},{250,1030,100,TPD_BUTTON_HEIGH},{50,1030,100,TPD_BUTTON_HEIGH}}
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_v17_XL_QC)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                { KEY_BACK, KEY_HOME,KEY_MENU}
+	#define TPD_KEYS_DIM            {{60,920,100,TPD_BUTTON_HEIGH},{180,920,100,TPD_BUTTON_HEIGH},{300,920,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1811_HT_HZ)
+	#define TPD_BUTTON_HEIGH        (60)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{20,890,40,TPD_BUTTON_HEIGH},{60,890,40,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_ZGT_CM)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,940,100,TPD_BUTTON_HEIGH},{400,940,100,TPD_BUTTON_HEIGH}}
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1811_GQ_YJ)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                { KEY_MENU, KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,850,80,TPD_BUTTON_HEIGH},{240,850,80,TPD_BUTTON_HEIGH},{400,850,80,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_YCD)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,1000,100,80},{460,1000,100,80}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_MG2)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            4
+	#define TPD_KEYS                {KEY_HOME,KEY_MENU,KEY_BACK,KEY_SEARCH}
+	#define TPD_KEYS_DIM            {{80,1040,100,TPD_BUTTON_HEIGH},{240,1040,100,TPD_BUTTON_HEIGH},{400,1040,100,TPD_BUTTON_HEIGH},{560,1040,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1811_HJY_JL)
+	#define AGOLD_CONFIG_FOR_FWVGA	
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                { KEY_MENU, KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,950,80,TPD_BUTTON_HEIGH},{240,950,80,TPD_BUTTON_HEIGH},{400,950,80,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_HT_QC)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{180,920,40,80},{300,920,40,80}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1908_JBAIL_JMS)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,850,100,TPD_BUTTON_HEIGH},{400,850,100,TPD_BUTTON_HEIGH}}
+       
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_HYDY_QD)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,1010,100,TPD_BUTTON_HEIGH},{480,1010,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_AD_HXD)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,920,100,TPD_BUTTON_HEIGH},{420,920,100,TPD_BUTTON_HEIGH}}
+       
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_GQ_CM)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,1030,100,TPD_BUTTON_HEIGH},{470,1030,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_MG_SXGD)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{200,1010,100,100},{400,1010,100,100}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_OK_HL)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{50,850,80,80},{450,850,80,80}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_HYDY_CM)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,1030,100,TPD_BUTTON_HEIGH},{470,1030,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_JBAIL_JMS)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,1030,100,TPD_BUTTON_HEIGH},{470,1030,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_GQ_JMS)
+	#define AGOLD_CONFIG_FOR_QHD
+        #define TPD_BUTTON_HEIGH        (100)
+        #define TPD_KEY_COUNT            2
+        #define TPD_KEYS                {KEY_MENU,KEY_BACK}
+        #define TPD_KEYS_DIM            {{80,1010,100,TPD_BUTTON_HEIGH},{460,1010,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_JBL_JMS)
+	#define AGOLD_CONFIG_FOR_QHD
+        #define TPD_BUTTON_HEIGH        (100)
+        #define TPD_KEY_COUNT            2
+        #define TPD_KEYS                {KEY_MENU,KEY_BACK}
+        #define TPD_KEYS_DIM            {{80,1010,100,TPD_BUTTON_HEIGH},{460,1010,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1910_SMT)
+	#define AGOLD_CONFIG_FOR_WSVGA
+	#define TPD_BUTTON_HEIGH        (120)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                {KEY_HOME, KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{160,1050,100,TPD_BUTTON_HEIGH},{300,1050,100,TPD_BUTTON_HEIGH},{440,1050,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1910_JHZT_WGJ)
+	#define AGOLD_CONFIG_FOR_WSVGA
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                { KEY_MENU, KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{600,1060,60,60},{525,1060,60,60},{475,1060,60,60}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_OK_HLTQ)
+       #define TPD_BUTTON_HEIGH        (100)
+       #define TPD_KEY_COUNT            2
+       #define TPD_KEYS                {KEY_MENU,KEY_BACK}
+       #define TPD_KEYS_DIM            {{60,850,80,TPD_BUTTON_HEIGH},{450,850,80,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_JHGG_LH)
+	#define AGOLD_CONFIG_FOR_FWVGA	
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                {KEY_BACK,KEY_HOME,KEY_MENU}
+	#define TPD_KEYS_DIM            {{80,920,100,TPD_BUTTON_HEIGH},{250,920,100,TPD_BUTTON_HEIGH},{430,920,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_LY_MD)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK,}
+	#define TPD_KEYS_DIM            {{70,1020,100,TPD_BUTTON_HEIGH},{460,1020,20,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_ND_JSD)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                { KEY_MENU, KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{100,1030,100,TPD_BUTTON_HEIGH},{250,1030,100,TPD_BUTTON_HEIGH},{420,1030,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_TZWX_CM)
+	#define AGOLD_CONFIG_FOR_QHD
+       	#define TPD_BUTTON_HEIGH        (100)
+       	#define TPD_KEY_COUNT            2
+       	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+       	#define TPD_KEYS_DIM            {{110,1030,100,TPD_BUTTON_HEIGH},{430,1030,100,TPD_BUTTON_HEIGH}}
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_JYY) 
+	#define TPD_BUTTON_HEIGH        (60)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{50,830,100,TPD_BUTTON_HEIGH},{430,830,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1809C_GQ_YJ)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK,}
+	#define TPD_KEYS_DIM            {{10,850,20,TPD_BUTTON_HEIGH},{70,850,20,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_AD_HXD_QHD)
+	#define AGOLD_CONFIG_FOR_QHD
+        #define TPD_BUTTON_HEIGH        (100)
+        #define TPD_KEY_COUNT            2
+        #define TPD_KEYS                {KEY_MENU,KEY_BACK}
+        #define TPD_KEYS_DIM            {{70,1030,100,TPD_BUTTON_HEIGH},{470,1030,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1910_JHZT_WGJ2)
+	#define AGOLD_CONFIG_FOR_WSVGA
+       	#define TPD_BUTTON_HEIGH        (80)
+       	#define TPD_KEY_COUNT            3
+       	#define TPD_KEYS                {KEY_BACK,KEY_HOME,KEY_MENU}
+       	#define TPD_KEYS_DIM            {{475,1063,60,TPD_BUTTON_HEIGH},{525,1063,60,TPD_BUTTON_HEIGH},{600,1063,60,TPD_BUTTON_HEIGH}}
+       	
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1910_JHGG)
+	#define AGOLD_CONFIG_FOR_WSVGA
+       	#define TPD_BUTTON_HEIGH        (80)
+       	#define TPD_KEY_COUNT            3
+       	#define TPD_KEYS                {KEY_BACK,KEY_HOME,KEY_MENU}
+       	#define TPD_KEYS_DIM            {{68,1063,60,TPD_BUTTON_HEIGH},{300,1063,60,TPD_BUTTON_HEIGH},{534,1063,60,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_ZGT_CM)
+       	#define TPD_BUTTON_HEIGH        (100)
+       	#define TPD_KEY_COUNT            2
+       	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+       	#define TPD_KEYS_DIM            {{70,850,100,TPD_BUTTON_HEIGH},{420,850,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_JBL)
+	#define AGOLD_CONFIG_FOR_FWVGA
+        #define TPD_BUTTON_HEIGH        (100)
+        #define TPD_KEY_COUNT            2
+        #define TPD_KEYS                {KEY_MENU,KEY_BACK}
+        #define TPD_KEYS_DIM            {{70,920,100,TPD_BUTTON_HEIGH},{420,920,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_BY_WY1)
+	#define TPD_RES_Y                800
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                { KEY_BACK, KEY_HOME,KEY_MENU}
+	#define TPD_KEYS_DIM            {{80,850,160,TPD_BUTTON_HEIGH},{240,850,160,TPD_BUTTON_HEIGH},{400,850,160,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1811_JBL_CM)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,930,100,TPD_BUTTON_HEIGH},{400,930,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1811_JBL_CM2)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                {KEY_BACK, KEY_HOME, KEY_MENU}
+	#define TPD_KEYS_DIM            {{70,930,100,TPD_BUTTON_HEIGH},{260,930,100,TPD_BUTTON_HEIGH},{400,930,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_ND_TQ1)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,1030,100,TPD_BUTTON_HEIGH},{460,1030,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_ND_TQ2)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,1030,100,TPD_BUTTON_HEIGH},{460,1030,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1811_HT_CZD)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (60)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{40,890,30,TPD_BUTTON_HEIGH},{70,890,30,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1811_ND_JYD)
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                {KEY_MENU, KEY_HOME, KEY_BACK}
+	#define TPD_KEYS_DIM            {{60,860,100,TPD_BUTTON_HEIGH},{220,860,100,TPD_BUTTON_HEIGH},{340,860,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_JHGG_JMS)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,1020,100,TPD_BUTTON_HEIGH},{460,1020,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_XL_QC2)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                { KEY_BACK, KEY_HOME,KEY_MENU}
+	#define TPD_KEYS_DIM            {{60,920,100,TPD_BUTTON_HEIGH},{180,920,100,TPD_BUTTON_HEIGH},{300,920,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_ZGT_JFGD)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,1020,100,TPD_BUTTON_HEIGH},{470,1020,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1910_ND)
+	#define AGOLD_CONFIG_FOR_WSVGA
+	#define TPD_BUTTON_HEIGH        (40)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                { KEY_BACK, KEY_HOME,KEY_MENU}
+	#define TPD_KEYS_DIM            {{400,1060,40,TPD_BUTTON_HEIGH},{430,1060,40,TPD_BUTTON_HEIGH},{470,1060,40,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_JBL_JMS)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            4
+	#define TPD_KEYS                {KEY_HOME,KEY_MENU,KEY_BACK,KEY_SEARCH}
+	#define TPD_KEYS_DIM            {{70,910,100,TPD_BUTTON_HEIGH},{170,910,100,TPD_BUTTON_HEIGH},{280,910,100,TPD_BUTTON_HEIGH},{400,910,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_ND_JMS1)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,1020,100,TPD_BUTTON_HEIGH},{460,1020,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_ND_JMS2)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_BACK, KEY_MENU}
+	#define TPD_KEYS_DIM            {{80,1020,100,TPD_BUTTON_HEIGH},{460,1020,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_LY_MD_QHD)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,1040,100,TPD_BUTTON_HEIGH},{460,1040,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_LB_CX)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,1030,100,TPD_BUTTON_HEIGH},{470,1030,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_XG_DZT)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,1010,100,TPD_BUTTON_HEIGH},{470,1010,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_GQ_JL)
+	#define AGOLD_CONFIG_FOR_HD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{90,1350,100,TPD_BUTTON_HEIGH},{430,1349,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1811_HC_HT)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{50,1050,100,100},{450,1050,100,100}} 
+	
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1920_ZLH_YJ)
+	#define AGOLD_CONFIG_FOR_QHD
+   	#define TPD_BUTTON_HEIGH        (100)
+   	#define TPD_KEY_COUNT            2
+   	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+   	#define TPD_KEYS_DIM            {{80,980,100,TPD_BUTTON_HEIGH},{460,980,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1910_LH_CK)
+	#define AGOLD_CONFIG_FOR_WSVGA
+	#define TPD_BUTTON_HEIGH        (50)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                { KEY_BACK, KEY_MENU}
+	#define TPD_KEYS_DIM            {{280,1050,100,TPD_BUTTON_HEIGH}, {600,1050,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_CXQ_YJ)
+	#define AGOLD_CONFIG_FOR_HD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            4
+	#define TPD_KEYS                {KEY_MENU, KEY_HOME, KEY_SEARCH, KEY_BACK}
+	#define TPD_KEYS_DIM            {{100,1350,100,TPD_BUTTON_HEIGH},{300,1350,100,TPD_BUTTON_HEIGH},{420,1350,100,TPD_BUTTON_HEIGH},{620,1350,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_HT_HZ)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (80)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{10,1010,20,TPD_BUTTON_HEIGH},{70,1010,20,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1811_JY_JL)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{100,1020,100,TPD_BUTTON_HEIGH},{400,1020,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1811_XG_YD)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,1020,100,TPD_BUTTON_HEIGH},{465,1020,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_HYDY_HLTQ)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{75,1010,100,TPD_BUTTON_HEIGH},{465,1010,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_JY_RJN)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{110,1030,100,TPD_BUTTON_HEIGH},{430,1030,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1811_XG_YD)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,1020,100,TPD_BUTTON_HEIGH},{465,1020,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_HYDY_YJ_QHD)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,1040,100,TPD_BUTTON_HEIGH},{460,1040,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1920_SH_KLX)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                {KEY_BACK, KEY_HOME,KEY_MENU}
+	#define TPD_KEYS_DIM            {{20,980,60,TPD_BUTTON_HEIGH},{110,980,60,TPD_BUTTON_HEIGH},{160,980,60,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1921_CXQ_BF)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,1020,100,TPD_BUTTON_HEIGH},{460,1020,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_JDT_JMS)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,990,100,TPD_BUTTON_HEIGH},{420,990,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_JHGG_RH)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH 		(100)
+	#define TPD_KEY_COUNT 			2
+	#define TPD_KEYS 				{KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM 			{{70,1030,100,TPD_BUTTON_HEIGH},{470,1030,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1921_LY_HY)
+	#define AGOLD_CONFIG_FOR_HD
+	#define TPD_BUTTON_HEIGH        (80)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{150,1300,100,TPD_BUTTON_HEIGH},{550,1300,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1921_LY_YM_HD)
+	#define AGOLD_CONFIG_FOR_HD
+	#define TPD_BUTTON_HEIGH (80)
+	#define TPD_KEY_COUNT 2
+	#define TPD_KEYS {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM {{180,1320,100,TPD_BUTTON_HEIGH},{540,1320,100,TPD_BUTTON_HEIGH}}
+
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_JHGG_YXD)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,1030,100,TPD_BUTTON_HEIGH},{470,1030,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_HC_TQ)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,1020,100,TPD_BUTTON_HEIGH},{240,1020,100,TPD_BUTTON_HEIGH},{470,1020,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1920_ZLH_KC)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,1020,100,TPD_BUTTON_HEIGH},{420,1020,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1921_LY_MD_HD)
+	#define AGOLD_CONFIG_FOR_HD
+	#define TPD_BUTTON_HEIGH        (80)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{90,1350,100,TPD_BUTTON_HEIGH},{635,1350,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_ZGT_RJN)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{100,1128,100,TPD_BUTTON_HEIGH},{400,1128,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_AD_HD)
+	#define AGOLD_CONFIG_FOR_HD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{100,1350,100,TPD_BUTTON_HEIGH},{620,1350,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_XG_RSGD)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH 		(60)
+	#define TPD_KEY_COUNT 			2
+	#define TPD_KEYS 				{KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM 			{{60,1000,100,TPD_BUTTON_HEIGH},{420,1000,100,TPD_BUTTON_HEIGH}}
+	
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_ZGT_JF)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{81,1034,100,TPD_BUTTON_HEIGH},{463,1034,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1920_SH_GLD)
+	#define AGOLD_CONFIG_FOR_QHD 
+	#define TPD_BUTTON_HEIGH        (60)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{170,1010,40,TPD_BUTTON_HEIGH},{370,1010,40,TPD_BUTTON_HEIGH},{420,1010,40,TPD_BUTTON_HEIGH}}
+	
+#elif  defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_YP_SH)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{100,1024,100,TPD_BUTTON_HEIGH},{480,1024,100,TPD_BUTTON_HEIGH}}
+	
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_GQ2008_HD)
+	#define AGOLD_CONFIG_FOR_HD
+	#define TPD_BUTTON_HEIGH        (40)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{60,1300,100,TPD_BUTTON_HEIGH},{600,1300,100,TPD_BUTTON_HEIGH}}
+	
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_GQ_CM_HD)
+	#define AGOLD_CONFIG_FOR_HD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{163,1345,100,TPD_BUTTON_HEIGH},{556,1345,100,TPD_BUTTON_HEIGH}}	
+	
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_JBLFWVGA)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (60)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{60,890,100,TPD_BUTTON_HEIGH},{420,890,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_SN_XG)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH 		(60)
+	#define TPD_KEY_COUNT 			2
+	#define TPD_KEYS 				{KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM 			{{90,1000,100,TPD_BUTTON_HEIGH},{470,1000,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1920_SH_HSY)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{50,1050,50,TPD_BUTTON_HEIGH},{100,1050,50,TPD_BUTTON_HEIGH},{150,1050,50,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1910_ND_YXD)
+	#define AGOLD_CONFIG_FOR_WSVGA
+	#define TPD_BUTTON_HEIGH (100)
+	#define TPD_KEY_COUNT 3
+	#define TPD_KEYS { KEY_BACK, KEY_HOME,KEY_MENU}
+	#define TPD_KEYS_DIM {{60,1060,60,60},{300,1060,60,60},{540,1060,60,60}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_JYL_LY_HD1)
+	#define AGOLD_CONFIG_FOR_HD
+	#define TPD_BUTTON_HEIGH        (80)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{100,1380,100,TPD_BUTTON_HEIGH},{350,1380,100,TPD_BUTTON_HEIGH},{640,1380,120,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_ZXD_HZ)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (80)
+	#define TPD_KEY_COUNT            3
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{10,1010,20,TPD_BUTTON_HEIGH},{70,1010,80,TPD_BUTTON_HEIGH},{470,1010,100,TPD_BUTTON_HEIGH}}
+	
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1921_HJY_HG)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (80)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{120,1020,30,TPD_BUTTON_HEIGH},{166,1020,30,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1921_CXQ_WY)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (80)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,1020,80,TPD_BUTTON_HEIGH},{465,1020,80,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1920_ZLH_YJ_FWVGA)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,950,100,TPD_BUTTON_HEIGH},{410,950,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_FWVGA_JDT_JMS)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,850,160,TPD_BUTTON_HEIGH},{400,850,160,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_JFWT_CM_HD)
+	#define AGOLD_CONFIG_FOR_HD
+	#define TPD_BUTTON_HEIGH (40)
+	#define TPD_KEY_COUNT 2
+	#define TPD_KEYS {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM {{60,1300,100,TPD_BUTTON_HEIGH},{600,1300,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_ZXD_HG_FWVGA)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (80)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{170,900,60,TPD_BUTTON_HEIGH},{230,900,60,TPD_BUTTON_HEIGH},{270,900,60,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_ZXD_HG_WVGA)
+	#define AGOLD_CONFIG_FOR_WVGA
+	#define TPD_BUTTON_HEIGH        (80)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{100,860,100,TPD_BUTTON_HEIGH},{240,860,100,TPD_BUTTON_HEIGH},{400,860,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_ZXD_HLD_QHD)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (60)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{160,1009,40,TPD_BUTTON_HEIGH},{200,1009,40,TPD_BUTTON_HEIGH},{240,1009,40,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_HYDY_HLTQ_WVGA)
+	#define AGOLD_CONFIG_FOR_WVGA
+	#define TPD_BUTTON_HEIGH        (80)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,1010,100,TPD_BUTTON_HEIGH},{480,1010,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_HYDY_YS_WVGA)
+	#define AGOLD_CONFIG_FOR_WVGA
+	#define TPD_BUTTON_HEIGH        (80)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,1010,100,TPD_BUTTON_HEIGH},{480,1010,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_AD_YXGD)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            3
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{73,1029,100,TPD_BUTTON_HEIGH},{232,873,100,30},{467,1029,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1920_ZLH_JJ)
+    #define AGOLD_CONFIG_FOR_QHD
+    #define TPD_BUTTON_HEIGH        (90)
+    #define TPD_KEY_COUNT            2
+    #define TPD_KEYS                {KEY_MENU,KEY_BACK}
+    #define TPD_KEYS_DIM            {{80,980,90,TPD_BUTTON_HEIGH},{460,980,90,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_GQ_JMS_HD)
+	#define AGOLD_CONFIG_FOR_HD
+	#define TPD_BUTTON_HEIGH        (60)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{60,1310,100,TPD_BUTTON_HEIGH},{630,1310,160,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_ND_JSD_FWVGA)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (80)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{100,920,60,TPD_BUTTON_HEIGH},{380,920,60,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_GQ_JMS_QHD)
+	#define AGOLD_CONFIG_FOR_QHD
+        #define TPD_BUTTON_HEIGH        (80)
+        #define TPD_KEY_COUNT            2
+        #define TPD_KEYS                {KEY_MENU,KEY_BACK}
+        #define TPD_KEYS_DIM            {{80,1010,100,TPD_BUTTON_HEIGH},{460,1010,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_ZXD_HZ_QHD)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (60)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{7,1009,14,TPD_BUTTON_HEIGH},{65,1009,40,TPD_BUTTON_HEIGH},{470,1009,40,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1921_LY_CX_HD)
+	#define AGOLD_CONFIG_FOR_HD
+	#define TPD_BUTTON_HEIGH        (80)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{160,1359,100,TPD_BUTTON_HEIGH},{600,1359,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_JFWY_JMS_HD)
+	#define AGOLD_CONFIG_FOR_HD
+	#define TPD_BUTTON_HEIGH        (60)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{60,1310,100,TPD_BUTTON_HEIGH},{660,1310,100,TPD_BUTTON_HEIGH}}
+	
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1921_CXQ_WY_FWVGA)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (40)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{66,916,100,TPD_BUTTON_HEIGH},{416,916,100,TPD_BUTTON_HEIGH}}
+	
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_XG_RSGD_QHD)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (80)
+	#define TPD_KEY_COUNT            3
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{60,1020,100,TPD_BUTTON_HEIGH},{240,1020,100,TPD_BUTTON_HEIGH},{480,1020,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_YP_YY_HD)
+	#define AGOLD_CONFIG_FOR_HD
+	#define TPD_BUTTON_HEIGH        (40)
+	#define TPD_KEY_COUNT            3
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{60,1300,60,TPD_BUTTON_HEIGH},{180,1300,60,TPD_BUTTON_HEIGH},{420,1300,60,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_AD_DJ_HD)
+	#define AGOLD_CONFIG_FOR_HD
+	#define TPD_BUTTON_HEIGH        (40)
+	#define TPD_KEY_COUNT            3
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{130,1370,50,TPD_BUTTON_HEIGH},{350,1370,50,TPD_BUTTON_HEIGH},{600,1370,50,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_AD_DJ_QHD)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (30)
+	#define TPD_KEY_COUNT            3
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,1030,40,TPD_BUTTON_HEIGH},{260,1030,40,TPD_BUTTON_HEIGH},{440,1030,40,TPD_BUTTON_HEIGH}}
+	
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_YP_JMS_HD_3_BUTTON)
+	#define AGOLD_CONFIG_FOR_HD
+	#define TPD_BUTTON_HEIGH        (50)
+	#define TPD_KEY_COUNT            3
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{60,1350,80,TPD_BUTTON_HEIGH},{360,1350,80,TPD_BUTTON_HEIGH},{660,1350,80,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_ND_JN_QHD)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (80)
+	#define TPD_KEY_COUNT            3
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{100,1350,100,TPD_BUTTON_HEIGH},{300,1350,100,TPD_BUTTON_HEIGH},{500,1350,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_JY_JYT)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH (60)
+	#define TPD_KEY_COUNT 2
+	#define TPD_KEYS {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM {{110,1000,100,TPD_BUTTON_HEIGH},{430,1000,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_ZGT_JF_FWVGA)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (60)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{60,930,60,TPD_BUTTON_HEIGH},{422,930,60,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_ZLH_RC_QHD)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (80)
+	#define TPD_KEY_COUNT            3
+	#define TPD_KEYS                {KEY_BACK,KEY_HOME,KEY_MENU}
+	#define TPD_KEYS_DIM            {{86,1023,100,TPD_BUTTON_HEIGH},{269,1023,100,TPD_BUTTON_HEIGH},{452,1023,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_ND_JN_QHD_TWO)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (80)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{100,1350,100,TPD_BUTTON_HEIGH},{500,1350,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1921_JYY_HLTQ_QHD)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (40)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{60,1020,100,TPD_BUTTON_HEIGH},{420,1020,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_HY_YS_FWVGA)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{60,930,100,TPD_BUTTON_HEIGH},{350,930,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_ZLH_RC_HD)
+	#define AGOLD_CONFIG_FOR_HD
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            3
+	#define TPD_KEYS                {KEY_BACK,KEY_HOME,KEY_MENU}
+	#define TPD_KEYS_DIM            {{110,1330,100,TPD_BUTTON_HEIGH},{360,1330,100,TPD_BUTTON_HEIGH},{560,1330,200,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1911_JY_FWVGA)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (50)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{100,898,100,TPD_BUTTON_HEIGH},{380,898,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_JDT_HZGD_FWVGA)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (60)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,900,100,TPD_BUTTON_HEIGH},{400,900,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_ZXD_HLD_FWVGA)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (40)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{220,900,20,TPD_BUTTON_HEIGH},{260,900,20,TPD_BUTTON_HEIGH},{300,900,20,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_ZXD_FWVGA)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (80)
+	#define TPD_KEY_COUNT           3
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{195,900,60,TPD_BUTTON_HEIGH},{245,900,40,TPD_BUTTON_HEIGH},{285,900,40,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1921_LY_HY_QHD)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (80)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{150,1300,100,TPD_BUTTON_HEIGH},{550,1300,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_JDT_HZGD_QHD)
+	#define AGOLD_CONFIG_FOR_QHD
+	#define TPD_BUTTON_HEIGH        (80)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{80,1010,100,TPD_BUTTON_HEIGH},{460,1010,100,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_HY_HLTQ_FWVGA)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            2
+	#define TPD_KEYS                {KEY_MENU,KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,965,100,TPD_BUTTON_HEIGH},{405,965,210,TPD_BUTTON_HEIGH}}//{{80,1000,100,TPD_BUTTON_HEIGH},{460,1000,100,TPD_BUTTON_HEIGH}}
+	
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_HT_HZ_FWVGA)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (80)
+	#define TPD_KEY_COUNT           2
+	#define TPD_KEYS                {KEY_MENU, KEY_BACK}
+	#define TPD_KEYS_DIM            {{20,900,40,TPD_BUTTON_HEIGH},{60,900,40,TPD_BUTTON_HEIGH}}
+
+#elif defined(AGOLD_CTP_BUTTON_CONFIG_FOR_E1901_ZXD_HZ_FWVGA)
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (100)
+	#define TPD_KEY_COUNT            3
+	#define TPD_KEYS                {KEY_MENU,KEY_HOME,KEY_BACK}
+	#define TPD_KEYS_DIM            {{70,930,100,TPD_BUTTON_HEIGH},{400,930,100,TPD_BUTTON_HEIGH},{470,930,20,TPD_BUTTON_HEIGH}}
+
+#else
+	#define AGOLD_CONFIG_FOR_FWVGA
+	#define TPD_BUTTON_HEIGH        (80)
+	#define TPD_KEY_COUNT            3
+	#define TPD_KEYS                {KEY_BACK,KEY_HOMEPAGE,KEY_MENU}
+	#define TPD_KEYS_DIM            {{60,900,80,TPD_BUTTON_HEIGH},{180,900,80,TPD_BUTTON_HEIGH},{300,900,80,TPD_BUTTON_HEIGH}}
+#endif
+
+/* for different ctp resolution */
+#if defined(AGOLD_CONFIG_FOR_QHD)
+	#define TPD_RES_X                540
+	#define TPD_RES_Y                960
+#elif defined(AGOLD_CONFIG_FOR_HD)
+	#define TPD_RES_X                720
+	#define TPD_RES_Y                1280
+#elif defined(AGOLD_CONFIG_FOR_FWVGA)
+	#define TPD_RES_X                480
+	#define TPD_RES_Y                854
+#elif defined(AGOLD_CONFIG_FOR_WSVGA)
+	#define TPD_RES_X                600
+	#define TPD_RES_Y                1024
+#else 
+	#define TPD_RES_X                480
+	#define TPD_RES_Y                800
+#endif
+
+#endif /* TOUCHPANEL_H__ */
+
